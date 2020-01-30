@@ -1,5 +1,5 @@
 import 'package:cafe/cafes/sit_selected.dart';
-import 'package:cafe/firebase/signin_firebase.dart';
+import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
