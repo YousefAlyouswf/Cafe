@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>771130919935-9s00gf96v38h2omis874rdtnthd73o8j.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.771130919935-9s00gf96v38h2omis874rdtnthd73o8j</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>771130919935-pp6fjclrobh7ojp2krukhoks86ep4b2k.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDJDo4LhpPUXOyva5Lihv6dwWoXRDAJ33E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>771130919935</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.cafe</string>
+	<key>PROJECT_ID</key>
+	<string>cafe2-1352c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cafe2-1352c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:771130919935:ios:af98ecfc3d9683e62ff5ca</string>
+	<key>DATABASE_URL</key>
+	<string>https://cafe2-1352c.firebaseio.com</string>
+</dict>
+</plist>

@@ -1,9 +1,9 @@
-import 'package:cafe/animation/fadeAnimation.dart';
-import 'package:cafe/cafes/googlemap.dart';
-import 'package:cafe/models/user_info.dart';
-import 'package:cafe/seatings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../animation/fadeAnimation.dart';
+import '../models/user_info.dart';
+import '../seatings.dart';
+import 'googlemap.dart';
 
 class CafeList extends StatefulWidget {
   final UserInfo info;

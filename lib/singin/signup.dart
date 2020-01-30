@@ -3,7 +3,7 @@ import 'package:cafe/models/user_info.dart';
 import 'package:cafe/singin/signin_firebase.dart';
 import 'package:flutter/material.dart';
 
-import '../seatings.dart';
+import 'login.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -198,7 +198,7 @@ class _SignUpState extends State<SignUp> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) {
-                                return Seatings();
+                                return Login();
                               },
                             ),
                           );
