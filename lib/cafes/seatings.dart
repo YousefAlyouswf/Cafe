@@ -1,12 +1,13 @@
+import 'package:cafe/cafes/sit_selected.dart';
+import 'package:cafe/firebase/signin_firebase.dart';
+import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/user_info.dart';
-import 'package:cafe/singin/signin_firebase.dart';
-import 'package:cafe/singin/login.dart';
-import 'package:cafe/sit_selected.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'animation/fadeAnimation.dart';
-import 'cafes/cafes_screen.dart';
+
+import '../animation/fadeAnimation.dart';
+import 'cafes_screen.dart';
 
 class Seatings extends StatefulWidget {
   final String cafeName;

@@ -5,7 +5,11 @@ class UserInfo {
   final String id;
   final String booked;
 
-  UserInfo({this.booked, this.name, this.phone, this.password, this.id});
-
-
+  UserInfo(
+      {this.booked,
+      this.name,
+      this.phone,
+      this.password,
+      this.id,
+      });
 }

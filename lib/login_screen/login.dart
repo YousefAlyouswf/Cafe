@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:cafe/cafes/cafes_screen.dart';
+import 'package:cafe/login_screen/signup.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/animation/fadeAnimation.dart';
-import 'package:cafe/singin/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -14,17 +14,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String phone;
-  String password;
-  String name;
-  String id;
-  String booked;
+  String phone, password, name, id, booked;
   bool check = false;
   List<String> idList = new List();
   List<String> nameList = new List();
   List<String> phoneList = new List();
   List<String> passwordList = new List();
   List<String> bookedList = new List();
+  List<String> cafenameList = new List();
   void getallID() async {
     idList = [];
     nameList = [];
@@ -218,7 +215,9 @@ class _LoginState extends State<Login> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) {
-                                    return CafeList(info: info,);
+                                    return CafeList(
+                                      info: info,
+                                    );
                                   },
                                 ),
                               );

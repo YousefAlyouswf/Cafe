@@ -1,8 +1,8 @@
+import 'package:cafe/cafes/seatings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../animation/fadeAnimation.dart';
 import '../models/user_info.dart';
-import '../seatings.dart';
 import 'googlemap.dart';
 
 class CafeList extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'models/user_info.dart';
+import '../models/user_info.dart';
 import 'seatings.dart';
 
 class SitSelected extends StatefulWidget {
