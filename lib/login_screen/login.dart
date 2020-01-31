@@ -22,6 +22,28 @@ class _LoginState extends State<Login> {
   List<String> passwordList = new List();
   List<String> bookedList = new List();
   List<String> cafenameList = new List();
+  List<int> cafeReviews = new List();
+  List<int> starsAvrage = new List();
+
+  void getAllReviews() async {
+    int count = 0;
+
+    cafeReviews = [];
+    final QuerySnapshot result =
+        await Firestore.instance.collection('cafes').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      cafeReviews.add(data['reviews'].length);
+      int sum = 0;
+      for (var i = 0; i < cafeReviews[count]; i++) {
+        //should sum all the values
+        sum += data['reviews'][i]['stars'];
+      }
+      starsAvrage.add(sum);
+      count++;
+    });
+  }
+
   void getallID() async {
     idList = [];
     nameList = [];
@@ -44,6 +66,7 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     getallID();
+    getAllReviews();
   }
 
   @override
@@ -211,6 +234,8 @@ class _LoginState extends State<Login> {
                                 password: password,
                                 id: id,
                                 booked: booked,
+                                reviewsCount: cafeReviews,
+                                starsAvrage: starsAvrage,
                               );
                               Navigator.of(context).push(
                                 MaterialPageRoute(
