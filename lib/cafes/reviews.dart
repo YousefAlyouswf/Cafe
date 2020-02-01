@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
 
+import 'package:intl/intl.dart';
+
 class Reviews extends StatefulWidget {
   final UserInfo info;
   final String cafeName;
@@ -18,6 +20,7 @@ class _ReviewsState extends State<Reviews> {
   List<String> reviews = new List();
   List<int> stars = new List();
   List<String> names = new List();
+  List<String> date = new List();
   String rate = '5';
   String review = 'لا تعليق';
 
@@ -54,12 +57,15 @@ class _ReviewsState extends State<Reviews> {
                         reviews = [];
                         stars = [];
                         names = [];
-                        for (var i = 0; i < myreview['reviews'].length; i++) {
+                        date = [];
+                        for (var i = myreview['reviews'].length-1; i >= 0; i--) {
                           reviews
                               .add(myreview['reviews'][i]['review'].toString());
                           stars.add(myreview['reviews'][i]['stars']);
                           names.add(myreview['reviews'][i]['name'].toString());
+                          date.add(myreview['reviews'][i]['date'].toString());
                         }
+
                         return Container(
                           height: height / 1.5,
                           color: Colors.orange,
@@ -87,13 +93,19 @@ class _ReviewsState extends State<Reviews> {
                                             SizedBox(
                                               width: 20,
                                             ),
-                                            Text(
-                                              names[i],
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.blue,
-                                                  fontWeight: FontWeight.bold),
+                                            Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  names[i],
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors.blue,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(date[i]),
+                                              ],
                                             ),
                                           ],
                                         ),
@@ -243,18 +255,24 @@ class _ReviewsState extends State<Reviews> {
                             ),
                             child: InkWell(
                               onTap: () async {
+                                var now = new DateTime.now();
+                                var date =
+                                    new DateFormat("dd-MM-yyyy").format(now);
+                                var timeToOrder = now.millisecondsSinceEpoch;
                                 List<Map<String, dynamic>> maplist = [
                                   {
                                     'name': widget.info.name,
                                     'stars': int.parse(rate),
-                                    'review': review
+                                    'review': review,
+                                    'date': date,
+                                    'time': timeToOrder
                                   },
                                 ];
                                 Firestore.instance
                                     .collection('cafes')
                                     .document(widget.cafeID)
                                     .updateData({
-                                  'reviews': FieldValue.arrayUnion(maplist)
+                                  'reviews': FieldValue.arrayUnion(maplist),
                                 });
                                 Navigator.pop(context);
                               },
