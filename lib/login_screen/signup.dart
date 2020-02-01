@@ -86,10 +86,11 @@ class _SignUpState extends State<SignUp> {
                           margin: EdgeInsets.only(top: 50),
                           child: Center(
                             child: Text(
-                              "Sign Up",
+                              "تسجيل جديد",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
+                                  fontSize: 60,
+                                  fontFamily: 'vip',
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -126,6 +127,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                               child: TextField(
+                                textAlign: TextAlign.end,
                                 onChanged: (val) {
                                   setState(() {
                                     name = val;
@@ -133,10 +135,10 @@ class _SignUpState extends State<SignUp> {
                                 },
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Name',
+                                  hintText: 'الأسم',
                                   hintStyle: TextStyle(
-                                    color: Colors.grey[400],
-                                  ),
+                                      color: Colors.grey[400],
+                                      fontFamily: 'topaz'),
                                 ),
                               ),
                             ),
@@ -150,6 +152,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                               child: TextField(
+                                textAlign: TextAlign.end,
                                 onChanged: (val) {
                                   setState(() {
                                     phone = val;
@@ -157,10 +160,10 @@ class _SignUpState extends State<SignUp> {
                                 },
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Phone',
+                                  hintText: 'رقم الجوال',
                                   hintStyle: TextStyle(
-                                    color: Colors.grey[400],
-                                  ),
+                                      color: Colors.grey[400],
+                                      fontFamily: 'topaz'),
                                 ),
                                 keyboardType: TextInputType.phone,
                               ),
@@ -168,15 +171,16 @@ class _SignUpState extends State<SignUp> {
                             Container(
                               padding: EdgeInsets.all(8),
                               child: TextField(
+                                textAlign: TextAlign.end,
                                 onChanged: (val) {
                                   password = val;
                                 },
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Password',
+                                  hintText: 'كلمة المرور',
                                   hintStyle: TextStyle(
-                                    color: Colors.grey[400],
-                                  ),
+                                      color: Colors.grey[400],
+                                      fontFamily: 'topaz'),
                                 ),
                               ),
                             ),
@@ -194,7 +198,7 @@ class _SignUpState extends State<SignUp> {
                           SigninFiresotre().addUser(name, phone, password);
                           UserInfo(
                               name: name, phone: phone, password: password);
-                              
+
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) {
@@ -214,9 +218,11 @@ class _SignUpState extends State<SignUp> {
                                 Color.fromRGBO(143, 14, 251, .6),
                               ])),
                           child: Center(
-                            child: Text("Sign up",
+                            child: Text("تسجيل",
                                 style: TextStyle(
                                     color: Colors.white,
+                                    fontFamily: 'topaz',
+                                    fontSize: 35,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ),

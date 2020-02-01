@@ -70,7 +70,11 @@ flutter:
 
     - family: arbaeen
       fonts:
-        - asset: assests/fonts/arbaeen.ttf      
+        - asset: assests/fonts/arbaeen.ttf  
+
+    - family: vip
+      fonts:
+        - asset: assests/fonts/vip.ttf    
        
   #   - family: Trajan Pro
   #     fonts:

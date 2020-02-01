@@ -82,37 +82,37 @@ class _CafeListState extends State<CafeList> {
           ListTile(
             title: Center(
                 child: Text(
-              "أختر المدينة",
+              "المقاهي المفضلة",
               style: TextStyle(fontSize: 24),
             )),
             trailing: Icon(Icons.map),
           ),
-          Container(
-            height: 500,
-            child: ListView.builder(
-              itemCount: removeDoublicat.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {},
-                  child: Center(
-                    child: ListTile(
-                      title: Text(
-                        removeDoublicat[index],
-                        textAlign: TextAlign.center,
-                      ),
-                      trailing: Icon(Icons.location_city),
-                      onTap: () {
-                        setState(() {
-                          filterCity = removeDoublicat[index];
-                        });
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          // Container(
+          //   height: 500,
+          //   child: ListView.builder(
+          //     itemCount: removeDoublicat.length,
+          //     itemBuilder: (context, index) {
+          //       return InkWell(
+          //         onTap: () {},
+          //         child: Center(
+          //           child: ListTile(
+          //             title: Text(
+          //               removeDoublicat[index],
+          //               textAlign: TextAlign.center,
+          //             ),
+          //             trailing: Icon(Icons.location_city),
+          //             onTap: () {
+          //               setState(() {
+          //                 filterCity = removeDoublicat[index];
+          //               });
+          //               Navigator.of(context).pop();
+          //             },
+          //           ),
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       )),
       body: Padding(
@@ -134,15 +134,29 @@ class _CafeListState extends State<CafeList> {
                       snapshot.data.documents[index].data['image'].toString();
                   String cafeName =
                       snapshot.data.documents[index].data['name'].toString();
+                  String cafeID =
+                      snapshot.data.documents[index].documentID;
                   int starsSum = widget.info.starsAvrage[index];
                   int reviewsCount = widget.info.reviewsCount[index];
-                  double result = starsSum/reviewsCount;
+                  double result = starsSum / reviewsCount;
+                  bool iconColor = false;
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: GridTile(
                       child: Image.network(
                         image,
                         fit: BoxFit.fill,
+                      ),
+                      header: Stack(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Icon(
+                              Icons.favorite,
+                              color: iconColor ? Colors.red : Colors.orange,
+                            ),
+                          ),
+                        ],
                       ),
                       footer: Container(
                         height: 70,
@@ -180,29 +194,34 @@ class _CafeListState extends State<CafeList> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              Text(
-                                  'التعليقات $reviewsCount'),
-                              SizedBox(
-                                width: 30,
-                              ),
                               InkWell(
                                 onTap: () {
+                                print(cafeID);
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) {
                                         return Reviews(
                                           cafeName: cafeName,
                                           info: widget.info,
+                                          cafeID: cafeID,
                                         );
                                       },
                                     ),
                                   );
                                 },
-                                child: Text(
-                                  cafeName,
-                                  style: TextStyle(
-                                      fontFamily: 'topaz', fontSize: 23),
-                                  textAlign: TextAlign.end,
+                                child: Row(
+                                  children: <Widget>[
+                                    Text('التعليقات $reviewsCount'),
+                                    SizedBox(
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      cafeName,
+                                      style: TextStyle(
+                                          fontFamily: 'topaz', fontSize: 23),
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

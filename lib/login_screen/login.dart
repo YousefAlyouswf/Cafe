@@ -119,25 +119,26 @@ class _LoginState extends State<Login> {
               ),
             ),
             SizedBox(
-              height: 40,
+              height: 5,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   FadeAnimation(
                     1.5,
                     Text(
-                      'Login',
+                      'دخول',
                       style: TextStyle(
                           color: Color.fromRGBO(49, 39, 79, 1),
                           fontWeight: FontWeight.bold,
-                          fontSize: 30),
+                          fontFamily: 'vip',
+                          fontSize: 40),textAlign: TextAlign.center,
                     ),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 10,
                   ),
                   FadeAnimation(
                     1.7,
@@ -165,6 +166,7 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             child: TextField(
+                              textAlign: TextAlign.end,
                               onChanged: (val) {
                                 setState(() {
                                   phone = val;
@@ -173,13 +175,14 @@ class _LoginState extends State<Login> {
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: 'Phone number',
-                                  hintStyle: TextStyle(color: Colors.grey)),
+                                  hintText: 'رقم الجوال',
+                                  hintStyle: TextStyle(color: Colors.grey,fontFamily: 'topaz')),
                             ),
                           ),
                           Container(
                             padding: EdgeInsets.all(10),
                             child: TextField(
+                              textAlign: TextAlign.end,
                               onChanged: (val) {
                                 setState(() {
                                   password = val;
@@ -187,8 +190,8 @@ class _LoginState extends State<Login> {
                               },
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Password',
-                                hintStyle: TextStyle(color: Colors.grey),
+                                hintText: 'كلمة المرور',
+                                hintStyle: TextStyle(color: Colors.grey,fontFamily: 'topaz'),
                               ),
                             ),
                           ),
@@ -255,8 +258,8 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(50),
                         child: Center(
                           child: Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white),
+                            "دخول",
+                            style: TextStyle(color: Colors.white,fontFamily: 'topaz',fontSize: 25),
                           ),
                         ),
                       ),
@@ -280,10 +283,10 @@ class _LoginState extends State<Login> {
                         },
                         splashColor: Color.fromRGBO(49, 39, 79, 1),
                         child: Text(
-                          'New user',
+                          'جديد',
                           style: TextStyle(
                               color: Color.fromRGBO(196, 153, 198, 1),
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,fontFamily: 'topaz',fontSize: 35),
                         ),
                       ),
                     ),

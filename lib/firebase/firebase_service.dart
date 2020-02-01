@@ -4,14 +4,24 @@ class SigninFiresotre {
   // initilaize
   final CollectionReference collectionReferenceUsers =
       Firestore.instance.collection('users');
-
-//Functions
+//   final CollectionReference collectionReferenceReview =
+//       Firestore.instance.collection('cafes');
+// //Functions
 
 //Add users
   Future addUser(String name, String phone, String password) async =>
       await collectionReferenceUsers
           .document()
           .setData({'name': name, 'phone': phone, 'password': password});
+
+  //Add review
+  // Future addReview(String review, String rate, String name, String id) async =>
+  //     await collectionReferenceReview
+  //         .document(id)
+  //         .setData({
+            
+  //            'review': review, 'stars': rate
+  //         });
 //compare user
 //String phone, String password
   Future compare(String phone, String password) async {
