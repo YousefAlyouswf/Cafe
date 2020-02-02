@@ -1,9 +1,11 @@
+import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../models/user_info.dart';
 
 import 'package:intl/intl.dart';
+
+import 'curvedlistitem.dart';
 
 class Reviews extends StatefulWidget {
   final UserInfo info;
@@ -40,163 +42,88 @@ class _ReviewsState extends State<Reviews> {
       appBar: AppBar(
         backgroundColor: Colors.purple,
         title: Center(
-            child: Text(
-          widget.cafeName,
-          style: TextStyle(
-              fontFamily: 'arbaeen', fontWeight: FontWeight.bold, fontSize: 28),
-        )),
-      ),
-      body: Column(
-        children: <Widget>[
-          Flexible(
-            child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection('cafes')
-                    .where('name', isEqualTo: widget.cafeName)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("لا توجد تعليقات");
-                  } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot myreview =
-                            snapshot.data.documents[index];
-                        reviews = [];
-                        stars = [];
-                        names = [];
-                        date = [];
-                        for (var i = myreview['reviews'].length - 1;
-                            i >= 0;
-                            i--) {
-                          reviews
-                              .add(myreview['reviews'][i]['review'].toString());
-                          stars.add(myreview['reviews'][i]['stars']);
-                          names.add(myreview['reviews'][i]['name'].toString());
-                          date.add(myreview['reviews'][i]['date'].toString());
-                        }
-
-                        return Container(
-                          height: height / 1.5,
-                          color: Colors.orange,
-                          child: ListView.builder(
-                            itemCount: reviews.length,
-                            itemBuilder: (context, i) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            Flexible(
-                                              child: Text(
-                                                reviews[i],
-                                                textAlign: TextAlign.end,
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  names[i],
-                                                  textAlign: TextAlign.end,
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.blue,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                Text(date[i]),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.star,
-                                              color: stars[i] >= 1
-                                                  ? Colors.yellow
-                                                  : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: stars[i] >= 2
-                                                  ? Colors.yellow
-                                                  : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: stars[i] >= 3
-                                                  ? Colors.yellow
-                                                  : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: stars[i] >= 4
-                                                  ? Colors.yellow
-                                                  : Colors.grey,
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: stars[i] >= 5
-                                                  ? Colors.yellow
-                                                  : Colors.grey,
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  }
-                }),
+          child: Text(
+            widget.cafeName,
+            style: TextStyle(
+                fontFamily: 'arbaeen',
+                fontWeight: FontWeight.bold,
+                fontSize: 28),
           ),
-          RaisedButton(
-            child: Text("تقييم"),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.rate_review,
+              color: Colors.white,
+            ),
             onPressed: () {
               showModalSheet(context);
             },
           )
         ],
       ),
+      body: Column(
+        children: <Widget>[
+          Flexible(
+            child: StreamBuilder(
+              stream: Firestore.instance
+                  .collection('cafes')
+                  .where('name', isEqualTo: widget.cafeName)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Text("لا توجد تعليقات");
+                } else {
+                  return ListView.builder(
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot myreview =
+                          snapshot.data.documents[index];
+                      reviews = [];
+                      stars = [];
+                      names = [];
+                      date = [];
+                      for (var i = myreview['reviews'].length - 1;
+                          i >= 0;
+                          i--) {
+                        reviews
+                            .add(myreview['reviews'][i]['review'].toString());
+                        stars.add(myreview['reviews'][i]['stars']);
+                        names.add(myreview['reviews'][i]['name'].toString());
+                        date.add(myreview['reviews'][i]['date'].toString());
+                      }
+
+                      Color reviewblue = const Color.fromRGBO(243,192,128,1);
+                      Color reviewred = const Color.fromRGBO(85,90,96, 1);
+
+                      return Container(
+                        height: height/1.1,
+                        child: ListView.builder(
+                          itemCount: reviews.length,
+                          itemBuilder: (context, i) {
+                            return CurvedListItem(
+                              title: names[i],
+                              time: date[i],
+                              review: reviews[i],
+                              stars: stars[i],
+                              color: i % 2 == 0 ? reviewblue : reviewred,
+                              nextColor: i % 2 == 1 ? reviewblue : reviewred,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   void showModalSheet(BuildContext context) {
-    final items = [
-      {
-        "displayName": "Enter value",
-        "type": "string",
-      },
-      {
-        "displayName": "Source",
-        "type": "list",
-        "data": [
-          {"id": 1, "displayId": "MO"},
-          {"id": 2, "displayId": "AO"},
-          {"id": 3, "displayId": "OffNet"}
-        ]
-      }
-    ];
-
     showModalBottomSheet<void>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -205,13 +132,12 @@ class _ReviewsState extends State<Reviews> {
         builder: (BuildContext context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter state) {
-            return createBox(context, items, state);
+            return createBox(context, state);
           });
         });
   }
 
-  createBox(
-      BuildContext context, List<Map<String, Object>> val, StateSetter state) {
+  createBox(BuildContext context, StateSetter state) {
     return SingleChildScrollView(
       child: LimitedBox(
         maxHeight: 450,
@@ -219,15 +145,14 @@ class _ReviewsState extends State<Reviews> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            buildMainDropdown(val, state),
+            buildMainDropdown(state),
           ],
         ),
       ),
     );
   }
 
-  Expanded buildMainDropdown(
-      List<Map<String, Object>> items, StateSetter setState) {
+  Expanded buildMainDropdown(StateSetter setState) {
     return Expanded(
       child: Container(
         color: Colors.red,

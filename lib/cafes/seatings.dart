@@ -1,3 +1,5 @@
+
+import 'package:cafe/cafes/reviews_secreen/reviews.dart';
 import 'package:cafe/cafes/sit_selected.dart';
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/login_screen/login.dart';
@@ -5,14 +7,13 @@ import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../animation/fadeAnimation.dart';
-import 'cafes_screen.dart';
 
 class Seatings extends StatefulWidget {
   final String cafeName;
   final UserInfo info;
-  const Seatings({Key key, this.cafeName, this.info}) : super(key: key);
+  final String cafeID;
+  const Seatings({Key key, this.cafeName, this.info, this.cafeID}) : super(key: key);
   @override
   _SittingsState createState() => _SittingsState();
 }
@@ -39,8 +40,9 @@ class _SittingsState extends State<Seatings> {
       onWillPop: () async => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) {
-              return CafeList(
+              return Reviews(
                 info: widget.info,
+                cafeName: widget.cafeName,
               );
             },
           ),
