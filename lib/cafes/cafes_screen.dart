@@ -3,15 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
 
-class CafeList extends StatefulWidget {
+class CafeList extends StatelessWidget {
   final UserInfo info;
-
-  const CafeList({Key key, this.info}) : super(key: key);
-  @override
-  _CafeListState createState() => _CafeListState();
-}
-
-class _CafeListState extends State<CafeList> {
+  CafeList({this.info});
   bool sort = false;
   String city;
   String filterCity;
@@ -29,33 +23,35 @@ class _CafeListState extends State<CafeList> {
   List<String> cityList = new List();
   List<dynamic> removeDoublicat = new List();
 
-  void getallcity() async {
-    cityList = [];
-    removeDoublicat = [];
-    final QuerySnapshot result =
-        await Firestore.instance.collection('cafes').getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    documents.forEach((data) {
-      cityList.add(data['city']);
-    });
-    setState(() {
-      removeDoublicat = cityList.toSet().toList();
-    });
-  }
+  
 
-  @override
-  void initState() {
-    super.initState();
-    getallcity();
-  }
+  // void getallcity() async {
+  //   cityList = [];
+  //   removeDoublicat = [];
+  //   final QuerySnapshot result =
+  //       await Firestore.instance.collection('cafes').getDocuments();
+  //   final List<DocumentSnapshot> documents = result.documents;
+  //   documents.forEach((data) {
+  //     cityList.add(data['city']);
+  //   });
+  //   setState(() {
+  //     removeDoublicat = cityList.toSet().toList();
+  //   });
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getallcity();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    userID = widget.info.id;
-    userName = widget.info.name;
-    userPhone = widget.info.phone;
-    userPassword = widget.info.password;
-    booked = widget.info.booked;
+    userID = info.id;
+    userName = info.name;
+    userPhone = info.phone;
+    userPassword = info.password;
+    booked = info.booked;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -134,10 +130,9 @@ class _CafeListState extends State<CafeList> {
                       snapshot.data.documents[index].data['image'].toString();
                   String cafeName =
                       snapshot.data.documents[index].data['name'].toString();
-                  String cafeID =
-                      snapshot.data.documents[index].documentID;
-                  int starsSum = widget.info.starsAvrage[index];
-                  int reviewsCount = widget.info.reviewsCount[index];
+                  String cafeID = snapshot.data.documents[index].documentID;
+                  int starsSum = info.starsAvrage[index];
+                  int reviewsCount = info.reviewsCount[index];
                   double result = starsSum / reviewsCount;
                   bool iconColor = false;
                   return ClipRRect(
@@ -196,13 +191,13 @@ class _CafeListState extends State<CafeList> {
                             children: <Widget>[
                               InkWell(
                                 onTap: () {
-                                print(cafeID);
+                                  print(cafeID);
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) {
                                         return Reviews(
                                           cafeName: cafeName,
-                                          info: widget.info,
+                                          info: info,
                                           cafeID: cafeID,
                                         );
                                       },

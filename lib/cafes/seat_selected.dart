@@ -1,18 +1,22 @@
+import 'package:cafe/cafes/reviews_secreen/reviews.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
 import 'seatings.dart';
 
-class SitSelected extends StatefulWidget {
+class SeatSelected extends StatefulWidget {
   final UserInfo info;
   final String cafeName;
-  const SitSelected({Key key, this.info, this.cafeName}) : super(key: key);
+  final String cafeID;
+  const SeatSelected({Key key, this.info, this.cafeName, this.cafeID}) : super(key: key);
   @override
-  _SitSelectedState createState() => _SitSelectedState();
+  _SeatSelectedState createState() => _SeatSelectedState();
 }
 
-class _SitSelectedState extends State<SitSelected> {
+class _SeatSelectedState extends State<SeatSelected> {
   @override
   Widget build(BuildContext context) {
+
+    
     return WillPopScope(
       onWillPop: () => Navigator.of(context).push(
           MaterialPageRoute(
@@ -30,6 +34,7 @@ class _SitSelectedState extends State<SitSelected> {
             child: Text("تأكيد الحجز"),
           ),
         ),
+      
         body: Center(
           child: Container(
             child: Column(

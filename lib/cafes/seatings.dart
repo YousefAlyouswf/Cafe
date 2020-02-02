@@ -1,6 +1,5 @@
-
 import 'package:cafe/cafes/reviews_secreen/reviews.dart';
-import 'package:cafe/cafes/sit_selected.dart';
+import 'package:cafe/cafes/seat_selected.dart';
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/user_info.dart';
@@ -8,12 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../animation/fadeAnimation.dart';
+import 'cafes_screen.dart';
 
 class Seatings extends StatefulWidget {
   final String cafeName;
   final UserInfo info;
   final String cafeID;
-  const Seatings({Key key, this.cafeName, this.info, this.cafeID}) : super(key: key);
+  const Seatings({Key key, this.cafeName, this.info, this.cafeID})
+      : super(key: key);
   @override
   _SittingsState createState() => _SittingsState();
 }
@@ -29,6 +30,27 @@ class _SittingsState extends State<Seatings> {
   //To Show user Info END
   bool sort = false;
   bool yourSeat = false;
+
+  int _selectedIndex = 1;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return Reviews(
+                cafeName: widget.cafeName,
+                info: widget.info,
+                cafeID: widget.cafeID,
+              );
+            },
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     userID = widget.info.id;
@@ -38,45 +60,59 @@ class _SittingsState extends State<Seatings> {
     booked = widget.info.booked;
     return WillPopScope(
       onWillPop: () async => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Reviews(
-                info: widget.info,
-                cafeName: widget.cafeName,
-              );
-            },
-          ),
+        MaterialPageRoute(
+          builder: (_) {
+            return CafeList(
+              info: widget.info,
+            );
+          },
         ),
+      ),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(49, 39, 79, 0.5),
-          title: Center(child: Text(widget.cafeName)),
-          actions: <Widget>[
-            // FlatButton.icon(
-            //   icon: Icon(Icons.sort),
-            //   label: Text(""),
-            //   onPressed: () {
-            //     setState(() {
-            //       if (!sort) {
-            //         sort = true;
-            //       } else {
-            //         sort = false;
-            //       }
-            //     });
-            //   },
-            // ),
-            FlatButton.icon(
-              icon: Icon(Icons.exit_to_app),
-              label: Text(""),
-              onPressed: () {
-                setState(() {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                    return Login();
-                  }));
-                });
-              },
-            )
+          backgroundColor: Colors.purple,
+          title: Center(
+            child: Text(
+              widget.cafeName,
+              style: TextStyle(
+                  fontFamily: 'arbaeen',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28),
+            ),
+          ),
+
+          // FlatButton.icon(
+          //   icon: Icon(Icons.sort),
+          //   label: Text(""),
+          //   onPressed: () {
+          //     setState(() {
+          //       if (!sort) {
+          //         sort = true;
+          //       } else {
+          //         sort = false;
+          //       }
+          //     });
+          //   },
+          // ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.comment),
+              title: Text('التعليقات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_seat),
+              title: Text('الجلسات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.fastfood),
+              title: Text('الطلبات'),
+            ),
           ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -99,14 +135,8 @@ class _SittingsState extends State<Seatings> {
                       color = Colors.green;
                       isbooked = false;
                     } else {
-                      if (snapshot.data.documents[index].data['userid'] ==
-                          widget.info.id) {
-                        color = Colors.red;
-                        yourSeat = true;
-                      } else {
-                        color = Colors.grey;
-                        isbooked = true;
-                      }
+                      color = Colors.grey;
+                      isbooked = true;
                     }
 
                     return InkWell(
@@ -114,9 +144,9 @@ class _SittingsState extends State<Seatings> {
                           ? null
                           : () {
                               SigninFiresotre().updateBooking(
-                                      snapshot.data.documents[index].documentID
-                                          .toString(),
-                                      widget.info.id);
+                                  snapshot.data.documents[index].documentID
+                                      .toString(),
+                                  widget.info.id);
                               SigninFiresotre().updateUser(
                                   widget.info.id,
                                   snapshot.data.documents[index].data['sit']
@@ -165,7 +195,7 @@ class _SittingsState extends State<Seatings> {
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (_) {
-                                                    return SitSelected(
+                                                    return SeatSelected(
                                                       info: widget.info,
                                                       cafeName: widget.cafeName,
                                                     );

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
+import '../cafes_screen.dart';
+import '../seatings.dart';
 import 'curvedlistitem.dart';
 
 class Reviews extends StatefulWidget {
@@ -35,90 +37,141 @@ class _ReviewsState extends State<Reviews> {
   IconData star = Icons.star;
   Color starColor = Colors.yellow;
   Color staremptyColor = Colors.black;
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 1) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return Seatings(
+                cafeName: widget.cafeName,
+                info: widget.info,
+                cafeID: widget.cafeID,
+              );
+            },
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple,
-        title: Center(
-          child: Text(
-            widget.cafeName,
-            style: TextStyle(
-                fontFamily: 'arbaeen',
-                fontWeight: FontWeight.bold,
-                fontSize: 28),
-          ),
+    return WillPopScope(
+      onWillPop: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return CafeList(
+              info: widget.info,
+            );
+          },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.rate_review,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              showModalSheet(context);
-            },
-          )
-        ],
       ),
-      body: Column(
-        children: <Widget>[
-          Flexible(
-            child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('cafes')
-                  .where('name', isEqualTo: widget.cafeName)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Text("لا توجد تعليقات");
-                } else {
-                  return ListView.builder(
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot myreview =
-                          snapshot.data.documents[index];
-                      reviews = [];
-                      stars = [];
-                      names = [];
-                      date = [];
-                      for (var i = myreview['reviews'].length - 1;
-                          i >= 0;
-                          i--) {
-                        reviews
-                            .add(myreview['reviews'][i]['review'].toString());
-                        stars.add(myreview['reviews'][i]['stars']);
-                        names.add(myreview['reviews'][i]['name'].toString());
-                        date.add(myreview['reviews'][i]['date'].toString());
-                      }
-
-                      Color reviewblue = const Color.fromRGBO(243,192,128,1);
-                      Color reviewred = const Color.fromRGBO(85,90,96, 1);
-
-                      return Container(
-                        height: height/1.1,
-                        child: ListView.builder(
-                          itemCount: reviews.length,
-                          itemBuilder: (context, i) {
-                            return CurvedListItem(
-                              title: names[i],
-                              time: date[i],
-                              review: reviews[i],
-                              stars: stars[i],
-                              color: i % 2 == 0 ? reviewblue : reviewred,
-                              nextColor: i % 2 == 1 ? reviewblue : reviewred,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.purple,
+          title: Center(
+            child: Text(
+              widget.cafeName,
+              style: TextStyle(
+                  fontFamily: 'arbaeen',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28),
             ),
           ),
-        ],
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.rate_review,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                showModalSheet(context);
+              },
+            )
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.comment),
+              title: Text('التعليقات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_seat),
+              title: Text('الجلسات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.fastfood),
+              title: Text('الطلبات'),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        ),
+        body: Column(
+          children: <Widget>[
+            Flexible(
+              child: StreamBuilder(
+                stream: Firestore.instance
+                    .collection('cafes')
+                    .where('name', isEqualTo: widget.cafeName)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text("لا توجد تعليقات");
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot myreview =
+                            snapshot.data.documents[index];
+                        reviews = [];
+                        stars = [];
+                        names = [];
+                        date = [];
+                        for (var i = myreview['reviews'].length - 1;
+                            i >= 0;
+                            i--) {
+                          reviews
+                              .add(myreview['reviews'][i]['review'].toString());
+                          stars.add(myreview['reviews'][i]['stars']);
+                          names.add(myreview['reviews'][i]['name'].toString());
+                          date.add(myreview['reviews'][i]['date'].toString());
+                        }
+
+                        Color currentColor =
+                          Colors.orange;
+                        Color nextColor = Colors.white;
+
+                        return Container(
+                          height: height,
+                          child: ListView.builder(
+                            itemCount: reviews.length,
+                            itemBuilder: (context, i) {
+                              return CurvedListItem(
+                                name: names[i],
+                                time: date[i],
+                                review: reviews[i],
+                                stars: stars[i],
+                                color: i % 2 == 0 ? currentColor : nextColor,
+                                nextColor: i % 2 == 1 ? currentColor : nextColor,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
