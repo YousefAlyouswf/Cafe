@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../cafes_screen.dart';
+import '../seat_selected.dart';
 import '../seatings.dart';
 import 'curvedlistitem.dart';
 
@@ -53,9 +54,23 @@ class _ReviewsState extends State<Reviews> {
             },
           ),
         );
+      } else if (index == 2) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) {
+              return SeatSelected(
+                cafeName: widget.cafeName,
+                info: widget.info,
+                cafeID: widget.cafeID,
+              );
+            },
+          ),
+        );
       }
     });
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +120,8 @@ class _ReviewsState extends State<Reviews> {
               title: Text('الجلسات'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood),
-              title: Text('الطلبات'),
+              icon: Icon(Icons.info),
+              title: Text('الحجز'),
             ),
           ],
           currentIndex: _selectedIndex,
@@ -144,8 +159,7 @@ class _ReviewsState extends State<Reviews> {
                           date.add(myreview['reviews'][i]['date'].toString());
                         }
 
-                        Color currentColor =
-                          Colors.orange;
+                        Color currentColor = Colors.orange;
                         Color nextColor = Colors.white;
 
                         return Container(
@@ -159,7 +173,8 @@ class _ReviewsState extends State<Reviews> {
                                 review: reviews[i],
                                 stars: stars[i],
                                 color: i % 2 == 0 ? currentColor : nextColor,
-                                nextColor: i % 2 == 1 ? currentColor : nextColor,
+                                nextColor:
+                                    i % 2 == 1 ? currentColor : nextColor,
                               );
                             },
                           ),

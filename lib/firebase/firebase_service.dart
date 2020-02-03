@@ -19,7 +19,7 @@ class SigninFiresotre {
   //     await collectionReferenceReview
   //         .document(id)
   //         .setData({
-            
+
   //            'review': review, 'stars': rate
   //         });
 //compare user
@@ -36,29 +36,39 @@ class SigninFiresotre {
   }
 
 //Update seat stauts
-  Future updateBooking(String id, String userid) async =>
+  Future updateBooking(
+          String id, String userid, String username, String userphone) async =>
       await Firestore.instance.collection('sitting').document(id).updateData({
         'color': 'grey',
         'userid': userid,
+        'username': username,
+        'userphone': userphone,
       });
   Future calnceBooking(String id, String userid) async =>
       await Firestore.instance.collection('sitting').document(id).updateData({
         'color': 'green',
         'userid': '',
+        'username': '',
+        'userphone': '',
       });
   // Future deleteUser(String id) async =>
   //     await collectionReferenceUsers.document(id).delete();
 
   //Add seat to a user
-  Future updateUser(String id, String sitNum) async {
+  Future updateUser(
+      String id, String sitNum, String cafename, String seatID) async {
     await Firestore.instance.collection('users').document(id).updateData({
       'booked': sitNum,
+      'cafename': cafename,
+      'seatid': seatID,
     });
   }
 
   Future cancleupdateUser(String id, String sitNum) async {
     await Firestore.instance.collection('users').document(id).updateData({
       'booked': '',
+      'cafename': '',
+      'seatid': '',
     });
   }
 }

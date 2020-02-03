@@ -3,55 +3,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
 
-class CafeList extends StatelessWidget {
+class CafeList extends StatefulWidget {
   final UserInfo info;
   CafeList({this.info});
+
+  @override
+  _CafeListState createState() => _CafeListState();
+}
+
+class _CafeListState extends State<CafeList> {
   bool sort = false;
+
   String city;
+
   String filterCity;
+
   bool check = false;
 
-  //To Show user Info START
   String userID;
+
   String userName;
+
   String userPhone;
+
   String userPassword;
+
   String booked;
+
   String seatNum;
 
-  //To Show user Info END
   List<String> cityList = new List();
+
   List<dynamic> removeDoublicat = new List();
-
-  
-
-  // void getallcity() async {
-  //   cityList = [];
-  //   removeDoublicat = [];
-  //   final QuerySnapshot result =
-  //       await Firestore.instance.collection('cafes').getDocuments();
-  //   final List<DocumentSnapshot> documents = result.documents;
-  //   documents.forEach((data) {
-  //     cityList.add(data['city']);
-  //   });
-  //   setState(() {
-  //     removeDoublicat = cityList.toSet().toList();
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getallcity();
-  // }
 
   @override
   Widget build(BuildContext context) {
-    userID = info.id;
-    userName = info.name;
-    userPhone = info.phone;
-    userPassword = info.password;
-    booked = info.booked;
+    userID = widget.info.id;
+    userName = widget.info.name;
+    userPhone = widget.info.phone;
+    userPassword = widget.info.password;
+    booked = widget.info.booked;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -131,8 +122,8 @@ class CafeList extends StatelessWidget {
                   String cafeName =
                       snapshot.data.documents[index].data['name'].toString();
                   String cafeID = snapshot.data.documents[index].documentID;
-                  int starsSum = info.starsAvrage[index];
-                  int reviewsCount = info.reviewsCount[index];
+                  int starsSum = widget.info.starsAvrage[index];
+                  int reviewsCount = widget.info.reviewsCount[index];
                   double result = starsSum / reviewsCount;
                   bool iconColor = false;
                   return ClipRRect(
@@ -197,7 +188,7 @@ class CafeList extends StatelessWidget {
                                       builder: (_) {
                                         return Reviews(
                                           cafeName: cafeName,
-                                          info: info,
+                                          info: widget.info,
                                           cafeID: cafeID,
                                         );
                                       },

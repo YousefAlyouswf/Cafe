@@ -23,8 +23,7 @@ class CurvedListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String today;
-    var now = new DateTime.now();
+
 
     return Container(
       padding: EdgeInsets.all(8.0),
