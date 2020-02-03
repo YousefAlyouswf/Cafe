@@ -1,7 +1,7 @@
-import 'package:cafe/cafes/reviews_secreen/reviews.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
+import 'Review_seat/reviews.dart';
 
 class CafeList extends StatefulWidget {
   final UserInfo info;

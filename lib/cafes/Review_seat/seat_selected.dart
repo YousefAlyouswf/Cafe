@@ -1,9 +1,16 @@
-import 'package:cafe/cafes/reviews_secreen/reviews.dart';
+import 'package:cafe/cafes/Review_seat/reviews.dart';
+import 'package:cafe/cafes/cafes_screen.dart';
 import 'package:cafe/firebase/firebase_service.dart';
+import 'package:cafe/models/user_info.dart';
+import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../models/user_info.dart';
 import 'seatings.dart';
+import 'package:sqflite/sqflite.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:cafe/models/booking.dart';
 
 class SeatSelected extends StatefulWidget {
   final UserInfo info;
@@ -17,6 +24,10 @@ class SeatSelected extends StatefulWidget {
 }
 
 class _SeatSelectedState extends State<SeatSelected> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Booking> bookList;
+  Booking booking;
+  int count = 0;
   bool hasBookinginSelected = false;
 
   int _selectedIndex = 2;
@@ -50,7 +61,6 @@ class _SeatSelectedState extends State<SeatSelected> {
       }
     });
   }
- 
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +68,8 @@ class _SeatSelectedState extends State<SeatSelected> {
       onWillPop: () => Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) {
-            return Seatings(
+            return CafeList(
               info: widget.info,
-              cafeName: widget.cafeName,
             );
           },
         ),
@@ -133,18 +142,24 @@ class _SeatSelectedState extends State<SeatSelected> {
                                       " جلسة رقم: " +
                                       myBooking['booked']),
                                   RaisedButton(
-                                      child: Text("إلغاء الحجز"),
-                                      onPressed: () {
-                                        setState(() {
-                                          SigninFiresotre().cancleupdateUser(
-                                              widget.info.id,
-                                              myBooking['booked']);
-                                          SigninFiresotre().calnceBooking(
-                                              myBooking['seatid'],
-                                              widget.info.id);
-                                          hasBookinginSelected = false;
-                                        });
-                                      })
+                                    child: Text("إلغاء الحجز"),
+                                    onPressed: () {
+//Delete from SQLITE
+
+                                      _delete(context, booking);
+//Delete from firebase
+
+                                      setState(() {
+                                        SigninFiresotre().cancleupdateUser(
+                                            widget.info.id,
+                                            myBooking['booked']);
+                                        SigninFiresotre().calnceBooking(
+                                            myBooking['seatid'],
+                                            widget.info.id);
+                                        hasBookinginSelected = false;
+                                      });
+                                    },
+                                  ),
                                 ],
                               )
                             : Text("عفوا, لا يوجد لديك حجز")
@@ -158,5 +173,19 @@ class _SeatSelectedState extends State<SeatSelected> {
         ),
       ),
     );
+  }
+
+  void _delete(BuildContext context, Booking booking) async {
+    int result = await databaseHelper.deleteBooking(booking.userID);
+    if (result != 0) {
+      _showSnackBar(context, "تم الغاء الحجز بنجاح");
+    }
+  }
+
+  void _showSnackBar(BuildContext context, String s) {
+    final snackbar = SnackBar(
+      content: Text(s),
+    );
+    Scaffold.of(context).showSnackBar(snackbar);
   }
 }

@@ -1,14 +1,12 @@
+import 'package:cafe/cafes/Review_seat/seat_selected.dart';
+import 'package:cafe/cafes/Review_seat/seatings.dart';
 import 'package:cafe/models/user_info.dart';
+import 'package:cafe/widgets/curvedlistitem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
-
 import '../cafes_screen.dart';
-import '../seat_selected.dart';
-import '../seatings.dart';
-import 'curvedlistitem.dart';
 
 class Reviews extends StatefulWidget {
   final UserInfo info;
@@ -69,8 +67,6 @@ class _ReviewsState extends State<Reviews> {
       }
     });
   }
-
- 
 
   @override
   Widget build(BuildContext context) {
