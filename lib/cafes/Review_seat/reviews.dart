@@ -1,12 +1,14 @@
 import 'package:cafe/cafes/Review_seat/seat_selected.dart';
 import 'package:cafe/cafes/Review_seat/seatings.dart';
+import 'package:cafe/models/booking.dart';
 import 'package:cafe/models/user_info.dart';
+import 'package:cafe/utils/database_helper.dart';
 import 'package:cafe/widgets/curvedlistitem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../cafes_screen.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class Reviews extends StatefulWidget {
   final UserInfo info;
@@ -16,10 +18,14 @@ class Reviews extends StatefulWidget {
   const Reviews({Key key, this.info, this.cafeName, this.cafeID})
       : super(key: key);
   @override
-  _ReviewsState createState() => _ReviewsState();
+  ReviewsState createState() => ReviewsState();
 }
 
-class _ReviewsState extends State<Reviews> {
+class ReviewsState extends State<Reviews> {
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<BookingDB> noteList;
+  int count = 0;
+  BookingDB bookingDB;
   List<String> reviews = new List();
   List<int> stars = new List();
   List<String> names = new List();
@@ -36,31 +42,21 @@ class _ReviewsState extends State<Reviews> {
   IconData star = Icons.star;
   Color starColor = Colors.yellow;
   Color staremptyColor = Colors.black;
+
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 1) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Seatings(
-                cafeName: widget.cafeName,
-                info: widget.info,
-                cafeID: widget.cafeID,
-              );
-            },
-          ),
-        );
+        navgateToSeating(BookingDB('', '', ''));
       } else if (index == 2) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) {
-              return SeatSelected(
-                cafeName: widget.cafeName,
-                info: widget.info,
-                cafeID: widget.cafeID,
-              );
+              updateListView();
+              int len = noteList.length - 1;
+              return SeatSelected(widget.info, widget.cafeName, widget.cafeID,
+                  BookingDB.withId(noteList[len].id, '', '', ''));
             },
           ),
         );
@@ -72,15 +68,7 @@ class _ReviewsState extends State<Reviews> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return WillPopScope(
-      onWillPop: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return CafeList(
-              info: widget.info,
-            );
-          },
-        ),
-      ),
+      onWillPop: () async => Navigator.pop(context, true),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.purple,
@@ -408,5 +396,28 @@ class _ReviewsState extends State<Reviews> {
         padding: EdgeInsets.all(40.0),
       ),
     );
+  }
+
+  void navgateToSeating(BookingDB booking) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return Seatings(booking, widget.cafeName, widget.info, widget.cafeID);
+        },
+      ),
+    );
+  }
+
+  void updateListView() {
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+      Future<List<BookingDB>> noteListFuture = databaseHelper.getNoteList();
+      noteListFuture.then((noteList) {
+        setState(() {
+          this.noteList = noteList;
+          this.count = noteList.length;
+        });
+      });
+    });
   }
 }

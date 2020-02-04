@@ -1,5 +1,4 @@
 import 'package:cafe/cafes/Review_seat/reviews.dart';
-import 'package:cafe/cafes/cafes_screen.dart';
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
@@ -8,29 +7,35 @@ import 'package:flutter/material.dart';
 import 'seatings.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:cafe/models/booking.dart';
 
 class SeatSelected extends StatefulWidget {
   final UserInfo info;
   final String cafeName;
   final String cafeID;
+  final BookingDB booking;
+  SeatSelected(this.info, this.cafeName, this.cafeID, this.booking);
 
-  const SeatSelected({Key key, this.info, this.cafeName, this.cafeID})
-      : super(key: key);
   @override
-  _SeatSelectedState createState() => _SeatSelectedState();
+  _SeatSelectedState createState() {
+    return _SeatSelectedState(
+        this.info, this.cafeName, this.cafeID, this.booking);
+  }
 }
 
 class _SeatSelectedState extends State<SeatSelected> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<Booking> bookList;
-  Booking booking;
+  BookingDB note;
+  List<BookingDB> noteList;
   int count = 0;
   bool hasBookinginSelected = false;
-
+  BookingDB bookingDB;
   int _selectedIndex = 2;
+  UserInfo info;
+  String cafeName;
+  String cafeID;
+  String seatnum;
+  _SeatSelectedState(this.info, this.cafeName, this.cafeID, this.bookingDB);
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -47,33 +52,36 @@ class _SeatSelectedState extends State<SeatSelected> {
           ),
         );
       } else if (index == 1) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              return Seatings(
-                cafeName: widget.cafeName,
-                info: widget.info,
-                cafeID: widget.cafeID,
-              );
-            },
-          ),
-        );
+        navgateToSeating(BookingDB('', '', ''));
       }
     });
   }
 
+  void updateListView() {
+    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    dbFuture.then((database) {
+      Future<List<BookingDB>> noteListFuture = databaseHelper.getNoteList();
+      noteListFuture.then((noteList) {
+        setState(() {
+          this.noteList = noteList;
+          this.count = noteList.length;
+        });
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateListView();
+  }
+
   @override
   Widget build(BuildContext context) {
+    //Check list for the database
+
     return WillPopScope(
-      onWillPop: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return CafeList(
-              info: widget.info,
-            );
-          },
-        ),
-      ),
+      onWillPop: () async => Navigator.pop(context, true),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.purple,
@@ -122,6 +130,7 @@ class _SeatSelectedState extends State<SeatSelected> {
                 } else {
                   hasBookinginSelected = false;
                 }
+                seatnum = myBooking['booked'];
                 return Center(
                   child: Container(
                     child: Column(
@@ -140,14 +149,14 @@ class _SeatSelectedState extends State<SeatSelected> {
                                   Text("لديك حجز في مقهى " +
                                       myBooking['cafename'] +
                                       " جلسة رقم: " +
-                                      myBooking['booked']),
+                                      seatnum),
                                   RaisedButton(
                                     child: Text("إلغاء الحجز"),
                                     onPressed: () {
-//Delete from SQLITE
+                                      //Delete from SQLITE
+                                      _delete();
 
-                                      _delete(context, booking);
-//Delete from firebase
+                                      //Delete from firebase
 
                                       setState(() {
                                         SigninFiresotre().cancleupdateUser(
@@ -175,17 +184,17 @@ class _SeatSelectedState extends State<SeatSelected> {
     );
   }
 
-  void _delete(BuildContext context, Booking booking) async {
-    int result = await databaseHelper.deleteBooking(booking.userID);
-    if (result != 0) {
-      _showSnackBar(context, "تم الغاء الحجز بنجاح");
-    }
+  void _delete() async {
+    await databaseHelper.deleteNote(int.parse(seatnum));
   }
 
-  void _showSnackBar(BuildContext context, String s) {
-    final snackbar = SnackBar(
-      content: Text(s),
+  void navgateToSeating(BookingDB booking) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return Seatings(booking, widget.cafeName, widget.info, widget.cafeID);
+        },
+      ),
     );
-    Scaffold.of(context).showSnackBar(snackbar);
   }
 }
