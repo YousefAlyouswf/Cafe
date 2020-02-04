@@ -54,9 +54,9 @@ class ReviewsState extends State<Reviews> {
           MaterialPageRoute(
             builder: (_) {
               updateListView();
-              int len = noteList.length - 1;
+              
               return SeatSelected(widget.info, widget.cafeName, widget.cafeID,
-                  BookingDB.withId(noteList[len].id, '', '', ''));
+                  BookingDB('', '', ''));
             },
           ),
         );

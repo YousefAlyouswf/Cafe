@@ -117,7 +117,7 @@ class _SeatSelectedState extends State<SeatSelected> {
         body: StreamBuilder(
           stream: Firestore.instance
               .collection('users')
-              .where('name', isEqualTo: widget.info.name)
+              .where('name', isEqualTo: info.name)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text("Loading..");
@@ -129,6 +129,7 @@ class _SeatSelectedState extends State<SeatSelected> {
                   hasBookinginSelected = true;
                 } else {
                   hasBookinginSelected = false;
+                  _delete();
                 }
                 seatnum = myBooking['booked'];
                 return Center(
@@ -171,7 +172,14 @@ class _SeatSelectedState extends State<SeatSelected> {
                                   ),
                                 ],
                               )
-                            : Text("عفوا, لا يوجد لديك حجز")
+                            : Column(
+                                children: <Widget>[
+                                  Text("عفوا, لا يوجد لديك حجز"),
+                                  SizedBox(
+                                    height: 70,
+                                  ),
+                                ],
+                              )
                       ],
                     ),
                   ),
@@ -185,7 +193,7 @@ class _SeatSelectedState extends State<SeatSelected> {
   }
 
   void _delete() async {
-    await databaseHelper.deleteNote(int.parse(seatnum));
+    await databaseHelper.deleteNote();
   }
 
   void navgateToSeating(BookingDB booking) async {

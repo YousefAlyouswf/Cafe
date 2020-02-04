@@ -73,10 +73,10 @@ class DatabaseHelper {
   }
 
   // Delete Operation: Delete a Note object from database
-  Future<int> deleteNote(int id) async {
+  Future<int> deleteNote() async {
     var db = await this.database;
     int result =
-        await db.rawDelete('DELETE FROM $noteTable WHERE $colSeatID = $id');
+        await db.rawDelete('DELETE FROM $noteTable');
     return result;
   }
 
