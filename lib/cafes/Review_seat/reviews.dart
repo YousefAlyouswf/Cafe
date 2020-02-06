@@ -1,9 +1,9 @@
-import 'package:cafe/cafes/Review_seat/seat_selected.dart';
-import 'package:cafe/cafes/Review_seat/seatings.dart';
+import 'package:cafe/cafes/Review_seat/widgets/review_widgets/review_widgets.dart';
+import 'package:cafe/cafes/Review_seat/widgets/seats_widgets/seats_widgets.dart';
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/selected_widgets.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
-import 'package:cafe/widgets/curvedlistitem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,17 +14,20 @@ class Reviews extends StatefulWidget {
   final UserInfo info;
   final String cafeName;
   final String cafeID;
+  final BookingDB booking;
+  const Reviews(this.info, this.cafeName, this.cafeID, this.booking);
 
-  const Reviews({Key key, this.info, this.cafeName, this.cafeID})
-      : super(key: key);
   @override
-  ReviewsState createState() => ReviewsState();
+  _ReviewsState createState() {
+    return _ReviewsState(this.info, this.cafeName, this.cafeID, this.booking);
+  }
 }
 
-class ReviewsState extends State<Reviews> {
+class _ReviewsState extends State<Reviews> {
   DatabaseHelper databaseHelper = DatabaseHelper();
-  List<BookingDB> noteList;
+  List<BookingDB> noteList = new List();
   int count = 0;
+  UserInfo info;
   BookingDB bookingDB;
   List<String> reviews = new List();
   List<int> stars = new List();
@@ -42,24 +45,63 @@ class ReviewsState extends State<Reviews> {
   IconData star = Icons.star;
   Color starColor = Colors.yellow;
   Color staremptyColor = Colors.black;
-
+  // Switch between 3 screens
+  int control = 0;
+  bool reviewScreen = true;
+  bool seatScreen = false;
+  bool selectedScreen = false;
   int _selectedIndex = 0;
+
+  bool hasBookinginSelected;
+
+  String seatnum;
+  String cafeName;
+  String cafeID;
+
+  _ReviewsState(this.info, this.cafeName, this.cafeID, this.bookingDB);
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
-        navgateToSeating(BookingDB('', '', ''));
+      if (index == 0) {
+        control = 0;
+      } else if (index == 1) {
+        updateListView();
+        control = 1;
       } else if (index == 2) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) {
-              updateListView();
-              
-              return SeatSelected(widget.info, widget.cafeName, widget.cafeID,
-                  BookingDB('', '', ''));
-            },
-          ),
-        );
+        control = 2;
+      }
+      showToast();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateListView();
+    //Database blocks
+
+    if (noteList == null) {
+      noteList = List<BookingDB>();
+    }
+    //Database blocks
+
+    print(bookingDB.userID);
+  }
+
+  void showToast() {
+    setState(() {
+      if (control == 0) {
+        reviewScreen = true;
+        seatScreen = false;
+        selectedScreen = false;
+      } else if (control == 1) {
+        reviewScreen = false;
+        seatScreen = true;
+        selectedScreen = false;
+      } else if (control == 2) {
+        reviewScreen = false;
+        seatScreen = false;
+        selectedScreen = true;
       }
     });
   }
@@ -67,126 +109,97 @@ class ReviewsState extends State<Reviews> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return WillPopScope(
-      onWillPop: () async => Navigator.pop(context, true),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.purple,
-          title: Center(
-            child: Text(
-              widget.cafeName,
-              style: TextStyle(
-                  fontFamily: 'arbaeen',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purple,
+        title: Center(
+          child: Text(
+            cafeName,
+            style: TextStyle(
+                fontFamily: 'arbaeen',
+                fontWeight: FontWeight.bold,
+                fontSize: 28),
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.rate_review,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                showModalSheet(context);
-              },
-            )
-          ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.comment),
-              title: Text('التعليقات'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.rate_review,
+              color: Colors.white,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_seat),
-              title: Text('الجلسات'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.info),
-              title: Text('الحجز'),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
-          onTap: _onItemTapped,
-        ),
-        body: Column(
-          children: <Widget>[
-            Flexible(
-              child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection('cafes')
-                    .where('name', isEqualTo: widget.cafeName)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("لا توجد تعليقات");
-                  } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot myreview =
-                            snapshot.data.documents[index];
-                        reviews = [];
-                        stars = [];
-                        names = [];
-                        date = [];
-                        for (var i = myreview['reviews'].length - 1;
-                            i >= 0;
-                            i--) {
-                          reviews
-                              .add(myreview['reviews'][i]['review'].toString());
-                          stars.add(myreview['reviews'][i]['stars']);
-                          names.add(myreview['reviews'][i]['name'].toString());
-                          date.add(myreview['reviews'][i]['date'].toString());
-                        }
-
-                        Color currentColor = Colors.orange;
-                        Color nextColor = Colors.white;
-
-                        return Container(
-                          height: height,
-                          child: ListView.builder(
-                            itemCount: reviews.length,
-                            itemBuilder: (context, i) {
-                              return CurvedListItem(
-                                name: names[i],
-                                time: date[i],
-                                review: reviews[i],
-                                stars: stars[i],
-                                color: i % 2 == 0 ? currentColor : nextColor,
-                                nextColor:
-                                    i % 2 == 1 ? currentColor : nextColor,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
+            onPressed: () {
+              showModalSheet(context);
+            },
+          )
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.comment),
+            title: Text('التعليقات'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event_seat),
+            title: Text('الجلسات'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            title: Text('الحجز'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
+      body: Column(
+        children: <Widget>[
+          ReviewWidgets(
+            reviewScreen,
+            cafeName,
+            reviews,
+            stars,
+            names,
+            date,
+            height,
+          ),
+          SeatsWidgets(
+            seatScreen,
+            info,
+            count,
+            updateListView,
+            _save,
+            _onItemTapped,
+            cafeName,
+          ),
+          SelectedWidgets(
+            selectedScreen,
+            info,
+            hasBookinginSelected,
+            _delete,
+            _onItemTapped,
+            seatnum,
+          ),
+        ],
       ),
     );
   }
 
+//End of screen
   void showModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter state) {
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter state) {
             return createBox(context, state);
-          });
-        });
+          },
+        );
+      },
+    );
   }
 
   createBox(BuildContext context, StateSetter state) {
@@ -367,7 +380,7 @@ class ReviewsState extends State<Reviews> {
                   var date = new DateFormat("dd-MM-yyyy").format(now);
                   List<Map<String, dynamic>> maplist = [
                     {
-                      'name': widget.info.name,
+                      'name': info.name,
                       'stars': countStar,
                       'review': review,
                       'date': date,
@@ -375,7 +388,7 @@ class ReviewsState extends State<Reviews> {
                   ];
                   Firestore.instance
                       .collection('cafes')
-                      .document(widget.cafeID)
+                      .document(cafeID)
                       .updateData({
                     'reviews': FieldValue.arrayUnion(maplist),
                   });
@@ -398,19 +411,9 @@ class ReviewsState extends State<Reviews> {
     );
   }
 
-  void navgateToSeating(BookingDB booking) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          return Seatings(booking, widget.cafeName, widget.info, widget.cafeID);
-        },
-      ),
-    );
-  }
-
-  void updateListView() {
+  void updateListView() async {
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    dbFuture.then((database) {
+    await dbFuture.then((database) {
       Future<List<BookingDB>> noteListFuture = databaseHelper.getNoteList();
       noteListFuture.then((noteList) {
         setState(() {
@@ -419,5 +422,26 @@ class ReviewsState extends State<Reviews> {
         });
       });
     });
+  }
+
+  // Save data to database
+  void _save() async {
+    int result;
+
+    // Case 2: Insert Operation
+    result = await databaseHelper.insertNote(bookingDB);
+
+    if (result != 0) {
+      // Success
+
+      debugPrint('Note Saved Successfully');
+    } else {
+      // Failure
+      debugPrint('Problem Saving Note');
+    }
+  }
+
+  void _delete() async {
+    await databaseHelper.deleteNote();
   }
 }

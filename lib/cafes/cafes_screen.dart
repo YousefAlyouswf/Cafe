@@ -1,3 +1,4 @@
+import 'package:cafe/models/booking.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/user_info.dart';
@@ -5,15 +6,18 @@ import 'Review_seat/reviews.dart';
 
 class CafeList extends StatefulWidget {
   final UserInfo info;
-  CafeList({this.info});
+  final BookingDB bookingDB;
+  CafeList(this.info, this.bookingDB);
 
   @override
-  _CafeListState createState() => _CafeListState();
+  _CafeListState createState() {
+    return _CafeListState(this.info, this.bookingDB);
+  }
 }
 
 class _CafeListState extends State<CafeList> {
   bool sort = false;
-
+  BookingDB bookingDB;
   String city;
 
   String filterCity;
@@ -31,10 +35,12 @@ class _CafeListState extends State<CafeList> {
   String booked;
 
   String seatNum;
-
+  UserInfo info;
   List<String> cityList = new List();
 
   List<dynamic> removeDoublicat = new List();
+
+  _CafeListState(this.info, this.bookingDB);
 
   @override
   Widget build(BuildContext context) {
@@ -74,41 +80,12 @@ class _CafeListState extends State<CafeList> {
             )),
             trailing: Icon(Icons.map),
           ),
-          // Container(
-          //   height: 500,
-          //   child: ListView.builder(
-          //     itemCount: removeDoublicat.length,
-          //     itemBuilder: (context, index) {
-          //       return InkWell(
-          //         onTap: () {},
-          //         child: Center(
-          //           child: ListTile(
-          //             title: Text(
-          //               removeDoublicat[index],
-          //               textAlign: TextAlign.center,
-          //             ),
-          //             trailing: Icon(Icons.location_city),
-          //             onTap: () {
-          //               setState(() {
-          //                 filterCity = removeDoublicat[index];
-          //               });
-          //               Navigator.of(context).pop();
-          //             },
-          //           ),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
         ],
       )),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: StreamBuilder(
-          stream: Firestore.instance
-              .collection('cafes')
-              .where('city', isEqualTo: filterCity)
-              .snapshots(),
+          stream: Firestore.instance.collection('cafes').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Text("Loading...");
@@ -187,9 +164,10 @@ class _CafeListState extends State<CafeList> {
                                     MaterialPageRoute(
                                       builder: (_) {
                                         return Reviews(
-                                          cafeName: cafeName,
-                                          info: widget.info,
-                                          cafeID: cafeID,
+                                          widget.info,
+                                          cafeName,
+                                          cafeID,
+                                          bookingDB,
                                         );
                                       },
                                     ),

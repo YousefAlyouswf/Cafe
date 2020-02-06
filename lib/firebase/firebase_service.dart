@@ -10,9 +10,8 @@ class SigninFiresotre {
 
 //Add users
   Future addUser(String name, String phone, String password) async =>
-      await collectionReferenceUsers
-          .document()
-          .setData({'name': name, 'phone': phone, 'password': password});
+      await collectionReferenceUsers.document().setData(
+          {'name': name, 'phone': phone, 'password': password, 'cafename': ''});
 
   //Add review
   // Future addReview(String review, String rate, String name, String id) async =>
@@ -24,15 +23,15 @@ class SigninFiresotre {
   //         });
 //compare user
 //String phone, String password
-  Future compare(String phone, String password) async {
-    Firestore.instance
+  static Future<bool> compare(String phone, String password) async {
+    final QuerySnapshot result = await Firestore.instance
         .collection("users")
         .where("password", isEqualTo: password)
         .where("phone", isEqualTo: phone)
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => f.documentID);
-    });
+        .limit(1)
+        .getDocuments();
+    final List<DocumentSnapshot> ducoments = result.documents;
+    return ducoments.length == 1;
   }
 
 //Update seat stauts

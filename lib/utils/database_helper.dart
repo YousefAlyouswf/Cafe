@@ -9,10 +9,8 @@ class DatabaseHelper {
   static Database _database; // Singleton Database
 
   String noteTable = 'note_table1';
-  String colId = 'id';
   String colUserID = 'userid';
-  String colSeatID = 'seatid';
-  String colCafeID = 'cafeid';
+
 
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -44,8 +42,7 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colUserID TEXT, '
-        '$colSeatID TEXT, $colCafeID TEXT)');
+        'CREATE TABLE $noteTable($colUserID TEXT )');
   }
 
   // Fetch Operation: Get all note objects from database
@@ -64,13 +61,7 @@ class DatabaseHelper {
     return result;
   }
 
-  // Update Operation: Update a Note object and save it to database
-  Future<int> updateNote(BookingDB note) async {
-    var db = await this.database;
-    var result = await db.update(noteTable, note.toMap(),
-        where: '$colId = ?', whereArgs: [note.id]);
-    return result;
-  }
+ 
 
   // Delete Operation: Delete a Note object from database
   Future<int> deleteNote() async {
