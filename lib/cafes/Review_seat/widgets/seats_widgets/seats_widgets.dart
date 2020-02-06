@@ -13,7 +13,8 @@ class SeatsWidgets extends StatelessWidget {
   final Function updateListView;
   final Function _save;
   final Function _onItemTapped;
-
+  final Function getUserResrevation;
+  final String reservation;
   SeatsWidgets(
     this.seatScreen,
     this.info,
@@ -22,12 +23,16 @@ class SeatsWidgets extends StatelessWidget {
     this._save,
     this._onItemTapped,
     this.cafeName,
+    this.getUserResrevation,
+    this.reservation,
   );
+
   @override
   Widget build(BuildContext context) {
+    getUserResrevation();
     return Visibility(
       visible: seatScreen,
-      child: count > 0
+      child: count > 0 || reservation != ''
           ? Center(child: Text('عفوا, يوجد لديك حجز'))
           : Container(
               height: 300,

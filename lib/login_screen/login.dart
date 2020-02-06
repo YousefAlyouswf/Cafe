@@ -199,7 +199,7 @@ class _LoginState extends State<Login> {
                             documents.forEach((data) {
                               info = UserInfo(
                                 name: data['name'],
-                                phone: data['name'],
+                                phone: data['phone'],
                                 id: data.documentID,
                                 reviewsCount: cafeReviews,
                                 starsAvrage: starsAvrage,

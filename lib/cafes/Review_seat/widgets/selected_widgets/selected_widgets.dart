@@ -11,6 +11,8 @@ class SelectedWidgets extends StatelessWidget {
   final Function _onItemTapped;
   String seatnum;
 
+  final String cafeName;
+
   SelectedWidgets(
     this.selectedScreen,
     this.info,
@@ -18,6 +20,7 @@ class SelectedWidgets extends StatelessWidget {
     this._delete,
     this._onItemTapped,
     this.seatnum,
+    this.cafeName,
   );
   @override
   Widget build(BuildContext context) {
@@ -56,30 +59,77 @@ class SelectedWidgets extends StatelessWidget {
                           style: TextStyle(fontSize: 25),
                         ),
                         hasBookinginSelected
-                            ? Column(
-                                children: <Widget>[
-                                  Text("لديك حجز في مقهى " +
-                                      myBooking['cafename'] +
-                                      " جلسة رقم: " +
-                                      seatnum),
-                                  RaisedButton(
-                                    child: Text("إلغاء الحجز"),
-                                    onPressed: () {
-                                      //Delete from SQLITE
-                                      _delete();
+                            ? Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text("لديك حجز في مقهى " +
+                                        myBooking['cafename'] +
+                                        " جلسة رقم: " +
+                                        seatnum),
+                                    RaisedButton(
+                                      child: Text("إلغاء الحجز"),
+                                      onPressed: () {
+                                        //Delete from SQLITE
+                                        _delete();
 
-                                      //Delete from firebase
+                                        //Delete from firebase
 
-                                      SigninFiresotre().cancleupdateUser(
-                                          info.id, myBooking['booked']);
-                                      SigninFiresotre().calnceBooking(
-                                          myBooking['seatid'], info.id);
-                                      hasBookinginSelected = false;
+                                        SigninFiresotre().cancleupdateUser(
+                                            info.id, myBooking['booked']);
+                                        SigninFiresotre().calnceBooking(
+                                            myBooking['seatid'], info.id);
+                                        hasBookinginSelected = false;
 
-                                      _onItemTapped(1);
-                                    },
-                                  ),
-                                ],
+                                        _onItemTapped(1);
+                                      },
+                                    ),
+                                    Text("قائمة الطلبات"),
+                                    Container(
+                                      height: 1500,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: StreamBuilder(
+                                            stream: Firestore.instance
+                                                .collection('order')
+                                                .where('cafename',
+                                                    isEqualTo: cafeName)
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (!snapshot.hasData) {
+                                                return Text("");
+                                              } else {
+                                                return GridView.builder(
+                                                  itemCount: snapshot
+                                                      .data.documents.length,
+                                                  itemBuilder: (context, index) {
+                                                    return InkWell(
+                                                      child: Card(
+                                                        color: Colors.red,
+                                                        child: Text(
+                                                          snapshot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['order'],
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  gridDelegate:
+                                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                                    maxCrossAxisExtent: 100,
+                                                    childAspectRatio:1,
+                                                    crossAxisSpacing: 30,
+                                                    mainAxisSpacing: 20,
+                                                  ),
+                                                );
+                                              }
+                                            }),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               )
                             : Column(
                                 children: <Widget>[

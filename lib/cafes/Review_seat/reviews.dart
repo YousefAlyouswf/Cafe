@@ -57,6 +57,19 @@ class _ReviewsState extends State<Reviews> {
   String seatnum;
   String cafeName;
   String cafeID;
+  String reservation;
+  void getUserResrevation() async {
+    final QuerySnapshot result = await Firestore.instance
+        .collection('users')
+        .where('phone', isEqualTo: info.phone)
+        .getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      setState(() {
+        reservation = data['booked'];
+      });
+    });
+  }
 
   _ReviewsState(this.info, this.cafeName, this.cafeID, this.bookingDB);
   void _onItemTapped(int index) {
@@ -66,6 +79,7 @@ class _ReviewsState extends State<Reviews> {
         control = 0;
       } else if (index == 1) {
         updateListView();
+        getUserResrevation();
         control = 1;
       } else if (index == 2) {
         control = 2;
@@ -171,6 +185,8 @@ class _ReviewsState extends State<Reviews> {
             _save,
             _onItemTapped,
             cafeName,
+            getUserResrevation,
+            reservation,
           ),
           SelectedWidgets(
             selectedScreen,
@@ -179,6 +195,7 @@ class _ReviewsState extends State<Reviews> {
             _delete,
             _onItemTapped,
             seatnum,
+            cafeName,
           ),
         ],
       ),
