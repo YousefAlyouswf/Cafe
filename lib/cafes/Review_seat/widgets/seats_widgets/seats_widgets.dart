@@ -29,11 +29,20 @@ class SeatsWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     getUserResrevation();
     return Visibility(
       visible: seatScreen,
       child: count > 0 || reservation != ''
-          ? Center(child: Text('عفوا, يوجد لديك حجز'))
+          ? Container(
+            height: height/1.5,
+            child: Center(
+                child: Text(
+                  "لديك حجز في مقهى $cafeName",
+                  textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontFamily: 'topaz'),
+                ),
+              ),
+          )
           : Container(
               height: 300,
               child: Padding(

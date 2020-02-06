@@ -37,7 +37,7 @@ class SelectedWidgets extends StatelessWidget {
             if (!snapshot.hasData) return Text("Loading..");
             return ListView.builder(
               itemCount: snapshot.data.documents.length,
-              itemBuilder: (contect, index) {
+              itemBuilder: (context, index) {
                 DocumentSnapshot myBooking = snapshot.data.documents[index];
                 if (myBooking['cafename'] != '') {
                   hasBookinginSelected = true;
@@ -85,7 +85,7 @@ class SelectedWidgets extends StatelessWidget {
                                     ),
                                     Text("قائمة الطلبات"),
                                     Container(
-                                      height: 1500,
+                                      height: 300,
                                       child: Padding(
                                         padding: const EdgeInsets.all(15.0),
                                         child: StreamBuilder(
