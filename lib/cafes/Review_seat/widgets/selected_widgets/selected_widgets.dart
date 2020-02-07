@@ -12,7 +12,7 @@ class SelectedWidgets extends StatelessWidget {
   String seatnum;
 
   final String cafeName;
-
+  String reserveCafe;
   SelectedWidgets(
     this.selectedScreen,
     this.info,
@@ -24,14 +24,15 @@ class SelectedWidgets extends StatelessWidget {
   );
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Visibility(
       visible: selectedScreen,
       child: Container(
-        height: 300,
+        height: height / 1.25,
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('users')
-              .where('name', isEqualTo: info.name)
+              .where('phone', isEqualTo: info.phone)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text("Loading..");
@@ -46,99 +47,156 @@ class SelectedWidgets extends StatelessWidget {
                   _delete();
                 }
                 seatnum = myBooking['booked'];
+                reserveCafe = myBooking['cafename'];
                 return Center(
                   child: Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          " مرحبا بك " + info.name,
-                          style: TextStyle(fontSize: 25),
-                        ),
                         hasBookinginSelected
                             ? Container(
                                 child: Column(
                                   children: <Widget>[
-                                    Text("لديك حجز في مقهى " +
-                                        myBooking['cafename'] +
-                                        " جلسة رقم: " +
-                                        seatnum),
-                                    RaisedButton(
-                                      child: Text("إلغاء الحجز"),
-                                      onPressed: () {
-                                        //Delete from SQLITE
-                                        _delete();
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Align(
+                                        alignment: Alignment.topRight,
+                                        child: RaisedButton(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  new BorderRadius.circular(18.0),
+                                              side:
+                                                  BorderSide(color: Colors.red)),
+                                          color: Colors.black54,
+                                          child: Text(
+                                            "إلغاء الحجز",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          onPressed: () {
+                                            //Delete from SQLITE
+                                            _delete();
 
-                                        //Delete from firebase
+                                            //Delete from firebase
 
-                                        SigninFiresotre().cancleupdateUser(
-                                            info.id, myBooking['booked']);
-                                        SigninFiresotre().calnceBooking(
-                                            myBooking['seatid'], info.id);
-                                        hasBookinginSelected = false;
+                                            SigninFiresotre().cancleupdateUser(
+                                                info.id, myBooking['booked']);
+                                            SigninFiresotre().calnceBooking(
+                                                myBooking['seatid'], info.id);
+                                            hasBookinginSelected = false;
 
-                                        _onItemTapped(1);
-                                      },
+                                            _onItemTapped(1);
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                    Text("قائمة الطلبات"),
+                                    Text(
+                                      " مقهى " +
+                                          reserveCafe +
+                                          " جلسة رقم: " +
+                                          seatnum,
+                                      style: TextStyle(
+                                          fontSize: 18, fontFamily: 'topaz'),
+                                    ),
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Text(
+                                      'لا تقبل الطلبات إلا في المقهى',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 15),
+                                    ),
+                                    Text("قائمة الطلبات", style: TextStyle(fontFamily: 'arbaeen', fontSize:18),),
                                     Container(
-                                      height: 300,
+                                      height: height,
                                       child: Padding(
                                         padding: const EdgeInsets.all(15.0),
-                                        child: StreamBuilder(
-                                            stream: Firestore.instance
-                                                .collection('order')
-                                                .where('cafename',
-                                                    isEqualTo: cafeName)
-                                                .snapshots(),
-                                            builder: (context, snapshot) {
-                                              if (!snapshot.hasData) {
-                                                return Text("");
-                                              } else {
-                                                return GridView.builder(
-                                                  itemCount: snapshot
-                                                      .data.documents.length,
-                                                  itemBuilder: (context, index) {
-                                                    return InkWell(
-                                                      child: Card(
-                                                        color: Colors.red,
-                                                        child: Text(
-                                                          snapshot
-                                                              .data
-                                                              .documents[index]
-                                                              .data['order'],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
+                                        child: reserveCafe != cafeName
+                                            ? null
+                                            : StreamBuilder(
+                                                stream: Firestore.instance
+                                                    .collection('order')
+                                                    .where('cafename',
+                                                        isEqualTo: cafeName)
+                                                    .snapshots(),
+                                                builder: (context, snapshot) {
+                                                  if (!snapshot.hasData) {
+                                                    return Text("");
+                                                  } else {
+                                                    return GridView.builder(
+                                                      itemCount: snapshot.data
+                                                          .documents.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return InkWell(
+                                                          splashColor:
+                                                              Colors.red,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
+                                                          child: Card(
+                                                            child: InkWell(
+                                                              child: Column(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Flexible(
+                                                                    child: Text(
+                                                                      snapshot
+                                                                          .data
+                                                                          .documents[
+                                                                              index]
+                                                                          .data['order'],
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 15,
+                                                                  ),
+                                                                  Text(
+                                                                    "السعر: " +
+                                                                        snapshot
+                                                                            .data
+                                                                            .documents[index]
+                                                                            .data['price'] +
+                                                                        " ريال",
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: 3,
+                                                        childAspectRatio: 3 / 2,
+                                                        crossAxisSpacing: 10,
+                                                        mainAxisSpacing: 10,
                                                       ),
                                                     );
-                                                  },
-                                                  gridDelegate:
-                                                      SliverGridDelegateWithMaxCrossAxisExtent(
-                                                    maxCrossAxisExtent: 100,
-                                                    childAspectRatio:1,
-                                                    crossAxisSpacing: 30,
-                                                    mainAxisSpacing: 20,
-                                                  ),
-                                                );
-                                              }
-                                            }),
+                                                  }
+                                                }),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                               )
-                            : Column(
-                                children: <Widget>[
-                                  Text("عفوا, لا يوجد لديك حجز"),
-                                  SizedBox(
-                                    height: 70,
-                                  ),
-                                ],
-                              )
+                            : Container(
+                              height: height/2,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("عفوا, لا يوجد لديك حجز", style: TextStyle(fontFamily:'topaz', fontSize: 20),),
+                                    SizedBox(
+                                      height: 70,
+                                    ),
+                                  ],
+                                ),
+                            )
                       ],
                     ),
                   ),

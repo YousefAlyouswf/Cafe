@@ -65,9 +65,7 @@ class _ReviewsState extends State<Reviews> {
         .getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
-      setState(() {
-        reservation = data['booked'];
-      });
+   reservation = data['booked'];
     });
   }
 
@@ -125,7 +123,7 @@ class _ReviewsState extends State<Reviews> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.red[200],
         title: Center(
           child: Text(
             cafeName,
@@ -158,7 +156,7 @@ class _ReviewsState extends State<Reviews> {
             title: Text('الجلسات'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info),
+            icon: Icon(Icons.description),
             title: Text('الحجز'),
           ),
         ],

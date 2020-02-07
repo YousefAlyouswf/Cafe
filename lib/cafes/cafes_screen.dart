@@ -52,7 +52,7 @@ class _CafeListState extends State<CafeList> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.red[200],
         title: Center(
             child: Text(
           "قائمة المقاهي",
@@ -60,28 +60,28 @@ class _CafeListState extends State<CafeList> {
               fontFamily: 'arbaeen', fontWeight: FontWeight.bold, fontSize: 28),
         )),
       ),
-      drawer: Drawer(
-          child: ListView(
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: Text(""),
-            accountEmail: Text(""),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: NetworkImage(
-                  'https://upload.wikimedia.org/wikipedia/ar/thumb/6/68/General_Entertainment_Authority_Logo.svg/1200px-General_Entertainment_Authority_Logo.svg.png'),
-            )),
-          ),
-          ListTile(
-            title: Center(
-                child: Text(
-              "المقاهي المفضلة",
-              style: TextStyle(fontSize: 24),
-            )),
-            trailing: Icon(Icons.map),
-          ),
-        ],
-      )),
+      // drawer: Drawer(
+      //     child: ListView(
+      //   children: <Widget>[
+      //     UserAccountsDrawerHeader(
+      //       accountName: Text(""),
+      //       accountEmail: Text(""),
+      //       decoration: BoxDecoration(
+      //           image: DecorationImage(
+      //         image: NetworkImage(
+      //             'https://upload.wikimedia.org/wikipedia/ar/thumb/6/68/General_Entertainment_Authority_Logo.svg/1200px-General_Entertainment_Authority_Logo.svg.png'),
+      //       )),
+      //     ),
+      //     ListTile(
+      //       title: Center(
+      //           child: Text(
+      //         "المقاهي المفضلة",
+      //         style: TextStyle(fontSize: 24),
+      //       )),
+      //       trailing: Icon(Icons.map),
+      //     ),
+      //   ],
+      // )),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: StreamBuilder(
@@ -102,24 +102,12 @@ class _CafeListState extends State<CafeList> {
                   int starsSum = widget.info.starsAvrage[index];
                   int reviewsCount = widget.info.reviewsCount[index];
                   double result = starsSum / reviewsCount;
-                  bool iconColor = false;
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: GridTile(
                       child: Image.network(
                         image,
                         fit: BoxFit.fill,
-                      ),
-                      header: Stack(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Icon(
-                              Icons.favorite,
-                              color: iconColor ? Colors.red : Colors.orange,
-                            ),
-                          ),
-                        ],
                       ),
                       footer: Container(
                         height: 70,

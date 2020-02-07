@@ -35,14 +35,45 @@ class SeatsWidgets extends StatelessWidget {
       visible: seatScreen,
       child: count > 0 || reservation != ''
           ? Container(
-            height: height/1.5,
-            child: Center(
-                child: Text(
-                  "لديك حجز في مقهى $cafeName",
-                  textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontFamily: 'topaz'),
-                ),
-              ),
-          )
+              height: height / 1.5,
+              child: StreamBuilder(
+                  stream: Firestore.instance
+                      .collection('users')
+                      .where('phone', isEqualTo: info.phone)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return Text("Loading..");
+
+                    return ListView.builder(
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot myBooking =
+                              snapshot.data.documents[index];
+                          return Container(
+                            height: height / 2,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "لديك حجز في مقهى ${myBooking['cafename']}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25, fontFamily: 'topaz'),
+                                  ),
+                                  Text(
+                                    "جلسة رقم ${myBooking['booked']}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25, fontFamily: 'topaz'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  }),
+            )
           : Container(
               height: 300,
               child: Padding(

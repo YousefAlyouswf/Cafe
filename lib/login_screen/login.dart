@@ -371,12 +371,12 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
+                          PushToSignUp(
+                            showToast: showToast,
+                            change: 'دخول',
+                          ),
                         ],
                       ),
-                    ),
-                    PushToSignUp(
-                      showToast: showToast,
-                      change: 'دخول',
                     ),
                   ],
                 ),

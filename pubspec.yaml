@@ -33,7 +33,7 @@ dependencies:
   sqflite: 
   path_provider: any
   progress_dialog: ^1.2.0
-
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
