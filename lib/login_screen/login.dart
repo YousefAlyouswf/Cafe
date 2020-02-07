@@ -8,6 +8,7 @@ import 'package:cafe/models/booking.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 StreamSubscription<DocumentSnapshot> subscription;
 
@@ -87,303 +88,312 @@ class _LoginState extends State<Login> {
     }
 
     final width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(children: <Widget>[
-          Visibility(
-            visible: login,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                HeaderLogin(width: width),
-                SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 10,
-                      ),
-                      FadeAnimation(
-                        1.7,
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromRGBO(196, 153, 198, 0.3),
-                                  blurRadius: 20,
-                                  offset: Offset(0, 10)),
-                            ],
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey[200],
+    return WillPopScope(
+      onWillPop: () {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        return;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            Visibility(
+              visible: login,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  HeaderLogin(width: width),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
+                        FadeAnimation(
+                          1.7,
+                          Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Color.fromRGBO(196, 153, 198, 0.3),
+                                    blurRadius: 20,
+                                    offset: Offset(0, 10)),
+                              ],
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey[200],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                child: TextFormField(
-                                    textInputAction: TextInputAction.next,
-                                    controller: phoneText,
-                                    textAlign: TextAlign.end,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        phone = val;
-                                      });
-                                    },
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'رقم الجوال',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                            fontFamily: 'topaz')),
-                                    focusNode: _phoneFocus,
-                                    onFieldSubmitted: (term) {
-                                      _fieldFocusChange(
-                                          context, _phoneFocus, _passwordFocus);
-                                    }),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                child: TextFormField(
-                                    focusNode: _passwordFocus,
-                                    textInputAction: TextInputAction.done,
-                                    controller: passwordText,
-                                    textAlign: TextAlign.end,
-                                    onChanged: (val) {
-                                      setState(() {
-                                        password = val;
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'كلمة المرور',
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: 'topaz'),
-                                    ),
-                                    onFieldSubmitted: (term) async {
-                                      _onsubmit();
-                                    }),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                FadeAnimation(
-                  2,
-                  Container(
-                    height: 50,
-                    margin: EdgeInsets.symmetric(horizontal: 50),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Color.fromRGBO(49, 39, 79, 0.8),
-                    ),
-                    child: Builder(
-                      builder: (context) => InkWell(
-                        onTap: () async {
-                          _onsubmit();
-                        },
-                        splashColor: Colors.red,
-                        borderRadius: BorderRadius.circular(50),
-                        child: Center(
-                          child: Text(
-                            "دخول",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'topaz',
-                                fontSize: 25),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                PushToSignUp(
-                  showToast: showToast,
-                  change: 'تسجيل',
-                ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: signup,
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    HeaderLogin(),
-                    Padding(
-                      padding: EdgeInsets.all(30),
-                      child: Column(
-                        children: <Widget>[
-                          FadeAnimation(
-                            1.8,
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color.fromRGBO(143, 14, 251, .2),
-                                        blurRadius: 20,
-                                        offset: Offset(0, 10))
-                                  ]),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom:
-                                            BorderSide(color: Colors.grey[100]),
-                                      ),
-                                    ),
-                                    child: TextFormField(
-                                      focusNode: _nameFocusReg,
-                                      textAlign: TextAlign.end,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          nameForSignup = val;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'الأسم',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: 'topaz'),
-                                      ),
+                                  child: TextFormField(
                                       textInputAction: TextInputAction.next,
-                                      onFieldSubmitted: (value) {
-                                        _fieldFocusChange(context,
-                                            _nameFocusReg, _phoneFocusReg);
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey[100],
-                                        ),
-                                      ),
-                                    ),
-                                    child: TextFormField(
-                                      focusNode: _phoneFocusReg,
-                                      controller: phoneTextReg,
+                                      controller: phoneText,
                                       textAlign: TextAlign.end,
                                       onChanged: (val) {
                                         setState(() {
-                                          phoneForSignup = val;
+                                          phone = val;
                                         });
                                       },
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'رقم الجوال',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: 'topaz'),
-                                      ),
                                       keyboardType: TextInputType.phone,
-                                      textInputAction: TextInputAction.next,
-                                      onFieldSubmitted: (value) {
-                                        _fieldFocusChange(context,
-                                            _phoneFocusReg, _passwordFocusReg);
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(8),
-                                    child: TextFormField(
-                                      focusNode: _passwordFocusReg,
-                                      controller: passwordTextReg,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'رقم الجوال',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                              fontFamily: 'topaz')),
+                                      focusNode: _phoneFocus,
+                                      onFieldSubmitted: (term) {
+                                        _fieldFocusChange(context, _phoneFocus,
+                                            _passwordFocus);
+                                      }),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: TextFormField(
+                                      focusNode: _passwordFocus,
+                                      textInputAction: TextInputAction.done,
+                                      controller: passwordText,
                                       textAlign: TextAlign.end,
                                       onChanged: (val) {
-                                        passwordForSignup = val;
+                                        setState(() {
+                                          password = val;
+                                        });
                                       },
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: 'كلمة المرور',
                                         hintStyle: TextStyle(
-                                            color: Colors.grey[400],
+                                            color: Colors.grey,
                                             fontFamily: 'topaz'),
                                       ),
-                                      textInputAction: TextInputAction.done,
-                                      onFieldSubmitted: (value) {
-                                        _onSubmitReg();
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                      onFieldSubmitted: (term) async {
+                                        _onsubmit();
+                                      }),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: 30,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  FadeAnimation(
+                    2,
+                    Container(
+                      height: 50,
+                      margin: EdgeInsets.symmetric(horizontal: 50),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Color.fromRGBO(49, 39, 79, 0.8),
+                      ),
+                      child: Builder(
+                        builder: (context) => InkWell(
+                          onTap: () async {
+                            _onsubmit();
+                          },
+                          splashColor: Colors.red,
+                          borderRadius: BorderRadius.circular(50),
+                          child: Center(
+                            child: Text(
+                              "دخول",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'topaz',
+                                  fontSize: 25),
+                            ),
                           ),
-                          FadeAnimation(
-                            2,
-                            Container(
-                              height: 50,
-                              margin: EdgeInsets.symmetric(horizontal: 50),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Color.fromRGBO(49, 39, 79, 0.8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  PushToSignUp(
+                    showToast: showToast,
+                    change: 'تسجيل',
+                  ),
+                ],
+              ),
+            ),
+            Visibility(
+              visible: signup,
+              child: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      HeaderLogin(),
+                      Padding(
+                        padding: EdgeInsets.all(30),
+                        child: Column(
+                          children: <Widget>[
+                            FadeAnimation(
+                              1.8,
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color:
+                                              Color.fromRGBO(143, 14, 251, .2),
+                                          blurRadius: 20,
+                                          offset: Offset(0, 10))
+                                    ]),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey[100]),
+                                        ),
+                                      ),
+                                      child: TextFormField(
+                                        focusNode: _nameFocusReg,
+                                        textAlign: TextAlign.end,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            nameForSignup = val;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'الأسم',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey[400],
+                                              fontFamily: 'topaz'),
+                                        ),
+                                        textInputAction: TextInputAction.next,
+                                        onFieldSubmitted: (value) {
+                                          _fieldFocusChange(context,
+                                              _nameFocusReg, _phoneFocusReg);
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: Colors.grey[100],
+                                          ),
+                                        ),
+                                      ),
+                                      child: TextFormField(
+                                        focusNode: _phoneFocusReg,
+                                        controller: phoneTextReg,
+                                        textAlign: TextAlign.end,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            phoneForSignup = val;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'رقم الجوال',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey[400],
+                                              fontFamily: 'topaz'),
+                                        ),
+                                        keyboardType: TextInputType.phone,
+                                        textInputAction: TextInputAction.next,
+                                        onFieldSubmitted: (value) {
+                                          _fieldFocusChange(
+                                              context,
+                                              _phoneFocusReg,
+                                              _passwordFocusReg);
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: TextFormField(
+                                        focusNode: _passwordFocusReg,
+                                        controller: passwordTextReg,
+                                        textAlign: TextAlign.end,
+                                        onChanged: (val) {
+                                          passwordForSignup = val;
+                                        },
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: 'كلمة المرور',
+                                          hintStyle: TextStyle(
+                                              color: Colors.grey[400],
+                                              fontFamily: 'topaz'),
+                                        ),
+                                        textInputAction: TextInputAction.done,
+                                        onFieldSubmitted: (value) {
+                                          _onSubmitReg();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: Builder(
-                                builder: (context) => InkWell(
-                                  onTap: () async {
-                                    _onSubmitReg();
-                                  },
-                                  splashColor: Colors.red,
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            FadeAnimation(
+                              2,
+                              Container(
+                                height: 50,
+                                margin: EdgeInsets.symmetric(horizontal: 50),
+                                decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
-                                  child: Center(
-                                    child: Text(
-                                      "تسجيل",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'topaz',
-                                          fontSize: 25),
+                                  color: Color.fromRGBO(49, 39, 79, 0.8),
+                                ),
+                                child: Builder(
+                                  builder: (context) => InkWell(
+                                    onTap: () async {
+                                      _onSubmitReg();
+                                    },
+                                    splashColor: Colors.red,
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Center(
+                                      child: Text(
+                                        "تسجيل",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'topaz',
+                                            fontSize: 25),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          PushToSignUp(
-                            showToast: showToast,
-                            change: 'دخول',
-                          ),
-                        ],
+                            PushToSignUp(
+                              showToast: showToast,
+                              change: 'دخول',
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
@@ -434,7 +444,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  _onSubmitReg() async {
+  void _onSubmitReg() async {
     final QuerySnapshot userinfo = await Firestore.instance
         .collection('users')
         .where("phone", isEqualTo: phoneForSignup)

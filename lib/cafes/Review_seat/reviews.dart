@@ -65,7 +65,7 @@ class _ReviewsState extends State<Reviews> {
         .getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
-   reservation = data['booked'];
+      reservation = data['booked'];
     });
   }
 
@@ -97,7 +97,7 @@ class _ReviewsState extends State<Reviews> {
     }
     //Database blocks
 
-    print(bookingDB.userID);
+   // print(bookingDB.userID);
   }
 
   void showToast() {
@@ -142,7 +142,8 @@ class _ReviewsState extends State<Reviews> {
             onPressed: () {
               showModalSheet(context);
             },
-          )
+          ),
+    
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -175,17 +176,8 @@ class _ReviewsState extends State<Reviews> {
             date,
             height,
           ),
-          SeatsWidgets(
-              seatScreen,
-              info,
-              count,
-              updateListView,
-              _save,
-              _onItemTapped,
-              cafeName,
-              getUserResrevation,
-              reservation
-              ),
+          SeatsWidgets(seatScreen, info, count, updateListView, _save,
+              _onItemTapped, cafeName, getUserResrevation, reservation),
           SelectedWidgets(
             selectedScreen,
             info,
@@ -459,4 +451,6 @@ class _ReviewsState extends State<Reviews> {
   void _delete() async {
     await databaseHelper.deleteNote();
   }
+
+ 
 }
