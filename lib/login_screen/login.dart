@@ -74,6 +74,11 @@ class _LoginState extends State<Login> {
   var passwordText = TextEditingController();
   var phoneTextReg = TextEditingController();
   var passwordTextReg = TextEditingController();
+  final FocusNode _phoneFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _phoneFocusReg = FocusNode();
+  final FocusNode _passwordFocusReg = FocusNode();
+  final FocusNode _nameFocusReg = FocusNode();
   @override
   Widget build(BuildContext context) {
     if (phoneTextReg.text != '') {
@@ -128,41 +133,50 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
                                 ),
-                                child: TextField(
-                                  controller: phoneText,
-                                  textAlign: TextAlign.end,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      phone = val;
-                                    });
-                                  },
-                                  keyboardType: TextInputType.phone,
-                                  decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      hintText: 'رقم الجوال',
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey,
-                                          fontFamily: 'topaz')),
-                                ),
+                                child: TextFormField(
+                                    textInputAction: TextInputAction.next,
+                                    controller: phoneText,
+                                    textAlign: TextAlign.end,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        phone = val;
+                                      });
+                                    },
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: 'رقم الجوال',
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontFamily: 'topaz')),
+                                    focusNode: _phoneFocus,
+                                    onFieldSubmitted: (term) {
+                                      _fieldFocusChange(
+                                          context, _phoneFocus, _passwordFocus);
+                                    }),
                               ),
                               Container(
                                 padding: EdgeInsets.all(10),
-                                child: TextField(
-                                  controller: passwordText,
-                                  textAlign: TextAlign.end,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      password = val;
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'كلمة المرور',
-                                    hintStyle: TextStyle(
-                                        color: Colors.grey,
-                                        fontFamily: 'topaz'),
-                                  ),
-                                ),
+                                child: TextFormField(
+                                    focusNode: _passwordFocus,
+                                    textInputAction: TextInputAction.done,
+                                    controller: passwordText,
+                                    textAlign: TextAlign.end,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        password = val;
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'كلمة المرور',
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey,
+                                          fontFamily: 'topaz'),
+                                    ),
+                                    onFieldSubmitted: (term) async {
+                                      _onsubmit();
+                                    }),
                               ),
                             ],
                           ),
@@ -186,45 +200,7 @@ class _LoginState extends State<Login> {
                     child: Builder(
                       builder: (context) => InkWell(
                         onTap: () async {
-                          var info, dbID;
-                          final QuerySnapshot userinfo = await Firestore
-                              .instance
-                              .collection('users')
-                              .where("password", isEqualTo: password)
-                              .where("phone", isEqualTo: phone)
-                              .getDocuments();
-                          final List<DocumentSnapshot> documents =
-                              userinfo.documents;
-                          if (documents.length == 1) {
-                            documents.forEach((data) {
-                              info = UserInfo(
-                                name: data['name'],
-                                phone: data['phone'],
-                                id: data.documentID,
-                                reviewsCount: cafeReviews,
-                                starsAvrage: starsAvrage,
-                              );
-                              dbID = BookingDB(
-                                data.documentID,
-                              );
-                            });
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) {
-                                  return CafeList(info, dbID);
-                                },
-                              ),
-                            );
-                          } else {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                'خطأ في تسجيل الدخول',
-                                textAlign: TextAlign.end,
-                              ),
-                              duration: Duration(seconds: 3),
-                            ));
-                          }
+                          _onsubmit();
                         },
                         splashColor: Colors.red,
                         borderRadius: BorderRadius.circular(50),
@@ -282,7 +258,8 @@ class _LoginState extends State<Login> {
                                             BorderSide(color: Colors.grey[100]),
                                       ),
                                     ),
-                                    child: TextField(
+                                    child: TextFormField(
+                                      focusNode: _nameFocusReg,
                                       textAlign: TextAlign.end,
                                       onChanged: (val) {
                                         setState(() {
@@ -296,6 +273,11 @@ class _LoginState extends State<Login> {
                                             color: Colors.grey[400],
                                             fontFamily: 'topaz'),
                                       ),
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (value) {
+                                        _fieldFocusChange(context,
+                                            _nameFocusReg, _phoneFocusReg);
+                                      },
                                     ),
                                   ),
                                   Container(
@@ -307,7 +289,8 @@ class _LoginState extends State<Login> {
                                         ),
                                       ),
                                     ),
-                                    child: TextField(
+                                    child: TextFormField(
+                                      focusNode: _phoneFocusReg,
                                       controller: phoneTextReg,
                                       textAlign: TextAlign.end,
                                       onChanged: (val) {
@@ -323,11 +306,17 @@ class _LoginState extends State<Login> {
                                             fontFamily: 'topaz'),
                                       ),
                                       keyboardType: TextInputType.phone,
+                                      textInputAction: TextInputAction.next,
+                                      onFieldSubmitted: (value) {
+                                        _fieldFocusChange(context,
+                                            _phoneFocusReg, _passwordFocusReg);
+                                      },
                                     ),
                                   ),
                                   Container(
                                     padding: EdgeInsets.all(8),
-                                    child: TextField(
+                                    child: TextFormField(
+                                      focusNode: _passwordFocusReg,
                                       controller: passwordTextReg,
                                       textAlign: TextAlign.end,
                                       onChanged: (val) {
@@ -340,6 +329,10 @@ class _LoginState extends State<Login> {
                                             color: Colors.grey[400],
                                             fontFamily: 'topaz'),
                                       ),
+                                      textInputAction: TextInputAction.done,
+                                      onFieldSubmitted: (value) {
+                                        _onSubmitReg();
+                                      },
                                     ),
                                   ),
                                 ],
@@ -361,34 +354,7 @@ class _LoginState extends State<Login> {
                               child: Builder(
                                 builder: (context) => InkWell(
                                   onTap: () async {
-                                    final QuerySnapshot userinfo =
-                                        await Firestore.instance
-                                            .collection('users')
-                                            .where("phone",
-                                                isEqualTo: phoneForSignup)
-                                            .getDocuments();
-                                    final List<DocumentSnapshot> documents =
-                                        userinfo.documents;
-                                    if (documents.length == 0) {
-                                      await SigninFiresotre().addUser(
-                                          nameForSignup,
-                                          phoneForSignup,
-                                          passwordForSignup);
-                                      setState(() {
-                                        control = 0;
-                                        showToast();
-                                      });
-                                    } else {
-                                      Scaffold.of(context)
-                                          .showSnackBar(SnackBar(
-                                        backgroundColor: Colors.red,
-                                        content: Text(
-                                          'رقم الجوال مسجل',
-                                          textAlign: TextAlign.end,
-                                        ),
-                                        duration: Duration(seconds: 3),
-                                      ));
-                                    }
+                                    _onSubmitReg();
                                   },
                                   splashColor: Colors.red,
                                   borderRadius: BorderRadius.circular(50),
@@ -420,5 +386,76 @@ class _LoginState extends State<Login> {
         ]),
       ),
     );
+  }
+
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
+  }
+
+  _onsubmit() async {
+    var info, dbID;
+    final QuerySnapshot userinfo = await Firestore.instance
+        .collection('users')
+        .where("password", isEqualTo: password)
+        .where("phone", isEqualTo: phone)
+        .getDocuments();
+    final List<DocumentSnapshot> documents = userinfo.documents;
+    if (documents.length == 1) {
+      documents.forEach((data) {
+        info = UserInfo(
+          name: data['name'],
+          phone: data['phone'],
+          id: data.documentID,
+          reviewsCount: cafeReviews,
+          starsAvrage: starsAvrage,
+        );
+        dbID = BookingDB(
+          data.documentID,
+        );
+      });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return CafeList(info, dbID);
+          },
+        ),
+      );
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(
+          'خطأ في تسجيل الدخول',
+          textAlign: TextAlign.end,
+        ),
+        duration: Duration(seconds: 3),
+      ));
+    }
+  }
+
+  _onSubmitReg() async {
+    final QuerySnapshot userinfo = await Firestore.instance
+        .collection('users')
+        .where("phone", isEqualTo: phoneForSignup)
+        .getDocuments();
+    final List<DocumentSnapshot> documents = userinfo.documents;
+    if (documents.length == 0) {
+      await SigninFiresotre()
+          .addUser(nameForSignup, phoneForSignup, passwordForSignup);
+      setState(() {
+        control = 0;
+        showToast();
+      });
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(
+          'رقم الجوال مسجل',
+          textAlign: TextAlign.end,
+        ),
+        duration: Duration(seconds: 3),
+      ));
+    }
   }
 }
