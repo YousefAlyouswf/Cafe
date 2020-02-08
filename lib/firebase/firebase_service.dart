@@ -10,8 +10,14 @@ class SigninFiresotre {
 
 //Add users
   Future addUser(String name, String phone, String password) async =>
-      await collectionReferenceUsers.document().setData(
-          {'name': name, 'phone': phone, 'password': password, 'cafename': ''});
+      await collectionReferenceUsers.document().setData({
+        'name': name,
+        'phone': phone,
+        'password': password,
+        'cafename': '',
+        'seatid': '',
+        'booked': ''
+      });
 
   //Add review
   // Future addReview(String review, String rate, String name, String id) async =>

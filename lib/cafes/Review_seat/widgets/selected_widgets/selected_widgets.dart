@@ -28,7 +28,7 @@ class SelectedWidgets extends StatelessWidget {
     return Visibility(
       visible: selectedScreen,
       child: Container(
-        height: height / 1.25,
+        height: height / 1.3,
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('users')

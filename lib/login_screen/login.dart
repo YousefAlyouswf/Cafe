@@ -71,10 +71,11 @@ class _LoginState extends State<Login> {
     });
   }
 
-  var phoneText = TextEditingController();
-  var passwordText = TextEditingController();
-  var phoneTextReg = TextEditingController();
-  var passwordTextReg = TextEditingController();
+  TextEditingController phoneText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+  TextEditingController phoneTextReg = TextEditingController();
+  TextEditingController passwordTextReg = TextEditingController();
+
   final FocusNode _phoneFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
   final FocusNode _phoneFocusReg = FocusNode();
@@ -82,10 +83,10 @@ class _LoginState extends State<Login> {
   final FocusNode _nameFocusReg = FocusNode();
   @override
   Widget build(BuildContext context) {
-    if (phoneTextReg.text != '') {
-      phoneText.text = phoneTextReg.text;
-      passwordText.text = passwordTextReg.text;
-    }
+    // if (phoneTextReg.text != '') {
+    //   phoneText = new TextEditingController(text: phoneTextReg.text);
+    //   passwordText = new TextEditingController(text: passwordTextReg.text);
+    // }
 
     final width = MediaQuery.of(context).size.width;
     return WillPopScope(
@@ -163,7 +164,8 @@ class _LoginState extends State<Login> {
                                 ),
                                 Container(
                                   padding: EdgeInsets.all(10),
-                                  child: TextFormField(
+                                  child: Builder(
+                                    builder: (context)=>TextFormField(
                                       focusNode: _passwordFocus,
                                       textInputAction: TextInputAction.done,
                                       controller: passwordText,
@@ -180,9 +182,52 @@ class _LoginState extends State<Login> {
                                             color: Colors.grey,
                                             fontFamily: 'topaz'),
                                       ),
-                                      onFieldSubmitted: (term) async {
-                                        _onsubmit();
-                                      }),
+                                      onFieldSubmitted: (value) async {
+                                        var info, dbID;
+                                        final QuerySnapshot userinfo =
+                                            await Firestore
+                                                .instance
+                                                .collection('users')
+                                                .where("password",
+                                                    isEqualTo: password)
+                                                .where("phone", isEqualTo: phone)
+                                                .getDocuments();
+                                        final List<DocumentSnapshot> documents =
+                                            userinfo.documents;
+                                        if (documents.length == 1) {
+                                          documents.forEach((data) {
+                                            info = UserInfo(
+                                              name: data['name'],
+                                              phone: data['phone'],
+                                              id: data.documentID,
+                                              reviewsCount: cafeReviews,
+                                              starsAvrage: starsAvrage,
+                                            );
+                                            dbID = BookingDB(
+                                              data.documentID,
+                                            );
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) {
+                                                return CafeList(info, dbID);
+                                              },
+                                            ),
+                                          );
+                                        } else {
+                                          Scaffold.of(context)
+                                              .showSnackBar(SnackBar(
+                                            backgroundColor: Colors.red,
+                                            content: Text(
+                                              'خطأ في تسجيل الدخول',
+                                              textAlign: TextAlign.end,
+                                            ),
+                                            duration: Duration(seconds: 3),
+                                          ));
+                                        }
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -206,7 +251,45 @@ class _LoginState extends State<Login> {
                       child: Builder(
                         builder: (context) => InkWell(
                           onTap: () async {
-                            _onsubmit();
+                            var info, dbID;
+                            final QuerySnapshot userinfo = await Firestore
+                                .instance
+                                .collection('users')
+                                .where("password", isEqualTo: password)
+                                .where("phone", isEqualTo: phone)
+                                .getDocuments();
+                            final List<DocumentSnapshot> documents =
+                                userinfo.documents;
+                            if (documents.length == 1) {
+                              documents.forEach((data) {
+                                info = UserInfo(
+                                  name: data['name'],
+                                  phone: data['phone'],
+                                  id: data.documentID,
+                                  reviewsCount: cafeReviews,
+                                  starsAvrage: starsAvrage,
+                                );
+                                dbID = BookingDB(
+                                  data.documentID,
+                                );
+                              });
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) {
+                                    return CafeList(info, dbID);
+                                  },
+                                ),
+                              );
+                            } else {
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  'خطأ في تسجيل الدخول',
+                                  textAlign: TextAlign.end,
+                                ),
+                                duration: Duration(seconds: 3),
+                              ));
+                            }
                           },
                           splashColor: Colors.red,
                           borderRadius: BorderRadius.circular(50),
@@ -324,24 +407,57 @@ class _LoginState extends State<Login> {
                                     ),
                                     Container(
                                       padding: EdgeInsets.all(8),
-                                      child: TextFormField(
-                                        focusNode: _passwordFocusReg,
-                                        controller: passwordTextReg,
-                                        textAlign: TextAlign.end,
-                                        onChanged: (val) {
-                                          passwordForSignup = val;
-                                        },
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: 'كلمة المرور',
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey[400],
-                                              fontFamily: 'topaz'),
+                                      child: Builder(
+                                        builder: (context)=>TextFormField(
+                                          focusNode: _passwordFocusReg,
+                                          controller: passwordTextReg,
+                                          textAlign: TextAlign.end,
+                                          onChanged: (val) {
+                                            passwordForSignup = val;
+                                          },
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: 'كلمة المرور',
+                                            hintStyle: TextStyle(
+                                                color: Colors.grey[400],
+                                                fontFamily: 'topaz'),
+                                          ),
+                                          textInputAction: TextInputAction.done,
+                                          onFieldSubmitted: (value) async {
+                                            final QuerySnapshot userinfo =
+                                                await Firestore.instance
+                                                    .collection('users')
+                                                    .where("phone",
+                                                        isEqualTo: phoneForSignup)
+                                                    .getDocuments();
+                                            final List<DocumentSnapshot>
+                                                documents = userinfo.documents;
+                                            if (documents.length == 0) {
+                                              await SigninFiresotre().addUser(
+                                                  nameForSignup,
+                                                  phoneForSignup,
+                                                  passwordForSignup);
+                                              setState(() {
+                                                control = 0;
+                                                showToast();
+                                                phoneText.text =
+                                                    phoneTextReg.text;
+                                                passwordText.text =
+                                                    passwordTextReg.text;
+                                              });
+                                            } else {
+                                              Scaffold.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                backgroundColor: Colors.red,
+                                                content: Text(
+                                                  'رقم الجوال مسجل',
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                                duration: Duration(seconds: 3),
+                                              ));
+                                            }
+                                          },
                                         ),
-                                        textInputAction: TextInputAction.done,
-                                        onFieldSubmitted: (value) {
-                                          _onSubmitReg();
-                                        },
                                       ),
                                     ),
                                   ],
@@ -363,7 +479,35 @@ class _LoginState extends State<Login> {
                                 child: Builder(
                                   builder: (context) => InkWell(
                                     onTap: () async {
-                                      _onSubmitReg();
+                                      final QuerySnapshot userinfo =
+                                          await Firestore
+                                              .instance
+                                              .collection('users')
+                                              .where("phone",
+                                                  isEqualTo: phoneForSignup)
+                                              .getDocuments();
+                                      final List<DocumentSnapshot> documents =
+                                          userinfo.documents;
+                                      if (documents.length == 0) {
+                                        await SigninFiresotre().addUser(
+                                            nameForSignup,
+                                            phoneForSignup,
+                                            passwordForSignup);
+                                        setState(() {
+                                          control = 0;
+                                          showToast();
+                                        });
+                                      } else {
+                                        Scaffold.of(context)
+                                            .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                            'رقم الجوال مسجل',
+                                            textAlign: TextAlign.end,
+                                          ),
+                                          duration: Duration(seconds: 3),
+                                        ));
+                                      }
                                     },
                                     splashColor: Colors.red,
                                     borderRadius: BorderRadius.circular(50),
@@ -402,70 +546,5 @@ class _LoginState extends State<Login> {
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
-  }
-
-  _onsubmit() async {
-    var info, dbID;
-    final QuerySnapshot userinfo = await Firestore.instance
-        .collection('users')
-        .where("password", isEqualTo: password)
-        .where("phone", isEqualTo: phone)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = userinfo.documents;
-    if (documents.length == 1) {
-      documents.forEach((data) {
-        info = UserInfo(
-          name: data['name'],
-          phone: data['phone'],
-          id: data.documentID,
-          reviewsCount: cafeReviews,
-          starsAvrage: starsAvrage,
-        );
-        dbID = BookingDB(
-          data.documentID,
-        );
-      });
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) {
-            return CafeList(info, dbID);
-          },
-        ),
-      );
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(
-          'خطأ في تسجيل الدخول',
-          textAlign: TextAlign.end,
-        ),
-        duration: Duration(seconds: 3),
-      ));
-    }
-  }
-
-  void _onSubmitReg() async {
-    final QuerySnapshot userinfo = await Firestore.instance
-        .collection('users')
-        .where("phone", isEqualTo: phoneForSignup)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = userinfo.documents;
-    if (documents.length == 0) {
-      await SigninFiresotre()
-          .addUser(nameForSignup, phoneForSignup, passwordForSignup);
-      setState(() {
-        control = 0;
-        showToast();
-      });
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(
-          'رقم الجوال مسجل',
-          textAlign: TextAlign.end,
-        ),
-        duration: Duration(seconds: 3),
-      ));
-    }
   }
 }

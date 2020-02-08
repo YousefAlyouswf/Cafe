@@ -57,6 +57,7 @@ class _CafeListState extends State<CafeList> {
 
   @override
   Widget build(BuildContext context) {
+    
     try {
       userID = widget.info.id;
       userName = widget.info.name;
@@ -72,7 +73,7 @@ class _CafeListState extends State<CafeList> {
           context,
           MaterialPageRoute(builder: (context) => Login()),
         );
-        return;
+        return Future.value(false);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -156,83 +157,99 @@ class _CafeListState extends State<CafeList> {
                     double result = starsSum / reviewsCount;
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: GridTile(
-                        child: Image.network(
-                          image,
-                          fit: BoxFit.fill,
-                        ),
-                        footer: Container(
-                          height: 70,
-                          child: GridTileBar(
-                            backgroundColor: Colors.black87,
-                            leading: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.star,
-                                  color:
-                                      result >= 1 ? Colors.yellow : Colors.grey,
-                                ),
-                                Icon(
-                                  Icons.star,
-                                  color: result >= 1.7
-                                      ? Colors.yellow
-                                      : Colors.grey,
-                                ),
-                                Icon(
-                                  Icons.star,
-                                  color: result >= 2.7
-                                      ? Colors.yellow
-                                      : Colors.grey,
-                                ),
-                                Icon(
-                                  Icons.star,
-                                  color: result >= 3.7
-                                      ? Colors.yellow
-                                      : Colors.grey,
-                                ),
-                                Icon(
-                                  Icons.star,
-                                  color: result >= 4.7
-                                      ? Colors.yellow
-                                      : Colors.grey,
-                                ),
-                              ],
-                            ),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    print(cafeID);
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) {
-                                          return Reviews(
-                                            widget.info,
-                                            cafeName,
-                                            cafeID,
-                                            bookingDB,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text('التعليقات $reviewsCount'),
-                                      SizedBox(
-                                        width: 30,
-                                      ),
-                                      Text(
-                                        cafeName,
-                                        style: TextStyle(
-                                            fontFamily: 'topaz', fontSize: 23),
-                                        textAlign: TextAlign.end,
-                                      ),
-                                    ],
+                      child: InkWell(
+                        onTap: (){
+                              Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) {
+                                            return Reviews(
+                                              widget.info,
+                                              cafeName,
+                                              cafeID,
+                                              widget.bookingDB,
+                                            );
+                                          },
+                                        ),
+                                      );
+                        },
+                                              child: GridTile(
+                          child: Image.network(
+                            image,
+                            fit: BoxFit.fill,
+                          ),
+                          footer: Container(
+                            height: 70,
+                            child: GridTileBar(
+                              backgroundColor: Colors.black87,
+                              leading: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.star,
+                                    color:
+                                        result >= 1 ? Colors.yellow : Colors.grey,
                                   ),
-                                ),
-                              ],
+                                  Icon(
+                                    Icons.star,
+                                    color: result >= 1.7
+                                        ? Colors.yellow
+                                        : Colors.grey,
+                                  ),
+                                  Icon(
+                                    Icons.star,
+                                    color: result >= 2.7
+                                        ? Colors.yellow
+                                        : Colors.grey,
+                                  ),
+                                  Icon(
+                                    Icons.star,
+                                    color: result >= 3.7
+                                        ? Colors.yellow
+                                        : Colors.grey,
+                                  ),
+                                  Icon(
+                                    Icons.star,
+                                    color: result >= 4.7
+                                        ? Colors.yellow
+                                        : Colors.grey,
+                                  ),
+                                ],
+                              ),
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {
+                                      print(cafeID);
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) {
+                                            return Reviews(
+                                              widget.info,
+                                              cafeName,
+                                              cafeID,
+                                              widget.bookingDB,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text('التعليقات $reviewsCount'),
+                                        SizedBox(
+                                          width: 30,
+                                        ),
+                                        Text(
+                                          cafeName,
+                                          style: TextStyle(
+                                              fontFamily: 'topaz', fontSize: 23),
+                                          textAlign: TextAlign.end,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

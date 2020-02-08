@@ -162,7 +162,9 @@ class _ReviewsState extends State<Reviews> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        backgroundColor: Colors.blue,
+        iconSize: 40,
+        selectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
       body: Column(
