@@ -9,6 +9,7 @@ import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 StreamSubscription<DocumentSnapshot> subscription;
 
@@ -18,6 +19,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //Progress dialog
+  ProgressDialog pr;
+
+  //--------------
   String phone, password;
 
   List<String> cafenameList = new List();
@@ -54,7 +59,7 @@ class _LoginState extends State<Login> {
     getAllReviews();
   }
 
-  int control = 0;
+  int control = 1;
   bool login = true;
   bool signup = false;
   void showToast() {
@@ -63,6 +68,7 @@ class _LoginState extends State<Login> {
         login = true;
         signup = false;
         control = 1;
+        pr.hide();
       } else {
         login = false;
         signup = true;
@@ -83,10 +89,11 @@ class _LoginState extends State<Login> {
   final FocusNode _nameFocusReg = FocusNode();
   @override
   Widget build(BuildContext context) {
-    // if (phoneTextReg.text != '') {
-    //   phoneText = new TextEditingController(text: phoneTextReg.text);
-    //   passwordText = new TextEditingController(text: passwordTextReg.text);
-    // }
+//progress dialog
+    pr = ProgressDialog(context, type: ProgressDialogType.Normal);
+    pr.style(message: "جاري التحميل");
+
+//----------
 
     final width = MediaQuery.of(context).size.width;
     return WillPopScope(
@@ -165,7 +172,7 @@ class _LoginState extends State<Login> {
                                 Container(
                                   padding: EdgeInsets.all(10),
                                   child: Builder(
-                                    builder: (context)=>TextFormField(
+                                    builder: (context) => TextFormField(
                                       focusNode: _passwordFocus,
                                       textInputAction: TextInputAction.done,
                                       controller: passwordText,
@@ -183,14 +190,15 @@ class _LoginState extends State<Login> {
                                             fontFamily: 'topaz'),
                                       ),
                                       onFieldSubmitted: (value) async {
+                                        pr.show();
                                         var info, dbID;
                                         final QuerySnapshot userinfo =
-                                            await Firestore
-                                                .instance
+                                            await Firestore.instance
                                                 .collection('users')
                                                 .where("password",
                                                     isEqualTo: password)
-                                                .where("phone", isEqualTo: phone)
+                                                .where("phone",
+                                                    isEqualTo: phone)
                                                 .getDocuments();
                                         final List<DocumentSnapshot> documents =
                                             userinfo.documents;
@@ -207,6 +215,7 @@ class _LoginState extends State<Login> {
                                               data.documentID,
                                             );
                                           });
+
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (_) {
@@ -251,6 +260,7 @@ class _LoginState extends State<Login> {
                       child: Builder(
                         builder: (context) => InkWell(
                           onTap: () async {
+                            pr.show();
                             var info, dbID;
                             final QuerySnapshot userinfo = await Firestore
                                 .instance
@@ -308,7 +318,7 @@ class _LoginState extends State<Login> {
                   ),
                   PushToSignUp(
                     showToast: showToast,
-                    change: 'تسجيل',
+                    change: 'تسجيل جديد',
                   ),
                 ],
               ),
@@ -408,7 +418,7 @@ class _LoginState extends State<Login> {
                                     Container(
                                       padding: EdgeInsets.all(8),
                                       child: Builder(
-                                        builder: (context)=>TextFormField(
+                                        builder: (context) => TextFormField(
                                           focusNode: _passwordFocusReg,
                                           controller: passwordTextReg,
                                           textAlign: TextAlign.end,
@@ -424,11 +434,13 @@ class _LoginState extends State<Login> {
                                           ),
                                           textInputAction: TextInputAction.done,
                                           onFieldSubmitted: (value) async {
+                                            pr.show();
                                             final QuerySnapshot userinfo =
                                                 await Firestore.instance
                                                     .collection('users')
                                                     .where("phone",
-                                                        isEqualTo: phoneForSignup)
+                                                        isEqualTo:
+                                                            phoneForSignup)
                                                     .getDocuments();
                                             final List<DocumentSnapshot>
                                                 documents = userinfo.documents;
@@ -437,14 +449,40 @@ class _LoginState extends State<Login> {
                                                   nameForSignup,
                                                   phoneForSignup,
                                                   passwordForSignup);
-                                              setState(() {
-                                                control = 0;
-                                                showToast();
-                                                phoneText.text =
-                                                    phoneTextReg.text;
-                                                passwordText.text =
-                                                    passwordTextReg.text;
+
+                                              //------------------
+                                              var info, dbID;
+                                              final QuerySnapshot userinfo =
+                                                  await Firestore.instance
+                                                      .collection('users')
+                                                      .where("phone",
+                                                          isEqualTo:
+                                                              phoneForSignup)
+                                                      .getDocuments();
+                                              final List<DocumentSnapshot>
+                                                  documents =
+                                                  userinfo.documents;
+
+                                              documents.forEach((data) {
+                                                info = UserInfo(
+                                                  name: data['name'],
+                                                  phone: data['phone'],
+                                                  id: data.documentID,
+                                                  reviewsCount: cafeReviews,
+                                                  starsAvrage: starsAvrage,
+                                                );
+                                                dbID = BookingDB(
+                                                  data.documentID,
+                                                );
                                               });
+
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (_) {
+                                                    return CafeList(info, dbID);
+                                                  },
+                                                ),
+                                              );
                                             } else {
                                               Scaffold.of(context)
                                                   .showSnackBar(SnackBar(
@@ -455,6 +493,7 @@ class _LoginState extends State<Login> {
                                                 ),
                                                 duration: Duration(seconds: 3),
                                               ));
+                                              pr.hide();
                                             }
                                           },
                                         ),
@@ -479,6 +518,7 @@ class _LoginState extends State<Login> {
                                 child: Builder(
                                   builder: (context) => InkWell(
                                     onTap: () async {
+                                      pr.show();
                                       final QuerySnapshot userinfo =
                                           await Firestore
                                               .instance
@@ -493,10 +533,38 @@ class _LoginState extends State<Login> {
                                             nameForSignup,
                                             phoneForSignup,
                                             passwordForSignup);
-                                        setState(() {
-                                          control = 0;
-                                          showToast();
+
+                                        //------------------
+                                        var info, dbID;
+                                        final QuerySnapshot userinfo =
+                                            await Firestore.instance
+                                                .collection('users')
+                                                .where("phone",
+                                                    isEqualTo: phoneForSignup)
+                                                .getDocuments();
+                                        final List<DocumentSnapshot> documents =
+                                            userinfo.documents;
+
+                                        documents.forEach((data) {
+                                          info = UserInfo(
+                                            name: data['name'],
+                                            phone: data['phone'],
+                                            id: data.documentID,
+                                            reviewsCount: cafeReviews,
+                                            starsAvrage: starsAvrage,
+                                          );
+                                          dbID = BookingDB(
+                                            data.documentID,
+                                          );
                                         });
+
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) {
+                                              return CafeList(info, dbID);
+                                            },
+                                          ),
+                                        );
                                       } else {
                                         Scaffold.of(context)
                                             .showSnackBar(SnackBar(
@@ -507,6 +575,7 @@ class _LoginState extends State<Login> {
                                           ),
                                           duration: Duration(seconds: 3),
                                         ));
+                                        pr.hide();
                                       }
                                     },
                                     splashColor: Colors.red,
@@ -526,7 +595,7 @@ class _LoginState extends State<Login> {
                             ),
                             PushToSignUp(
                               showToast: showToast,
-                              change: 'دخول',
+                              change: 'لديك حساب',
                             ),
                           ],
                         ),

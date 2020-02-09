@@ -50,11 +50,11 @@ class ReviewWidgets extends StatelessWidget {
                     date.add(myreview['reviews'][i]['date'].toString());
                   }
 
-                  Color currentColor = Colors.red[200];
+                  Color currentColor = Colors.blue[200];
                   Color nextColor = Colors.white;
 
                   return Container(
-                    height: height,
+                    height: height/1.28,
                     child: ListView.builder(
                       itemCount: reviews.length,
                       itemBuilder: (context, i) {

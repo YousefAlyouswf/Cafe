@@ -57,7 +57,6 @@ class _CafeListState extends State<CafeList> {
 
   @override
   Widget build(BuildContext context) {
-    
     try {
       userID = widget.info.id;
       userName = widget.info.name;
@@ -73,7 +72,6 @@ class _CafeListState extends State<CafeList> {
           context,
           MaterialPageRoute(builder: (context) => Login()),
         );
-        return Future.value(false);
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -158,21 +156,21 @@ class _CafeListState extends State<CafeList> {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
-                        onTap: (){
-                              Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) {
-                                            return Reviews(
-                                              widget.info,
-                                              cafeName,
-                                              cafeID,
-                                              widget.bookingDB,
-                                            );
-                                          },
-                                        ),
-                                      );
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) {
+                                return Reviews(
+                                  widget.info,
+                                  cafeName,
+                                  cafeID,
+                                  widget.bookingDB,
+                                );
+                              },
+                            ),
+                          );
                         },
-                                              child: GridTile(
+                        child: GridTile(
                           child: Image.network(
                             image,
                             fit: BoxFit.fill,
@@ -185,8 +183,9 @@ class _CafeListState extends State<CafeList> {
                                 children: <Widget>[
                                   Icon(
                                     Icons.star,
-                                    color:
-                                        result >= 1 ? Colors.yellow : Colors.grey,
+                                    color: result >= 1
+                                        ? Colors.yellow
+                                        : Colors.grey,
                                   ),
                                   Icon(
                                     Icons.star,
@@ -242,7 +241,8 @@ class _CafeListState extends State<CafeList> {
                                         Text(
                                           cafeName,
                                           style: TextStyle(
-                                              fontFamily: 'topaz', fontSize: 23),
+                                              fontFamily: 'topaz',
+                                              fontSize: 23),
                                           textAlign: TextAlign.end,
                                         ),
                                       ],
