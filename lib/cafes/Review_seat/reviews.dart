@@ -158,7 +158,7 @@ class _ReviewsState extends State<Reviews> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
-            title: Text('الحجز'),
+            title: Text('الطلبات'),
           ),
         ],
         currentIndex: _selectedIndex,

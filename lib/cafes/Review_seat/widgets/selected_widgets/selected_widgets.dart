@@ -64,13 +64,16 @@ class SelectedWidgets extends StatelessWidget {
                                         child: RaisedButton(
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  new BorderRadius.circular(18.0),
-                                              side:
-                                                  BorderSide(color: Colors.red)),
+                                                  new BorderRadius.circular(
+                                                      50.0),
+                                              side: BorderSide(
+                                                  color: Colors.red)),
                                           color: Colors.black54,
                                           child: Text(
                                             "إلغاء الحجز",
-                                            style: TextStyle(color: Colors.white),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           onPressed: () {
                                             //Delete from SQLITE
@@ -89,29 +92,46 @@ class SelectedWidgets extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      " مقهى " +
-                                          reserveCafe +
-                                          " جلسة رقم: " +
-                                          seatnum,
-                                      style: TextStyle(
-                                          fontSize: 18, fontFamily: 'topaz'),
-                                    ),
+                                    reserveCafe != cafeName
+                                        ? Text(
+                                            " لديك حجز في مقهى " +
+                                                reserveCafe +
+                                                " جلسة رقم: " +
+                                                seatnum,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontFamily: 'topaz'),
+                                          )
+                                        : Text(
+                                            " مقهى " +
+                                                reserveCafe +
+                                                " جلسة رقم: " +
+                                                seatnum,
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontFamily: 'topaz'),
+                                          ),
                                     SizedBox(
                                       height: 30,
                                     ),
+                                    // Text(
+                                    //   'لا تقبل الطلبات إلا في المقهى',
+                                    //   style: TextStyle(
+                                    //       color: Colors.red, fontSize: 15),
+                                    // ),
                                     Text(
-                                      'لا تقبل الطلبات إلا في المقهى',
+                                      "قائمة الطلبات",
                                       style: TextStyle(
-                                          color: Colors.red, fontSize: 15),
+                                          fontFamily: 'arbaeen', fontSize: 18),
                                     ),
-                                    Text("قائمة الطلبات", style: TextStyle(fontFamily: 'arbaeen', fontSize:18),),
                                     Container(
-                                      height: height,
+                                      height: height / 1.4,
+                                      
                                       child: Padding(
                                         padding: const EdgeInsets.all(15.0),
                                         child: reserveCafe != cafeName
-                                            ? null
+                                            ? Text(
+                                                "لا يمكن عرض طلبات مقهى $reserveCafe في صفحة مقهى $cafeName")
                                             : StreamBuilder(
                                                 stream: Firestore.instance
                                                     .collection('order')
@@ -128,44 +148,46 @@ class SelectedWidgets extends StatelessWidget {
                                                       itemBuilder:
                                                           (context, index) {
                                                         return InkWell(
+                                                          onTap: () {
+                                                            
+                                                          },
                                                           splashColor:
                                                               Colors.red,
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(50),
+                                                                  .circular(5),
                                                           child: Card(
-                                                            child: InkWell(
-                                                              child: Column(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Flexible(
-                                                                    child: Text(
-                                                                      snapshot
-                                                                          .data
-                                                                          .documents[
-                                                                              index]
-                                                                          .data['order'],
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "السعر: " +
-                                                                        snapshot
-                                                                            .data
-                                                                            .documents[index]
-                                                                            .data['price'] +
-                                                                        " ريال",
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    snapshot
+                                                                        .data
+                                                                        .documents[
+                                                                            index]
+                                                                        .data['order'],
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 15,
+                                                                ),
+                                                                Text(
+                                                                  "السعر: " +
+                                                                      snapshot
+                                                                          .data
+                                                                          .documents[
+                                                                              index]
+                                                                          .data['price'] +
+                                                                      " ريال",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                         );
@@ -186,17 +208,21 @@ class SelectedWidgets extends StatelessWidget {
                                 ),
                               )
                             : Container(
-                              height: height/2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                height: height / 2,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Text("عفوا, لا يوجد لديك حجز", style: TextStyle(fontFamily:'topaz', fontSize: 20),),
+                                    Text(
+                                      "عفوا, لا يوجد لديك حجز",
+                                      style: TextStyle(
+                                          fontFamily: 'topaz', fontSize: 20),
+                                    ),
                                     SizedBox(
                                       height: 70,
                                     ),
                                   ],
                                 ),
-                            )
+                              )
                       ],
                     ),
                   ),
