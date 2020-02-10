@@ -33,25 +33,27 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
 
   // need service
   void needService() async {
+    List<String> useridList = new List();
     final QuerySnapshot result =
         await Firestore.instance.collection('faham').getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
       setState(() {
-        if (data['userid'] == widget.info.id) {
-          pressed = true;
-        } else {
-          pressed = false;
-        }
+        useridList.add(data['userid']);
       });
     });
+    pressed = false;
+    for (var i = 0; i < useridList.length; i++) {
+      if (useridList[i] == widget.info.id) {
+        pressed = true;
+      }
+    }
   }
 
   //---------
   @override
   Widget build(BuildContext context) {
     needService();
-     needService();
     double height = MediaQuery.of(context).size.height;
     return Visibility(
       visible: widget.selectedScreen,
@@ -118,7 +120,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                             documents.forEach((data) {
                                               if (data['userid'] ==
                                                   widget.info.id) {
-                                        
                                                 String docID = data.documentID;
                                                 Firestore.instance
                                                     .collection('faham')
@@ -126,6 +127,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                     .delete();
                                               }
                                             });
+                                            needService();
 
                                             SigninFiresotre().cancleupdateUser(
                                                 widget.info.id,
@@ -191,6 +193,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                             TextDirection.rtl,
                                                       ),
                                                 onPressed: () async {
+                                                  needService();
+
                                                   bool faham = true;
                                                   final QuerySnapshot result =
                                                       await Firestore.instance
