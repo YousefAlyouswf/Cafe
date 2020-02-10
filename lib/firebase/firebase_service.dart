@@ -77,7 +77,7 @@ class SigninFiresotre {
     });
   }
 
-  //Add users
+  //Add Faham
   Future faham(String cafename, String seatnum, String sort, String username,
           String userid) async =>
       await Firestore.instance.collection('faham').document().setData({
@@ -88,15 +88,15 @@ class SigninFiresotre {
         'userid': userid,
       });
 
-  Future calnceFaham(String id) async {
-    final QuerySnapshot result =
-        await Firestore.instance.collection('faham').getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    documents.forEach((data) {
-      if (data['userid'] == id) {
-        String docID = data.documentID;
-        Firestore.instance.collection('faham').document(docID).delete();
-      }
-    });
-  }
+  //Add in Cart
+  Future addInCart(String cafename, String seatnum, String order,
+          String username, String price, String userid) async =>
+      await Firestore.instance.collection('cart').document().setData({
+        'cafename': cafename,
+        'seatnum': seatnum,
+        'order': order,
+        'username': username,
+        'price': price,
+        'userid': userid,
+      });
 }

@@ -38,9 +38,9 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         await Firestore.instance.collection('faham').getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
-      setState(() {
+    
         useridList.add(data['userid']);
-      });
+     
     });
     pressed = false;
     for (var i = 0; i < useridList.length; i++) {
@@ -51,9 +51,36 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
   }
 
   //---------
+
+  // countOrderINCart
+  int orderCount;
+  int cartPrice = 0;
+  void countOrderINCart() async {
+    List<String> useridList = new List();
+    List<String> priceList = new List();
+    final QuerySnapshot result =
+        await Firestore.instance.collection('cart').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      if (data['userid'] == widget.info.id) {
+      
+          useridList.add(data['userid']);
+          priceList.add(data['price']);
+    
+      }
+    });
+    cartPrice = 0;
+    orderCount = useridList.length;
+    for (var i = 0; i < priceList.length; i++) {
+      cartPrice += int.parse(priceList[i]);
+    }
+  }
+
+  //---------
   @override
   Widget build(BuildContext context) {
     needService();
+    countOrderINCart();
     double height = MediaQuery.of(context).size.height;
     return Visibility(
       visible: widget.selectedScreen,
@@ -92,53 +119,110 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Align(
                                         alignment: Alignment.topRight,
-                                        child: RaisedButton(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  new BorderRadius.circular(
-                                                      50.0),
-                                              side: BorderSide(
-                                                  color: Colors.red)),
-                                          color: Colors.black54,
-                                          child: Text(
-                                            "إلغاء الحجز",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          onPressed: () async {
-                                            //Delete from SQLITE
-                                            widget._delete();
+                                        child: Row(
+                                          children: <Widget>[
+                                            RaisedButton(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      new BorderRadius.circular(
+                                                          10.0),
+                                                  side: BorderSide(
+                                                      color: Colors.red),
+                                                ),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      "الطلبات: $orderCount",
+                                                      textAlign: TextAlign.end,
+                                                      textDirection:
+                                                          TextDirection.rtl,
+                                                    ),
+                                                    Text(
+                                                      "السعر: $cartPrice",
+                                                      textAlign: TextAlign.end,
+                                                      textDirection:
+                                                          TextDirection.rtl,
+                                                    ),
+                                                  ],
+                                                ),
+                                                onPressed: () {}),
+                                            Spacer(),
+                                            RaisedButton(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        50.0),
+                                                side: BorderSide(
+                                                    color: Colors.red),
+                                              ),
+                                              color: Colors.black54,
+                                              child: Text(
+                                                "إلغاء الحجز",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              onPressed: () async {
+                                                //Delete from SQLITE
+                                                widget._delete();
 
-                                            //Delete from firebase
-                                            final QuerySnapshot result =
-                                                await Firestore.instance
-                                                    .collection('faham')
-                                                    .getDocuments();
-                                            final List<DocumentSnapshot>
-                                                documents = result.documents;
-                                            documents.forEach((data) {
-                                              if (data['userid'] ==
-                                                  widget.info.id) {
-                                                String docID = data.documentID;
-                                                Firestore.instance
-                                                    .collection('faham')
-                                                    .document(docID)
-                                                    .delete();
-                                              }
-                                            });
-                                            needService();
+                                                //Delete faham from firebase
+                                                final QuerySnapshot result =
+                                                    await Firestore.instance
+                                                        .collection('faham')
+                                                        .getDocuments();
+                                                final List<DocumentSnapshot>
+                                                    documents =
+                                                    result.documents;
+                                                documents.forEach((data) {
+                                                  if (data['userid'] ==
+                                                      widget.info.id) {
+                                                    String docID =
+                                                        data.documentID;
+                                                    Firestore.instance
+                                                        .collection('faham')
+                                                        .document(docID)
+                                                        .delete();
+                                                  }
+                                                });
+                                                //------------
+                                                //Delete cart from firebase
+                                                final QuerySnapshot cartResult =
+                                                    await Firestore.instance
+                                                        .collection('cart')
+                                                        .getDocuments();
+                                                final List<DocumentSnapshot>
+                                                    documentsCart =
+                                                    cartResult.documents;
+                                                documentsCart.forEach((data) {
+                                                  if (data['userid'] ==
+                                                      widget.info.id) {
+                                                    String docID =
+                                                        data.documentID;
+                                                    Firestore.instance
+                                                        .collection('cart')
+                                                        .document(docID)
+                                                        .delete();
+                                                  }
+                                                });
+                                                //----------
+                                                needService();
+                                               
+                                                SigninFiresotre()
+                                                    .cancleupdateUser(
+                                                        widget.info.id,
+                                                        myBooking['booked']);
+                                                SigninFiresotre().calnceBooking(
+                                                    myBooking['seatid'],
+                                                    widget.info.id);
+                                                widget.hasBookinginSelected =
+                                                    false;
 
-                                            SigninFiresotre().cancleupdateUser(
-                                                widget.info.id,
-                                                myBooking['booked']);
-                                            SigninFiresotre().calnceBooking(
-                                                myBooking['seatid'],
-                                                widget.info.id);
-                                            widget.hasBookinginSelected = false;
-
-                                            widget._onItemTapped(1);
-                                          },
+                                                widget._onItemTapped(1);
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -194,7 +278,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                       ),
                                                 onPressed: () async {
                                                   needService();
-
+                                                  countOrderINCart();
                                                   bool faham = true;
                                                   final QuerySnapshot result =
                                                       await Firestore.instance
@@ -268,7 +352,29 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                       itemBuilder:
                                                           (context, index) {
                                                         return InkWell(
-                                                          onTap: () {},
+                                                          onTap: () {
+                                                            countOrderINCart();
+                                                            String order = snapshot
+                                                                .data
+                                                                .documents[
+                                                                    index]
+                                                                .data['order'];
+                                                            String price = snapshot
+                                                                .data
+                                                                .documents[
+                                                                    index]
+                                                                .data['price'];
+
+                                                            SigninFiresotre()
+                                                                .addInCart(
+                                                              reserveCafe,
+                                                              widget.seatnum,
+                                                              order,
+                                                              widget.info.name,
+                                                              price,
+                                                              widget.info.id,
+                                                            );
+                                                          },
                                                           splashColor:
                                                               Colors.red,
                                                           borderRadius:
