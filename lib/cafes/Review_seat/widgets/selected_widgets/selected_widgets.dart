@@ -38,9 +38,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         await Firestore.instance.collection('faham').getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
-    
-        useridList.add(data['userid']);
-     
+      useridList.add(data['userid']);
     });
     pressed = false;
     for (var i = 0; i < useridList.length; i++) {
@@ -63,10 +61,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
       if (data['userid'] == widget.info.id) {
-      
-          useridList.add(data['userid']);
-          priceList.add(data['price']);
-    
+        useridList.add(data['userid']);
+        priceList.add(data['price']);
       }
     });
     cartPrice = 0;
@@ -145,7 +141,9 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                     ),
                                                   ],
                                                 ),
-                                                onPressed: () {}),
+                                                onPressed: () {
+                                                  showModalSheet(context);
+                                                }),
                                             Spacer(),
                                             RaisedButton(
                                               shape: RoundedRectangleBorder(
@@ -208,7 +206,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                 });
                                                 //----------
                                                 needService();
-                                               
+
                                                 SigninFiresotre()
                                                     .cancleupdateUser(
                                                         widget.info.id,
@@ -451,6 +449,86 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                     ),
                   ),
                 );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void showModalSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter state) {
+            return createBox(context, state);
+          },
+        );
+      },
+    );
+  }
+
+  createBox(BuildContext context, StateSetter state) {
+    return SingleChildScrollView(
+      child: LimitedBox(
+        maxHeight: 450,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            buildMainDropdown(state),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Expanded buildMainDropdown(StateSetter setState) {
+    return Expanded(
+      child: Container(
+        color: Colors.blue[50],
+        child: StreamBuilder(
+          stream: Firestore.instance
+              .collection('cart')
+              .where('userid', isEqualTo: widget.info.id)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Text("Loading..");
+
+            return ListView.builder(
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) {
+                String order = snapshot.data.documents[index].data['order'];
+                String price = snapshot.data.documents[index].data['price'];
+                String id = snapshot.data.documents[index].documentID;
+                return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: ListTile(
+                        title: Text(
+                          order,
+                          textDirection: TextDirection.rtl,
+                        ),
+                        subtitle: Text(
+                          price,
+                          textDirection: TextDirection.rtl,
+                        ),
+                        leading: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            Firestore.instance
+                                .collection('cart')
+                                .document(id)
+                                .delete();
+                          },
+                        ),
+                      ),
+                    ));
               },
             );
           },
