@@ -100,4 +100,16 @@ class SigninFiresotre {
         'userid': userid,
         'submit':'no',
       });
+       //Add in Cart
+  Future updateCart(String cafename, String seatnum, String order,
+          String username, String price, String userid) async =>
+      await Firestore.instance.collection('cart').document().setData({
+        'cafename': cafename,
+        'seatnum': seatnum,
+        'order': order,
+        'username': username,
+        'price': price,
+        'userid': userid,
+        'submit':'no',
+      });
 }

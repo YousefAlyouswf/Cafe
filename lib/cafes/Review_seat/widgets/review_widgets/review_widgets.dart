@@ -50,7 +50,7 @@ class ReviewWidgets extends StatelessWidget {
                     date.add(myreview['reviews'][i]['date'].toString());
                   }
 
-                  Color currentColor = Colors.blue[200];
+                  Color currentColor = Colors.purple[300];
                   Color nextColor = Colors.white;
 
                   return Container(

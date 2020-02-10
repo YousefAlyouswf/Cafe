@@ -491,45 +491,78 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
   Expanded buildMainDropdown(StateSetter setState) {
     return Expanded(
       child: Container(
-        color: Colors.blue[50],
+        
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('cart')
               .where('userid', isEqualTo: widget.info.id)
+              .orderBy('order')
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text("Loading..");
 
-            return ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) {
-                String order = snapshot.data.documents[index].data['order'];
-                String price = snapshot.data.documents[index].data['price'];
-                String id = snapshot.data.documents[index].documentID;
-                return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(
-                          order,
-                          textDirection: TextDirection.rtl,
+            return Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      String order =
+                          snapshot.data.documents[index].data['order'];
+                      String price =
+                          snapshot.data.documents[index].data['price'];
+                      String id = snapshot.data.documents[index].documentID;
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(
+                              order,
+                              textDirection: TextDirection.rtl,
+                            ),
+                            subtitle: Text(
+                              price,
+                              textDirection: TextDirection.rtl,
+                            ),
+                            leading: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                Firestore.instance
+                                    .collection('cart')
+                                    .document(id)
+                                    .delete();
+                              },
+                            ),
+                          ),
                         ),
-                        subtitle: Text(
-                          price,
-                          textDirection: TextDirection.rtl,
-                        ),
-                        leading: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            Firestore.instance
-                                .collection('cart')
-                                .document(id)
-                                .delete();
-                          },
-                        ),
-                      ),
-                    ));
-              },
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  margin: EdgeInsets.symmetric(horizontal: 50),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Color.fromRGBO(49, 39, 79, 0.8),
+                  ),
+                  child: InkWell(
+                    onTap: () async {
+                      
+                    },
+                    splashColor: Colors.red,
+                    borderRadius: BorderRadius.circular(50),
+                    child: Center(
+                        child: Text(
+                      "أرسل الطلب",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'topaz',
+                          fontSize: 25),
+                    )),
+                  ),
+                ),
+              ],
             );
           },
         ),
