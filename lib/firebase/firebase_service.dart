@@ -76,4 +76,27 @@ class SigninFiresotre {
       'seatid': '',
     });
   }
+
+  //Add users
+  Future faham(String cafename, String seatnum, String sort, String username,
+          String userid) async =>
+      await Firestore.instance.collection('faham').document().setData({
+        'cafename': cafename,
+        'seatnum': seatnum,
+        'sort': sort,
+        'username': username,
+        'userid': userid,
+      });
+
+  Future calnceFaham(String id) async {
+    final QuerySnapshot result =
+        await Firestore.instance.collection('faham').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      if (data['userid'] == id) {
+        String docID = data.documentID;
+        Firestore.instance.collection('faham').document(docID).delete();
+      }
+    });
+  }
 }

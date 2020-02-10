@@ -97,7 +97,7 @@ class _ReviewsState extends State<Reviews> {
     }
     //Database blocks
 
-   // print(bookingDB.userID);
+    // print(bookingDB.userID);
   }
 
   void showToast() {
@@ -143,7 +143,6 @@ class _ReviewsState extends State<Reviews> {
               showModalSheet(context);
             },
           ),
-    
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -180,15 +179,8 @@ class _ReviewsState extends State<Reviews> {
           ),
           SeatsWidgets(seatScreen, info, count, updateListView, _save,
               _onItemTapped, cafeName, getUserResrevation, reservation),
-          SelectedWidgets(
-            selectedScreen,
-            info,
-            hasBookinginSelected,
-            _delete,
-            _onItemTapped,
-            seatnum,
-            cafeName,
-          ),
+          SelectedWidgets(selectedScreen, info, hasBookinginSelected, _delete,
+              _onItemTapped, seatnum, cafeName),
         ],
       ),
     );
@@ -453,6 +445,4 @@ class _ReviewsState extends State<Reviews> {
   void _delete() async {
     await databaseHelper.deleteNote();
   }
-
- 
 }
