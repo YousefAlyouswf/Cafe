@@ -491,7 +491,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
   Expanded buildMainDropdown(StateSetter setState) {
     return Expanded(
       child: Container(
-        
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('cart')
@@ -548,7 +547,20 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                   ),
                   child: InkWell(
                     onTap: () async {
-                      
+                      List<String> cartID = new List();
+                      final QuerySnapshot result = await Firestore.instance
+                          .collection('cart')
+                          .where('userid', isEqualTo: widget.info.id)
+                          .getDocuments();
+                      final List<DocumentSnapshot> documents = result.documents;
+                      documents.forEach((data) {
+                        cartID.add(data.documentID);
+                      });
+
+                      for (var i = 0; i < cartID.length; i++) {
+                        SigninFiresotre().updateCart(cartID[i]);
+                      }
+                      Navigator.pop(context);
                     },
                     splashColor: Colors.red,
                     borderRadius: BorderRadius.circular(50),
