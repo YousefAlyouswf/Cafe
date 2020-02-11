@@ -495,10 +495,10 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
           stream: Firestore.instance
               .collection('cart')
               .where('userid', isEqualTo: widget.info.id)
-              .orderBy('order')
+              .orderBy('submit').orderBy('order')
               .snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return Text("Loading..");
+            if (!snapshot.hasData) return Text("لا توجد طلبات يمكن عرضها");
 
             return Column(
               children: <Widget>[
@@ -511,17 +511,26 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                       String price =
                           snapshot.data.documents[index].data['price'];
                       String id = snapshot.data.documents[index].documentID;
+                      String submit = snapshot.data.documents[index].data['submit'];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
+                          color: submit=='no'? Colors.red[100]: Colors.green[100],
                           child: ListTile(
                             title: Text(
-                              order,
+                              order ,
                               textDirection: TextDirection.rtl,
                             ),
-                            subtitle: Text(
-                              price,
-                              textDirection: TextDirection.rtl,
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(submit=='no'?"الطلب جاهز للإرسال":" تم أستقبال الطلب",),
+                                SizedBox(width: 20,),
+                                Text(
+                                  price,
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ],
                             ),
                             leading: IconButton(
                               icon: Icon(Icons.delete),
@@ -538,40 +547,43 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                     },
                   ),
                 ),
-                Container(
-                  height: 50,
-                  margin: EdgeInsets.symmetric(horizontal: 50),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Color.fromRGBO(49, 39, 79, 0.8),
-                  ),
-                  child: InkWell(
-                    onTap: () async {
-                      List<String> cartID = new List();
-                      final QuerySnapshot result = await Firestore.instance
-                          .collection('cart')
-                          .where('userid', isEqualTo: widget.info.id)
-                          .getDocuments();
-                      final List<DocumentSnapshot> documents = result.documents;
-                      documents.forEach((data) {
-                        cartID.add(data.documentID);
-                      });
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 50,
+                    margin: EdgeInsets.symmetric(horizontal: 50),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Color.fromRGBO(49, 39, 79, 0.8),
+                    ),
+                    child: InkWell(
+                      onTap: () async {
+                        List<String> cartID = new List();
+                        final QuerySnapshot result = await Firestore.instance
+                            .collection('cart')
+                            .where('userid', isEqualTo: widget.info.id)
+                            .getDocuments();
+                        final List<DocumentSnapshot> documents = result.documents;
+                        documents.forEach((data) {
+                          cartID.add(data.documentID);
+                        });
 
-                      for (var i = 0; i < cartID.length; i++) {
-                        SigninFiresotre().updateCart(cartID[i]);
-                      }
-                      Navigator.pop(context);
-                    },
-                    splashColor: Colors.red,
-                    borderRadius: BorderRadius.circular(50),
-                    child: Center(
-                        child: Text(
-                      "أرسل الطلب",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'topaz',
-                          fontSize: 25),
-                    )),
+                        for (var i = 0; i < cartID.length; i++) {
+                          SigninFiresotre().updateCart(cartID[i]);
+                        }
+                        Navigator.pop(context);
+                      },
+                      splashColor: Colors.red,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Center(
+                          child: Text(
+                        "أرسل الطلب",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'topaz',
+                            fontSize: 25),
+                      )),
+                    ),
                   ),
                 ),
               ],

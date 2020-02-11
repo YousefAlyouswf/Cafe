@@ -91,7 +91,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
 //progress dialog
     pr = ProgressDialog(context, type: ProgressDialogType.Normal);
-    pr.style(message: "جاري التحميل");
+    pr.style(message: "...أنتظر قليلا");
 
 //----------
 

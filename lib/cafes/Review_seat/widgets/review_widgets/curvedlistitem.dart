@@ -98,28 +98,4 @@ class CurvedListItem extends StatelessWidget {
   }
 }
 
-// Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: <Widget>[
-//               Icon(
-//                 Icons.star,
-//                 color: stars >= 1 ? Colors.yellow : Colors.grey,
-//               ),
-//               Icon(
-//                 Icons.star,
-//                 color: stars >= 2 ? Colors.yellow : Colors.grey,
-//               ),
-//               Icon(
-//                 Icons.star,
-//                 color: stars >= 3 ? Colors.yellow : Colors.grey,
-//               ),
-//               Icon(
-//                 Icons.star,
-//                 color: stars >= 4 ? Colors.yellow : Colors.grey,
-//               ),
-//               Icon(
-//                 Icons.star,
-//                 color: stars >= 5 ? Colors.yellow : Colors.grey,
-//               )
-//             ],
-//           ),
+

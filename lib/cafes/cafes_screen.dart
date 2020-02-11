@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
 import 'Review_seat/reviews.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CafeList extends StatefulWidget {
   final UserInfo info;
@@ -55,8 +56,18 @@ class _CafeListState extends State<CafeList> {
     updateListView();
   }
 
+ static Future<void> openMap(String latitude, String longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    if (await canLaunch(googleUrl)) {
+      await launch(googleUrl);
+    } else {
+      throw 'Could not open the map.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     try {
       userID = widget.info.id;
       userName = widget.info.name;
@@ -67,16 +78,16 @@ class _CafeListState extends State<CafeList> {
 
     return WillPopScope(
       onWillPop: () {
-        _deleteLogin();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Login()),
-        );
+        // _deleteLogin();
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => Login()),
+        // );
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.red[200],
+          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
           title: Center(
             child: Text(
               "قائمة المقاهي",
@@ -91,8 +102,8 @@ class _CafeListState extends State<CafeList> {
               padding: const EdgeInsets.all(8.0),
               child: IconButton(
                 icon: Icon(
-                  Icons.power_settings_new,
-                  color: Colors.black,
+                  Icons.exit_to_app,
+                  color: Colors.white,
                   size: 30,
                 ),
                 onPressed: () {
@@ -106,28 +117,75 @@ class _CafeListState extends State<CafeList> {
             ),
           ],
         ),
-        // drawer: Drawer(
-        //     child: ListView(
-        //   children: <Widget>[
-        //     UserAccountsDrawerHeader(
-        //       accountName: Text(""),
-        //       accountEmail: Text(""),
-        //       decoration: BoxDecoration(
-        //           image: DecorationImage(
-        //         image: NetworkImage(
-        //             'https://upload.wikimedia.org/wikipedia/ar/thumb/6/68/General_Entertainment_Authority_Logo.svg/1200px-General_Entertainment_Authority_Logo.svg.png'),
-        //       )),
-        //     ),
-        //     ListTile(
-        //       title: Center(
-        //           child: Text(
-        //         "المقاهي المفضلة",
-        //         style: TextStyle(fontSize: 24),
-        //       )),
-        //       trailing: Icon(Icons.map),
-        //     ),
-        //   ],
-        // )),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text(""),
+                accountEmail: Text(""),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: NetworkImage(
+                      'https://t4.ftcdn.net/jpg/02/57/34/73/240_F_257347345_xMLYoln5APOlAJcmv8x0FPexLUeRMdzA.jpg'),
+                  fit: BoxFit.fitWidth,
+                )),
+              ),
+              ListTile(
+                title: Center(
+                    child: Text(
+                  "قائمة المقاهي",
+                  style: TextStyle(fontSize: 24),
+                )),
+                trailing: Icon(Icons.map),
+                subtitle: Container(
+                  height: height / 1.5,
+                  child: StreamBuilder(
+                      stream:
+                          Firestore.instance.collection('cafes').snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Text("Loading...");
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data.documents.length,
+                            itemBuilder: (context, index) {
+                              String cafeName =
+                                  snapshot.data.documents[index].data['name'];
+                              String cafeID =
+                                  snapshot.data.documents[index].documentID;
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) {
+                                        return Reviews(
+                                          widget.info,
+                                          cafeName,
+                                          cafeID,
+                                          widget.bookingDB,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    cafeName,
+                                    style: TextStyle(fontSize: 18),
+                                  )),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      }),
+                ),
+              ),
+            ],
+          ),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(15),
           child: StreamBuilder(
@@ -174,6 +232,20 @@ class _CafeListState extends State<CafeList> {
                           child: Image.network(
                             image,
                             fit: BoxFit.fill,
+                          ),
+                          header: Align(
+                            alignment: Alignment.bottomRight,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: Colors.red,
+                                  size: 35,
+                                ),
+                                onPressed: () {
+                            String lat = snapshot.data.documents[index].data['lat'];
+                            String long = snapshot.data.documents[index].data['long'];
+                                  openMap(lat,long);
+                                }),
                           ),
                           footer: Container(
                             height: 70,

@@ -123,7 +123,7 @@ class _ReviewsState extends State<Reviews> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red[200],
+        backgroundColor: Color.fromRGBO(161,141,114, 1),
         title: Center(
           child: Text(
             cafeName,
@@ -161,8 +161,8 @@ class _ReviewsState extends State<Reviews> {
           ),
         ],
         currentIndex: _selectedIndex,
-        backgroundColor: Colors.blue,
-        iconSize: 40,
+        backgroundColor: Color.fromRGBO(161,141,114, 1),
+        iconSize: 45,
         selectedItemColor: Colors.white,
         onTap: _onItemTapped,
       ),
@@ -221,7 +221,7 @@ class _ReviewsState extends State<Reviews> {
   Expanded buildMainDropdown(StateSetter setState) {
     return Expanded(
       child: Container(
-        color: Colors.red,
+        color: Colors.transparent,
         child: Column(
           children: <Widget>[
             Container(

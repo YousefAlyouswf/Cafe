@@ -81,7 +81,7 @@ class SeatsWidgets extends StatelessWidget {
                 child: StreamBuilder(
                   stream: Firestore.instance
                       .collection('sitting')
-                      .where('cafe', isEqualTo: cafeName).orderBy('color')
+                      .where('cafe', isEqualTo: cafeName)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
