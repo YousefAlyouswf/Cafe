@@ -2,7 +2,6 @@ import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_id/device_id.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -57,13 +56,7 @@ class _CafeListState extends State<CafeList> {
           print("IntersttialAd $event");
         });
   }
-String deviceID;
 
-  void getDeviceID() async {
-    String deviceId = await DeviceId.getID;
-    deviceID = 'Device ID is $deviceId';
-    print('Device ID is $deviceId');
-  }
   //----------------------------
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
@@ -126,7 +119,6 @@ String deviceID;
 
   @override
   Widget build(BuildContext context) {
- //   getDeviceID();
     double height = MediaQuery.of(context).size.height;
     try {
       userID = widget.info.id;
