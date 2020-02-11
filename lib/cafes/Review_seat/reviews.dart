@@ -9,6 +9,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+
+const String testDevice = '5f5e444ae62ce0ed';
 
 class Reviews extends StatefulWidget {
   final UserInfo info;
@@ -24,6 +27,38 @@ class Reviews extends StatefulWidget {
 }
 
 class _ReviewsState extends State<Reviews> {
+  //Admob-----------------------
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: testDevice != null ? <String>[testDevice] : null,
+    nonPersonalizedAds: true,
+    keywords: <String>['Game', 'Mario'],
+  );
+
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+        adUnitId: "ca-app-pub-6845451754172569/5930942121",
+        //Change BannerAd adUnitId with Admob ID
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd $event");
+        });
+  }
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: "ca-app-pub-6845451754172569/6501787765",
+        //Change Interstitial AdUnitId with Admob ID
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("IntersttialAd $event");
+        });
+  }
+
+  //----------------------------
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
   int count = 0;
@@ -88,6 +123,12 @@ class _ReviewsState extends State<Reviews> {
 
   @override
   void initState() {
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
+    //Change appId With Admob Id
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
     super.initState();
     updateListView();
     //Database blocks
@@ -96,8 +137,13 @@ class _ReviewsState extends State<Reviews> {
       noteList = List<BookingDB>();
     }
     //Database blocks
+  }
 
-    // print(bookingDB.userID);
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    _interstitialAd.dispose();
+    super.dispose();
   }
 
   void showToast() {
@@ -109,11 +155,15 @@ class _ReviewsState extends State<Reviews> {
       } else if (control == 1) {
         reviewScreen = false;
         seatScreen = true;
+
         selectedScreen = false;
       } else if (control == 2) {
         reviewScreen = false;
         seatScreen = false;
         selectedScreen = true;
+        createInterstitialAd()
+          ..load()
+          ..show();
       }
     });
   }
@@ -123,7 +173,7 @@ class _ReviewsState extends State<Reviews> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(161,141,114, 1),
+        backgroundColor: Color.fromRGBO(161, 141, 114, 1),
         title: Center(
           child: Text(
             cafeName,
@@ -145,26 +195,29 @@ class _ReviewsState extends State<Reviews> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.comment),
-            title: Text('التعليقات'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_seat),
-            title: Text('الجلسات'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            title: Text('الطلبات'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        backgroundColor: Color.fromRGBO(161,141,114, 1),
-        iconSize: 45,
-        selectedItemColor: Colors.white,
-        onTap: _onItemTapped,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 50),
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.comment),
+              title: Text('التعليقات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_seat),
+              title: Text('الجلسات'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.description),
+              title: Text('الطلبات'),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
+          iconSize: 45,
+          selectedItemColor: Colors.white,
+          onTap: _onItemTapped,
+        ),
       ),
       body: Column(
         children: <Widget>[

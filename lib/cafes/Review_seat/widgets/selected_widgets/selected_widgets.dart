@@ -81,7 +81,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     return Visibility(
       visible: widget.selectedScreen,
       child: Container(
-        height: height / 1.3,
+        height: height / 1.5,
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('users')
@@ -118,23 +118,30 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                         child: Row(
                                           children: <Widget>[
                                             RaisedButton(
+                                                color: Color.fromRGBO(
+                                                    161, 141, 114, 1),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       new BorderRadius.circular(
                                                           10.0),
                                                   side: BorderSide(
-                                                      color: Colors.red),
+                                                      color: Colors.red,
+                                                      width: 2),
                                                 ),
                                                 child: Column(
                                                   children: <Widget>[
                                                     Text(
                                                       "الطلبات: $orderCount",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
                                                       textAlign: TextAlign.end,
                                                       textDirection:
                                                           TextDirection.rtl,
                                                     ),
                                                     Text(
                                                       "السعر: $cartPrice",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
                                                       textAlign: TextAlign.end,
                                                       textDirection:
                                                           TextDirection.rtl,
@@ -237,10 +244,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                         : Column(
                                             children: <Widget>[
                                               Text(
-                                                " مقهى " +
-                                                    reserveCafe +
-                                                    " جلسة رقم: " +
-                                                    widget.seatnum,
+                                                " جلسة رقم: " + widget.seatnum,
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontFamily: 'topaz'),
@@ -321,11 +325,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                     //   style: TextStyle(
                                     //       color: Colors.red, fontSize: 15),
                                     // ),
-                                    Text(
-                                      "قائمة الطلبات",
-                                      style: TextStyle(
-                                          fontFamily: 'arbaeen', fontSize: 18),
-                                    ),
+                                    
                                     Container(
                                       height: height / 1.85,
                                       child: Padding(
@@ -495,7 +495,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
           stream: Firestore.instance
               .collection('cart')
               .where('userid', isEqualTo: widget.info.id)
-              .orderBy('submit').orderBy('order')
+              .orderBy('submit')
+              .orderBy('order')
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return Text("لا توجد طلبات يمكن عرضها");
@@ -511,21 +512,30 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                       String price =
                           snapshot.data.documents[index].data['price'];
                       String id = snapshot.data.documents[index].documentID;
-                      String submit = snapshot.data.documents[index].data['submit'];
+                      String submit =
+                          snapshot.data.documents[index].data['submit'];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                          color: submit=='no'? Colors.red[100]: Colors.green[100],
+                          color: submit == 'no'
+                              ? Colors.red[100]
+                              : Colors.green[100],
                           child: ListTile(
                             title: Text(
-                              order ,
+                              order,
                               textDirection: TextDirection.rtl,
                             ),
                             subtitle: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(submit=='no'?"الطلب جاهز للإرسال":" تم أستقبال الطلب",),
-                                SizedBox(width: 20,),
+                                Text(
+                                  submit == 'no'
+                                      ? "الطلب جاهز للإرسال"
+                                      : " تم أستقبال الطلب",
+                                ),
+                                SizedBox(
+                                  width: 20,
+                                ),
                                 Text(
                                   price,
                                   textDirection: TextDirection.rtl,
@@ -548,7 +558,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(bottom: 50),
                   child: Container(
                     height: 50,
                     margin: EdgeInsets.symmetric(horizontal: 50),
@@ -563,7 +573,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                             .collection('cart')
                             .where('userid', isEqualTo: widget.info.id)
                             .getDocuments();
-                        final List<DocumentSnapshot> documents = result.documents;
+                        final List<DocumentSnapshot> documents =
+                            result.documents;
                         documents.forEach((data) {
                           cartID.add(data.documentID);
                         });

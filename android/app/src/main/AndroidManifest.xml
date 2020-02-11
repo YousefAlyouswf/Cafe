@@ -10,7 +10,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="هوكا"
         android:icon="@mipmap/launcher_icon">
-     
+     <meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-6845451754172569~9603621495"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

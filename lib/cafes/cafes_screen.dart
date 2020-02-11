@@ -2,11 +2,16 @@ import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_id/device_id.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
 import 'Review_seat/reviews.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+
+const String testDevice = '5f5e444ae62ce0ed';
 
 class CafeList extends StatefulWidget {
   final UserInfo info;
@@ -20,6 +25,46 @@ class CafeList extends StatefulWidget {
 }
 
 class _CafeListState extends State<CafeList> {
+  //Admob-----------------------
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: testDevice != null ? <String>[testDevice] : null,
+    nonPersonalizedAds: true,
+    keywords: <String>['Game', 'Mario'],
+  );
+
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+        adUnitId: "ca-app-pub-6845451754172569/5930942121",
+        //Change BannerAd adUnitId with Admob ID
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd $event");
+        });
+  }
+
+
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: "ca-app-pub-6845451754172569/6501787765",
+        //Change Interstitial AdUnitId with Admob ID
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("IntersttialAd $event");
+        });
+  }
+String deviceID;
+
+  void getDeviceID() async {
+    String deviceId = await DeviceId.getID;
+    deviceID = 'Device ID is $deviceId';
+    print('Device ID is $deviceId');
+  }
+  //----------------------------
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
   List<BookingDB> loginList = new List();
@@ -52,12 +97,26 @@ class _CafeListState extends State<CafeList> {
   _CafeListState(this.info, this.bookingDB);
   @override
   void initState() {
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
+    //Change appId With Admob Id
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
     super.initState();
     updateListView();
   }
 
- static Future<void> openMap(String latitude, String longitude) async {
-    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    _interstitialAd.dispose();
+    super.dispose();
+  }
+
+  static Future<void> openMap(String latitude, String longitude) async {
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     if (await canLaunch(googleUrl)) {
       await launch(googleUrl);
     } else {
@@ -67,6 +126,7 @@ class _CafeListState extends State<CafeList> {
 
   @override
   Widget build(BuildContext context) {
+ //   getDeviceID();
     double height = MediaQuery.of(context).size.height;
     try {
       userID = widget.info.id;
@@ -215,6 +275,9 @@ class _CafeListState extends State<CafeList> {
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
                         onTap: () {
+                          createInterstitialAd()
+                            ..load()
+                            ..show();
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) {
@@ -242,9 +305,11 @@ class _CafeListState extends State<CafeList> {
                                   size: 35,
                                 ),
                                 onPressed: () {
-                            String lat = snapshot.data.documents[index].data['lat'];
-                            String long = snapshot.data.documents[index].data['long'];
-                                  openMap(lat,long);
+                                  String lat = snapshot
+                                      .data.documents[index].data['lat'];
+                                  String long = snapshot
+                                      .data.documents[index].data['long'];
+                                  openMap(lat, long);
                                 }),
                           ),
                           footer: Container(
