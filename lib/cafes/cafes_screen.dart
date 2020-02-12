@@ -119,6 +119,7 @@ class _CafeListState extends State<CafeList> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     try {
       userID = widget.info.id;
@@ -244,7 +245,7 @@ class _CafeListState extends State<CafeList> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.only(bottom: 50),
           child: StreamBuilder(
             stream: citySelected != ''
                 ? Firestore.instance
@@ -323,7 +324,8 @@ class _CafeListState extends State<CafeList> {
                                 }),
                           ),
                           footer: Container(
-                            height: 70,
+                            height: height / 12,
+                            
                             child: GridTileBar(
                               backgroundColor: Colors.black87,
                               leading: Row(
@@ -384,7 +386,7 @@ class _CafeListState extends State<CafeList> {
                                         Text(
                                             'التعليقات ${int.parse(reviewsCountF)}'),
                                         SizedBox(
-                                          width: 30,
+                                          width: width/20,
                                         ),
                                         Text(
                                           cafeName,

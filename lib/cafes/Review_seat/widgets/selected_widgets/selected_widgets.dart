@@ -81,7 +81,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     return Visibility(
       visible: widget.selectedScreen,
       child: Container(
-        height: height / 1.5,
+        height: height / 1.6,
         child: StreamBuilder(
           stream: Firestore.instance
               .collection('users')
@@ -116,6 +116,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                       child: Align(
                                         alignment: Alignment.topRight,
                                         child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             RaisedButton(
                                                 color: Color.fromRGBO(
@@ -151,7 +152,72 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                 onPressed: () {
                                                   showModalSheet(context);
                                                 }),
-                                            Spacer(),
+                                             RaisedButton(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        new BorderRadius
+                                                            .circular(5),
+                                                    side: BorderSide(
+                                                        color: Colors.red)),
+                                                color: Colors.blue,
+                                                child: pressed
+                                                    ? Text(
+                                                        "من فضلك أنتظر...",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                        textDirection:
+                                                            TextDirection.rtl,
+                                                      )
+                                                    : Text(
+                                                        "أريد خدمة",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                        textDirection:
+                                                            TextDirection.rtl,
+                                                      ),
+                                                onPressed: () async {
+                                                  needService();
+                                                  countOrderINCart();
+                                                  bool faham = true;
+                                                  final QuerySnapshot result =
+                                                      await Firestore.instance
+                                                          .collection('faham')
+                                                          .getDocuments();
+                                                  final List<DocumentSnapshot>
+                                                      documents =
+                                                      result.documents;
+                                                  documents.forEach((data) {
+                                                    if (data['userid'] ==
+                                                        widget.info.id) {
+                                                      String docID =
+                                                          data.documentID;
+                                                      Firestore.instance
+                                                          .collection('faham')
+                                                          .document(docID)
+                                                          .delete();
+                                                      faham = false;
+                                                    }
+                                                  });
+                                                  if (faham) {
+                                                    var now = DateTime.now()
+                                                        .millisecondsSinceEpoch;
+                                                    SigninFiresotre().faham(
+                                                        reserveCafe,
+                                                        widget.seatnum,
+                                                        now.toString(),
+                                                        widget.info.name,
+                                                        widget.info.id);
+                                                    //------
+
+                                                  }
+                                                },
+                                              ),
                                             RaisedButton(
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -249,72 +315,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                     fontSize: 20,
                                                     fontFamily: 'topaz'),
                                               ),
-                                              RaisedButton(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        new BorderRadius
-                                                            .circular(5),
-                                                    side: BorderSide(
-                                                        color: Colors.red)),
-                                                color: Colors.blue,
-                                                child: pressed
-                                                    ? Text(
-                                                        "من فضلك أنتظر...",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        textDirection:
-                                                            TextDirection.rtl,
-                                                      )
-                                                    : Text(
-                                                        "أريد خدمة",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        textDirection:
-                                                            TextDirection.rtl,
-                                                      ),
-                                                onPressed: () async {
-                                                  needService();
-                                                  countOrderINCart();
-                                                  bool faham = true;
-                                                  final QuerySnapshot result =
-                                                      await Firestore.instance
-                                                          .collection('faham')
-                                                          .getDocuments();
-                                                  final List<DocumentSnapshot>
-                                                      documents =
-                                                      result.documents;
-                                                  documents.forEach((data) {
-                                                    if (data['userid'] ==
-                                                        widget.info.id) {
-                                                      String docID =
-                                                          data.documentID;
-                                                      Firestore.instance
-                                                          .collection('faham')
-                                                          .document(docID)
-                                                          .delete();
-                                                      faham = false;
-                                                    }
-                                                  });
-                                                  if (faham) {
-                                                    var now = DateTime.now()
-                                                        .millisecondsSinceEpoch;
-                                                    SigninFiresotre().faham(
-                                                        reserveCafe,
-                                                        widget.seatnum,
-                                                        now.toString(),
-                                                        widget.info.name,
-                                                        widget.info.id);
-                                                    //------
-
-                                                  }
-                                                },
-                                              ),
+                                             
                                             ],
                                           ),
                                     SizedBox(

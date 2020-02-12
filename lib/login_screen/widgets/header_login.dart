@@ -7,8 +7,10 @@ class HeaderLogin extends StatelessWidget {
   const HeaderLogin({Key key, this.width}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
-      height: 400,
+      height: height / 2.55,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assests/images/background.png'),
@@ -20,7 +22,7 @@ class HeaderLogin extends StatelessWidget {
           Positioned(
             left: 30,
             width: 80,
-            height: 200,
+            height: height/4,
             child: FadeAnimation(
               1,
               Container(
@@ -63,7 +65,6 @@ class HeaderLogin extends StatelessWidget {
               ),
             ),
           ),
-        
         ],
       ),
     );

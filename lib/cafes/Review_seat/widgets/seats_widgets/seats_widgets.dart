@@ -75,7 +75,7 @@ class SeatsWidgets extends StatelessWidget {
                   }),
             )
           : Container(
-              height: 300,
+              height: height/1.57,
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: StreamBuilder(
