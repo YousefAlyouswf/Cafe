@@ -45,8 +45,6 @@ class _CafeListState extends State<CafeList> {
         });
   }
 
-
-
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
         adUnitId: "ca-app-pub-6845451754172569/6501787765",
@@ -58,6 +56,8 @@ class _CafeListState extends State<CafeList> {
   }
 
   //----------------------------
+  List<String> citis = new List();
+  String citySelected = '';
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
   List<BookingDB> loginList = new List();
@@ -182,57 +182,62 @@ class _CafeListState extends State<CafeList> {
                   fit: BoxFit.fitWidth,
                 )),
               ),
-              ListTile(
-                title: Center(
-                    child: Text(
-                  "قائمة المقاهي",
-                  style: TextStyle(fontSize: 24),
-                )),
-                trailing: Icon(Icons.map),
-                subtitle: Container(
-                  height: height / 1.5,
-                  child: StreamBuilder(
-                      stream:
-                          Firestore.instance.collection('cafes').snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Text("Loading...");
-                        } else {
-                          return ListView.builder(
-                            itemCount: snapshot.data.documents.length,
-                            itemBuilder: (context, index) {
-                              String cafeName =
-                                  snapshot.data.documents[index].data['name'];
-                              String cafeID =
-                                  snapshot.data.documents[index].documentID;
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) {
-                                        return Reviews(
-                                          widget.info,
-                                          cafeName,
-                                          cafeID,
-                                          widget.bookingDB,
-                                        );
-                                      },
+              Container(
+                color: Color.fromRGBO(254, 254, 254, 1),
+                child: ListTile(
+                  title: Center(
+                      child: Text(
+                    "أختر المدينه",
+                    style: TextStyle(fontSize: 24),
+                  )),
+                  trailing: Icon(Icons.map),
+                  subtitle: Container(
+                    height: height / 1.5,
+                    child: StreamBuilder(
+                        stream:
+                            Firestore.instance.collection('cafes').snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Text("Loading...");
+                          } else {
+                            citis.add("جميع المقاهي");
+                            for (var i = 0;
+                                i < snapshot.data.documents.length;
+                                i++) {
+                              citis
+                                  .add(snapshot.data.documents[i].data['city']);
+                            }
+                            var cityFilter = citis.toSet().toList();
+                            return ListView.builder(
+                              itemCount: cityFilter.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      citySelected = cityFilter[index];
+                                      if (citySelected == 'جميع المقاهي') {
+                                        citySelected = '';
+                                      }
+                                    });
+                                    Navigator.pop(context);
+                                    //---------------
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: Text(
+                                        cityFilter[index],
+                                        style: TextStyle(fontSize: 18),
+                                      )),
                                     ),
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: Text(
-                                    cafeName,
-                                    style: TextStyle(fontSize: 18),
-                                  )),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      }),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        }),
+                  ),
                 ),
               ),
             ],
@@ -241,10 +246,19 @@ class _CafeListState extends State<CafeList> {
         body: Padding(
           padding: const EdgeInsets.all(15),
           child: StreamBuilder(
-            stream: Firestore.instance.collection('cafes').orderBy('reviewcount', descending: true).snapshots(),
+            stream: citySelected != ''
+                ? Firestore.instance
+                    .collection('cafes')
+                    .orderBy('reviewcount', descending: true)
+                    .where('city', isEqualTo: citySelected)
+                    .snapshots()
+                : Firestore.instance
+                    .collection('cafes')
+                    .orderBy('reviewcount', descending: true)
+                    .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Text("Loading...");
+                return Center(child: Text("من فضلك أختر المدينة"));
               } else {
                 return GridView.builder(
                   padding: const EdgeInsets.all(10),
@@ -255,18 +269,18 @@ class _CafeListState extends State<CafeList> {
                     String cafeName =
                         snapshot.data.documents[index].data['name'].toString();
 
-                         String starsSumF =
+                    String starsSumF =
                         snapshot.data.documents[index].data['stars'].toString();
 
-                         String reviewsCountF =
-                        snapshot.data.documents[index].data['reviewcount'].toString();
+                    String reviewsCountF = snapshot
+                        .data.documents[index].data['reviewcount']
+                        .toString();
                     String cafeID = snapshot.data.documents[index].documentID;
-             
-                    try {
-                      
-                    } catch (e) {}
 
-                    double result = int.parse(starsSumF) / int.parse(reviewsCountF);
+                    try {} catch (e) {}
+
+                    double result =
+                        int.parse(starsSumF) / int.parse(reviewsCountF);
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
@@ -367,7 +381,8 @@ class _CafeListState extends State<CafeList> {
                                     },
                                     child: Row(
                                       children: <Widget>[
-                                        Text('التعليقات ${int.parse(reviewsCountF)}'),
+                                        Text(
+                                            'التعليقات ${int.parse(reviewsCountF)}'),
                                         SizedBox(
                                           width: 30,
                                         ),
