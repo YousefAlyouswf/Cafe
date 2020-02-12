@@ -25,9 +25,7 @@ class _LoginState extends State<Login> {
   //--------------
   String phone, password;
 
-  List<String> cafenameList = new List();
   List<int> cafeReviews = new List();
-  List<int> starsAvrage = new List();
 
   String nameForSignup;
 
@@ -48,7 +46,14 @@ class _LoginState extends State<Login> {
         //should sum all the values
         sum += data['reviews'][i]['stars'];
       }
-      starsAvrage.add(sum);
+      Firestore.instance
+          .collection('cafes')
+          .document(data.documentID)
+          .updateData({
+        'stars': sum.toString(),
+        'reviewcount': data['reviews'].length
+      });
+   
       count++;
     });
   }
@@ -208,8 +213,7 @@ class _LoginState extends State<Login> {
                                               name: data['name'],
                                               phone: data['phone'],
                                               id: data.documentID,
-                                              reviewsCount: cafeReviews,
-                                              starsAvrage: starsAvrage,
+                              
                                             );
                                             dbID = BookingDB(
                                               data.documentID,
@@ -276,8 +280,7 @@ class _LoginState extends State<Login> {
                                   name: data['name'],
                                   phone: data['phone'],
                                   id: data.documentID,
-                                  reviewsCount: cafeReviews,
-                                  starsAvrage: starsAvrage,
+               
                                 );
                                 dbID = BookingDB(
                                   data.documentID,
@@ -468,8 +471,7 @@ class _LoginState extends State<Login> {
                                                   name: data['name'],
                                                   phone: data['phone'],
                                                   id: data.documentID,
-                                                  reviewsCount: cafeReviews,
-                                                  starsAvrage: starsAvrage,
+                         
                                                 );
                                                 dbID = BookingDB(
                                                   data.documentID,
@@ -550,8 +552,7 @@ class _LoginState extends State<Login> {
                                             name: data['name'],
                                             phone: data['phone'],
                                             id: data.documentID,
-                                            reviewsCount: cafeReviews,
-                                            starsAvrage: starsAvrage,
+               
                                           );
                                           dbID = BookingDB(
                                             data.documentID,

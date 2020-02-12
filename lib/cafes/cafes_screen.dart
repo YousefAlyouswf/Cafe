@@ -241,7 +241,7 @@ class _CafeListState extends State<CafeList> {
         body: Padding(
           padding: const EdgeInsets.all(15),
           child: StreamBuilder(
-            stream: Firestore.instance.collection('cafes').snapshots(),
+            stream: Firestore.instance.collection('cafes').orderBy('reviewcount', descending: true).snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Text("Loading...");
@@ -254,15 +254,19 @@ class _CafeListState extends State<CafeList> {
                         snapshot.data.documents[index].data['image'].toString();
                     String cafeName =
                         snapshot.data.documents[index].data['name'].toString();
+
+                         String starsSumF =
+                        snapshot.data.documents[index].data['stars'].toString();
+
+                         String reviewsCountF =
+                        snapshot.data.documents[index].data['reviewcount'].toString();
                     String cafeID = snapshot.data.documents[index].documentID;
-                    int starsSum = 1;
-                    int reviewsCount = 1;
+             
                     try {
-                      starsSum = widget.info.starsAvrage[index];
-                      reviewsCount = widget.info.reviewsCount[index];
+                      
                     } catch (e) {}
 
-                    double result = starsSum / reviewsCount;
+                    double result = int.parse(starsSumF) / int.parse(reviewsCountF);
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: InkWell(
@@ -363,7 +367,7 @@ class _CafeListState extends State<CafeList> {
                                     },
                                     child: Row(
                                       children: <Widget>[
-                                        Text('التعليقات $reviewsCount'),
+                                        Text('التعليقات ${int.parse(reviewsCountF)}'),
                                         SizedBox(
                                           width: 30,
                                         ),

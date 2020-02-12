@@ -446,6 +446,7 @@ class _ReviewsState extends State<Reviews> {
                       .updateData({
                     'reviews': FieldValue.arrayUnion(maplist),
                   });
+                  getAllReviews();
                   Navigator.pop(context);
                 },
                 splashColor: Colors.red,
@@ -497,5 +498,32 @@ class _ReviewsState extends State<Reviews> {
 
   void _delete() async {
     await databaseHelper.deleteNote();
+  }
+
+  List<int> cafeReviews = new List();
+
+  void getAllReviews() async {
+    int count = 0;
+    cafeReviews = [];
+    final QuerySnapshot result =
+        await Firestore.instance.collection('cafes').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      cafeReviews.add(data['reviews'].length);
+      int sum = 0;
+      for (var i = 0; i < cafeReviews[count]; i++) {
+        //should sum all the values
+        sum += data['reviews'][i]['stars'];
+      }
+      Firestore.instance
+          .collection('cafes')
+          .document(data.documentID)
+          .updateData({
+        'stars': sum.toString(),
+        'reviewcount': data['reviews'].length
+      });
+      
+      count++;
+    });
   }
 }

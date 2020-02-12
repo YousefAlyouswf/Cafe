@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getAllReviews() async {
-    int count = 0;
+  int count = 0;
     cafeReviews = [];
     final QuerySnapshot result =
         await Firestore.instance.collection('cafes').getDocuments();
@@ -108,7 +108,14 @@ class _MyAppState extends State<MyApp> {
         //should sum all the values
         sum += data['reviews'][i]['stars'];
       }
-      starsAvrage.add(sum);
+      Firestore.instance
+          .collection('cafes')
+          .document(data.documentID)
+          .updateData({
+        'stars': sum.toString(),
+        'reviewcount': data['reviews'].length
+      });
+  
       count++;
     });
   }
