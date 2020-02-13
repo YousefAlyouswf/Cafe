@@ -429,39 +429,32 @@ class _LoginState extends State<Login> {
                                           ),
                                           textInputAction: TextInputAction.done,
                                           onFieldSubmitted: (value) async {
-                                            pr.show();
-                                            final QuerySnapshot userinfo =
-                                                await Firestore.instance
-                                                    .collection('users')
-                                                    .where("phone",
-                                                        isEqualTo:
-                                                            phoneForSignup)
-                                                    .getDocuments();
-                                            final List<DocumentSnapshot>
-                                                documents = userinfo.documents;
-                                            if (passwordForSignup.length < 7) {
-                                              setState(() {
-                                                errorMsg = 'كلمة المرور قصيرة';
-                                              });
-                                            } else if (phoneForSignup.length <
-                                                11) {
-                                              setState(() {
-                                                errorMsg = 'رقم الجوال خاطئ';
-                                              });
-                                            } else {
-                                              setState(() {
-                                                errorMsg = '';
-                                              });
-                                            }
-                                            if (errorMsg == '') {
-                                              if (documents.length == 0) {
-                                                await SigninFiresotre().addUser(
-                                                    nameForSignup,
-                                                    phoneForSignup,
-                                                    passwordForSignup);
-
-                                                //------------------
-                                                var info, dbID;
+                                            try {
+                                              if (nameForSignup.length < 2) {
+                                                setState(() {
+                                                  errorMsg =
+                                                      'يجب كتابة الأسم بالشكل الصحيح';
+                                                });
+                                              } else if (phoneForSignup.length <
+                                                  10) {
+                                                setState(() {
+                                                  errorMsg =
+                                                      'رقم الجوال يجب ان يكون 10 خانات';
+                                                });
+                                              } else if (passwordForSignup
+                                                      .length <
+                                                  6) {
+                                                setState(() {
+                                                  errorMsg =
+                                                      'كلمة المرور يجب ان تكون 6 او اكثر';
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  errorMsg = '';
+                                                });
+                                              }
+                                              if (errorMsg == '') {
+                                                pr.show();
                                                 final QuerySnapshot userinfo =
                                                     await Firestore.instance
                                                         .collection('users')
@@ -472,32 +465,64 @@ class _LoginState extends State<Login> {
                                                 final List<DocumentSnapshot>
                                                     documents =
                                                     userinfo.documents;
+                                                if (documents.length == 0) {
+                                                  await SigninFiresotre()
+                                                      .addUser(
+                                                          nameForSignup,
+                                                          phoneForSignup,
+                                                          passwordForSignup);
 
-                                                documents.forEach((data) {
-                                                  info = UserInfo(
-                                                    name: data['name'],
-                                                    phone: data['phone'],
-                                                    id: data.documentID,
-                                                  );
-                                                  dbID = BookingDB(
-                                                    data.documentID,
-                                                  );
-                                                });
+                                                  //------------------
+                                                  var info, dbID;
+                                                  final QuerySnapshot userinfo =
+                                                      await Firestore.instance
+                                                          .collection('users')
+                                                          .where("phone",
+                                                              isEqualTo:
+                                                                  phoneForSignup)
+                                                          .getDocuments();
+                                                  final List<DocumentSnapshot>
+                                                      documents =
+                                                      userinfo.documents;
 
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (_) {
-                                                      return CafeList(
-                                                          info, dbID);
-                                                    },
-                                                  ),
-                                                );
+                                                  documents.forEach((data) {
+                                                    info = UserInfo(
+                                                      name: data['name'],
+                                                      phone: data['phone'],
+                                                      id: data.documentID,
+                                                    );
+                                                    dbID = BookingDB(
+                                                      data.documentID,
+                                                    );
+                                                  });
+
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) {
+                                                        return CafeList(
+                                                            info, dbID);
+                                                      },
+                                                    ),
+                                                  );
+                                                } else {
+                                                  Scaffold.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                    backgroundColor: Colors.red,
+                                                    content: Text(
+                                                      'رقم الجوال مسجل',
+                                                      textAlign: TextAlign.end,
+                                                    ),
+                                                    duration:
+                                                        Duration(seconds: 3),
+                                                  ));
+                                                  pr.hide();
+                                                }
                                               } else {
                                                 Scaffold.of(context)
                                                     .showSnackBar(SnackBar(
                                                   backgroundColor: Colors.red,
                                                   content: Text(
-                                                    'رقم الجوال مسجل',
+                                                    errorMsg,
                                                     textAlign: TextAlign.end,
                                                   ),
                                                   duration:
@@ -505,12 +530,12 @@ class _LoginState extends State<Login> {
                                                 ));
                                                 pr.hide();
                                               }
-                                            } else {
+                                            } catch (e) {
                                               Scaffold.of(context)
                                                   .showSnackBar(SnackBar(
                                                 backgroundColor: Colors.red,
                                                 content: Text(
-                                                  errorMsg,
+                                                  "خطأ في أدخال البيانات",
                                                   textAlign: TextAlign.end,
                                                 ),
                                                 duration: Duration(seconds: 3),
@@ -540,38 +565,30 @@ class _LoginState extends State<Login> {
                                 child: Builder(
                                   builder: (context) => InkWell(
                                     onTap: () async {
-                                      pr.show();
-                                      final QuerySnapshot userinfo =
-                                          await Firestore
-                                              .instance
-                                              .collection('users')
-                                              .where("phone",
-                                                  isEqualTo: phoneForSignup)
-                                              .getDocuments();
-                                      final List<DocumentSnapshot> documents =
-                                          userinfo.documents;
-                                      if (passwordForSignup.length < 7) {
-                                        setState(() {
-                                          errorMsg = 'كلمة المرور قصيرة';
-                                        });
-                                      } else if (phoneForSignup.length < 11) {
-                                        setState(() {
-                                          errorMsg = 'رقم الجوال خاطئ';
-                                        });
-                                      } else {
-                                        setState(() {
-                                          errorMsg = '';
-                                        });
-                                      }
-                                      if (errorMsg == '') {
-                                        if (documents.length == 0) {
-                                          await SigninFiresotre().addUser(
-                                              nameForSignup,
-                                              phoneForSignup,
-                                              passwordForSignup);
-
-                                          //------------------
-                                          var info, dbID;
+                                      try {
+                                        if (nameForSignup.length < 2) {
+                                          setState(() {
+                                            errorMsg =
+                                                'يجب كتابة الأسم بالشكل الصحيح';
+                                          });
+                                        } else if (phoneForSignup.length < 10) {
+                                          setState(() {
+                                            errorMsg =
+                                                'رقم الجوال يجب ان يكون 10 خانات';
+                                          });
+                                        } else if (passwordForSignup.length <
+                                            6) {
+                                          setState(() {
+                                            errorMsg =
+                                                'كلمة المرور يجب ان تكون 6 او اكثر';
+                                          });
+                                        } else {
+                                          setState(() {
+                                            errorMsg = '';
+                                          });
+                                        }
+                                        if (errorMsg == '') {
+                                          pr.show();
                                           final QuerySnapshot userinfo =
                                               await Firestore.instance
                                                   .collection('users')
@@ -580,43 +597,72 @@ class _LoginState extends State<Login> {
                                                   .getDocuments();
                                           final List<DocumentSnapshot>
                                               documents = userinfo.documents;
+                                          if (documents.length == 0) {
+                                            await SigninFiresotre().addUser(
+                                                nameForSignup,
+                                                phoneForSignup,
+                                                passwordForSignup);
 
-                                          documents.forEach((data) {
-                                            info = UserInfo(
-                                              name: data['name'],
-                                              phone: data['phone'],
-                                              id: data.documentID,
-                                            );
-                                            dbID = BookingDB(
-                                              data.documentID,
-                                            );
-                                          });
+                                            //------------------
+                                            var info, dbID;
+                                            final QuerySnapshot userinfo =
+                                                await Firestore.instance
+                                                    .collection('users')
+                                                    .where("phone",
+                                                        isEqualTo:
+                                                            phoneForSignup)
+                                                    .getDocuments();
+                                            final List<DocumentSnapshot>
+                                                documents = userinfo.documents;
 
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) {
-                                                return CafeList(info, dbID);
-                                              },
-                                            ),
-                                          );
+                                            documents.forEach((data) {
+                                              info = UserInfo(
+                                                name: data['name'],
+                                                phone: data['phone'],
+                                                id: data.documentID,
+                                              );
+                                              dbID = BookingDB(
+                                                data.documentID,
+                                              );
+                                            });
+
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) {
+                                                  return CafeList(info, dbID);
+                                                },
+                                              ),
+                                            );
+                                          } else {
+                                            Scaffold.of(context)
+                                                .showSnackBar(SnackBar(
+                                              backgroundColor: Colors.red,
+                                              content: Text(
+                                                'رقم الجوال مسجل',
+                                                textAlign: TextAlign.end,
+                                              ),
+                                              duration: Duration(seconds: 3),
+                                            ));
+                                            pr.hide();
+                                          }
                                         } else {
                                           Scaffold.of(context)
                                               .showSnackBar(SnackBar(
                                             backgroundColor: Colors.red,
                                             content: Text(
-                                              'رقم الجوال مسجل',
+                                              errorMsg,
                                               textAlign: TextAlign.end,
                                             ),
                                             duration: Duration(seconds: 3),
                                           ));
                                           pr.hide();
                                         }
-                                      } else {
+                                      } catch (e) {
                                         Scaffold.of(context)
                                             .showSnackBar(SnackBar(
                                           backgroundColor: Colors.red,
                                           content: Text(
-                                            errorMsg,
+                                            "خطأ في أدخال البيانات",
                                             textAlign: TextAlign.end,
                                           ),
                                           duration: Duration(seconds: 3),

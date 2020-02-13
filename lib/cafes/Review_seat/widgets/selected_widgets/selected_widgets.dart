@@ -352,27 +352,30 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                                                           (context, index) {
                                                         return InkWell(
                                                           onTap: () {
-                                                            countOrderINCart();
-                                                            String order = snapshot
-                                                                .data
-                                                                .documents[
-                                                                    index]
-                                                                .data['order'];
-                                                            String price = snapshot
-                                                                .data
-                                                                .documents[
-                                                                    index]
-                                                                .data['price'];
+                                                            // countOrderINCart();
+                                                            // String order = snapshot
+                                                            //     .data
+                                                            //     .documents[
+                                                            //         index]
+                                                            //     .data['order'];
+                                                            // String price = snapshot
+                                                            //     .data
+                                                            //     .documents[
+                                                            //         index]
+                                                            //     .data['price'];
 
-                                                            SigninFiresotre()
-                                                                .addInCart(
-                                                              reserveCafe,
-                                                              widget.seatnum,
-                                                              order,
-                                                              widget.info.name,
-                                                              price,
-                                                              widget.info.id,
-                                                            );
+                                                            // SigninFiresotre()
+                                                            //     .addInCart(
+                                                            //   reserveCafe,
+                                                            //   widget.seatnum,
+                                                            //   order,
+                                                            //   widget.info.name,
+                                                            //   price,
+                                                            //   widget.info.id,
+                                                            // );
+
+
+                                                            
                                                           },
                                                           splashColor:
                                                               Colors.red,

@@ -518,11 +518,9 @@ class _ReviewsState extends State<Reviews> {
       Firestore.instance
           .collection('cafes')
           .document(data.documentID)
-          .updateData({
-        'stars': sum.toString(),
-        'reviewcount': data['reviews'].length
-      });
-      
+          .updateData(
+              {'stars': sum.toString(), 'reviewcount': data['reviews'].length});
+
       count++;
     });
   }
