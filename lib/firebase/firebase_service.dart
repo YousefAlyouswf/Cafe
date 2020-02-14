@@ -49,7 +49,7 @@ class SigninFiresotre {
         'username': username,
         'userphone': userphone,
       });
-  Future calnceBooking(String id, String userid) async =>
+  Future calnceBooking(String id) async =>
       await Firestore.instance.collection('sitting').document(id).updateData({
         'color': 'green',
         'userid': '',
@@ -98,11 +98,23 @@ class SigninFiresotre {
         'username': username,
         'price': price,
         'userid': userid,
-        'submit':'no',
+        'submit': 'no',
       });
-       //Update in Cart
-  Future updateCart(String id) async =>
-      await Firestore.instance.collection('cart').document(id).updateData({
-        'submit':'yes'
-      });
+  //Update in Cart
+  Future insertInCart(List ordername, List orderPrice, String cafeName,
+      String seatnum, String name, String phone) async {
+    List<Map<String, dynamic>> maplist = [
+      {
+        'ordername': ordername,
+        'price': orderPrice,
+      },
+    ];
+    Firestore.instance.collection('cart').document().setData({
+      'name':name,
+      'phone': phone,
+      'cafename': cafeName,
+      'seatnum': seatnum,
+      'orders': FieldValue.arrayUnion(maplist),
+    });
+  }
 }

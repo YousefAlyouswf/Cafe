@@ -2,11 +2,13 @@ class Cart {
   String _userID;
   String _orderName;
   String _price;
+  int _orderID;
   Cart(this._userID, this._orderName, this._price);
 
   String get userID => _userID;
   String get orderName => _orderName;
   String get price => _price;
+  int get orderID => _orderID;
 
   set userID(String userID) {
     this._userID = userID;
@@ -20,6 +22,10 @@ class Cart {
     this._price = price;
   }
 
+  set orderID(int orderID) {
+    this._orderID = orderID;
+  }
+
   // Convert a Note object into a Map object
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -27,6 +33,7 @@ class Cart {
     map['userid'] = _userID;
     map['ordername'] = _orderName;
     map['price'] = _price;
+    map['orderid'] = _orderID;
 
     return map;
   }
@@ -36,5 +43,6 @@ class Cart {
     this._userID = map['userid'];
     this._orderName = map['ordername'];
     this._price = map['price'];
+    this._orderID = map['orderid'];
   }
 }

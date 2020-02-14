@@ -35,7 +35,7 @@ class SeatsWidgets extends StatelessWidget {
       visible: seatScreen,
       child: count > 0 || reservation != ''
           ? Container(
-              height: height / 1.5,
+              height: height / 1.56999,
               child: StreamBuilder(
                   stream: Firestore.instance
                       .collection('users')

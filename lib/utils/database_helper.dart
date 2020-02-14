@@ -1,3 +1,4 @@
+import 'package:cafe/models/cart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -42,6 +43,8 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute('CREATE TABLE $noteTable($colUserID TEXT )');
     await db.execute('CREATE TABLE login($colUserID TEXT )');
+    await db.execute(
+        'CREATE TABLE cart($colUserID TEXT, ordername TEXT, price TEXT, orderid INTEGER PRIMARY KEY AUTOINCREMENT)');
   }
 
   // Fetch Operation: Get all note objects from database
@@ -135,6 +138,55 @@ class DatabaseHelper {
     // For loop to create a 'Note List' from a 'Map List'
     for (int i = 0; i < count; i++) {
       noteList.add(BookingDB.fromMapObject(noteMapList[i]));
+    }
+
+    return noteList;
+  }
+
+  //User Cart -------------------------------------------------
+
+  // Fetch Operation: Get all note objects from database
+  Future<List<Map<String, dynamic>>> getCartMapList() async {
+    Database db = await this.database;
+
+//		var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
+    var result = await db.query("cart");
+    return result;
+  }
+
+  // Insert Operation: Insert a Note object to database
+  Future<int> insertCart(Cart note) async {
+    Database db = await this.database;
+    var result = await db.insert("cart", note.toMap());
+    return result;
+  }
+
+  // Delete Operation: Delete a Note object from database
+  Future<int> deleteCart(int orderid) async {
+    var db = await this.database;
+    int result = await db.rawDelete('DELETE FROM cart WHERE orderid = $orderid');
+    return result;
+  }
+
+  // Get number of Note objects in database
+  Future<int> getCartCount() async {
+    Database db = await this.database;
+    List<Map<String, dynamic>> x =
+        await db.rawQuery('SELECT COUNT (*) from cart');
+    int result = Sqflite.firstIntValue(x);
+    return result;
+  }
+
+  // Get the 'Map List' [ List<Map> ] and convert it to 'Note List' [ List<Note> ]
+  Future<List<Cart>> getCartList() async {
+    var noteMapList = await getCartMapList(); // Get 'Map List' from database
+    int count =
+        noteMapList.length; // Count the number of map entries in db table
+
+    List<Cart> noteList = List<Cart>();
+    // For loop to create a 'Note List' from a 'Map List'
+    for (int i = 0; i < count; i++) {
+      noteList.add(Cart.fromMapObject(noteMapList[i]));
     }
 
     return noteList;
