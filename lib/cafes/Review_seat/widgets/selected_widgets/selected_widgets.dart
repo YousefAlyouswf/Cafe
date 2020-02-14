@@ -15,7 +15,7 @@ class SelectedWidgets extends StatefulWidget {
   final Function _onItemTapped;
   String seatnum;
   final String cafeName;
-
+  final String reservation;
   SelectedWidgets(
     this.selectedScreen,
     this.info,
@@ -24,6 +24,7 @@ class SelectedWidgets extends StatefulWidget {
     this._onItemTapped,
     this.seatnum,
     this.cafeName,
+    this.reservation,
   );
 
   @override
@@ -89,10 +90,12 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.topRight,
-                child: Row(
+                child: widget.reservation == ''
+                        ? Text("")
+                        :  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    RaisedButton(
+                  RaisedButton(
                         color: Color.fromRGBO(0, 141, 114, 1),
                         shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(10.0),
@@ -125,7 +128,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                         onPressed: () {
                           showModalSheet(context);
                         }),
-                    RaisedButton(
+                   RaisedButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(5),
                           side: BorderSide(color: Colors.red)),
@@ -173,73 +176,71 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                         }
                       },
                     ),
-                    RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(50.0),
-                        side: BorderSide(color: Colors.red),
-                      ),
-                      color: Colors.black54,
-                      child: Text(
-                        "إلغاء الحجز",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () async {
-                        //Delete from SQLITE
-                        widget._delete();
+                   RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(50.0),
+                              side: BorderSide(color: Colors.red),
+                            ),
+                            color: Colors.black54,
+                            child: Text(
+                              "إلغاء الحجز",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () async {
+                              //Delete from SQLITE
+                              widget._delete();
 
-                        //Delete faham from firebase
-                        final QuerySnapshot result = await Firestore.instance
-                            .collection('faham')
-                            .getDocuments();
-                        final List<DocumentSnapshot> documents =
-                            result.documents;
-                        documents.forEach((data) {
-                          if (data['userid'] == widget.info.id) {
-                            String docID = data.documentID;
-                            Firestore.instance
-                                .collection('faham')
-                                .document(docID)
-                                .delete();
-                          }
-                        });
-                        //------------
-                        //Delete cart from firebase
-                        final QuerySnapshot cartResult = await Firestore
-                            .instance
-                            .collection('cart')
-                            .getDocuments();
-                        final List<DocumentSnapshot> documentsCart =
-                            cartResult.documents;
-                        documentsCart.forEach((data) {
-                          if (data['userid'] == widget.info.id) {
-                            String docID = data.documentID;
-                            Firestore.instance
-                                .collection('cart')
-                                .document(docID)
-                                .delete();
-                          }
-                        });
-                        //----------
-                        needService();
-                        final QuerySnapshot seat = await Firestore.instance
-                            .collection('sitting')
-                            .getDocuments();
-                        final List<DocumentSnapshot> seatDoc = seat.documents;
-                        seatDoc.forEach((data) {
-                          if (data['userid'] == widget.info.id) {
-                            String docID = data.documentID;
+                              //Delete faham from firebase
+                              final QuerySnapshot result = await Firestore
+                                  .instance
+                                  .collection('faham')
+                                  .getDocuments();
+                              final List<DocumentSnapshot> documents =
+                                  result.documents;
+                              documents.forEach((data) {
+                                if (data['userid'] == widget.info.id) {
+                                  String docID = data.documentID;
+                                  Firestore.instance
+                                      .collection('faham')
+                                      .document(docID)
+                                      .delete();
+                                }
+                              });
+                              //------------
+                              //Delete cart from firebase
+                              final QuerySnapshot cartResult = await Firestore
+                                  .instance
+                                  .collection('cart')
+                                  .getDocuments();
+                              final List<DocumentSnapshot> documentsCart =
+                                  cartResult.documents;
+                              documentsCart.forEach((data) {
+                                if (data['userid'] == widget.info.id) {
+                                  String docID = data.documentID;
+                                  Firestore.instance
+                                      .collection('cart')
+                                      .document(docID)
+                                      .delete();
+                                }
+                              });
+                              //----------
+                              needService();
 
-                            SigninFiresotre().calnceBooking(docID);
-                            widget.hasBookinginSelected = false;
-                          }
-                        });
+                              SigninFiresotre().calnceBooking(
+                                  widget.cafeName,
+                                  widget.info.id,
+                                  widget.info.name,
+                                  widget.info.phone,
+                                  widget.seatnum);
+                              widget.hasBookinginSelected = false;
 
-                        SigninFiresotre()
-                            .cancleupdateUser(widget.info.id, widget.seatnum);
-                        widget._onItemTapped(1);
-                      },
-                    ),
+                              SigninFiresotre().cancleupdateUser(
+                                  widget.info.id, widget.seatnum);
+                              widget._onItemTapped(1);
+                            },
+                          ),
                   ],
                 ),
               ),

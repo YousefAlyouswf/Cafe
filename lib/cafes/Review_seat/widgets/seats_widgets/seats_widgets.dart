@@ -1,4 +1,3 @@
-import 'package:cafe/animation/fadeAnimation.dart';
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +14,9 @@ class SeatsWidgets extends StatelessWidget {
   final Function _onItemTapped;
   final Function getUserResrevation;
   final String reservation;
+  List<String> colorSeat = new List();
+  List<String> numSeat = new List();
+  List<String> idSeat = new List();
   SeatsWidgets(
     this.seatScreen,
     this.info,
@@ -75,25 +77,33 @@ class SeatsWidgets extends StatelessWidget {
                   }),
             )
           : Container(
-              height: height/1.57,
+              height: height / 1.57,
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: StreamBuilder(
                   stream: Firestore.instance
-                      .collection('sitting')
-                      .where('cafe', isEqualTo: cafeName)
+                      .collection('seats')
+                      .document(cafeName)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Text("");
                     } else {
+                      int lengthCheck = snapshot.data['allseats'].length;
+
+                      for (var i = 0; i < lengthCheck; i++) {
+                        colorSeat.add(
+                            snapshot.data['allseats'][i]['color'].toString());
+                        numSeat.add(
+                            snapshot.data['allseats'][i]['seat'].toString());
+                        idSeat.add(i.toString());
+                      }
                       return GridView.builder(
-                        itemCount: snapshot.data.documents.length,
+                        itemCount: lengthCheck,
                         itemBuilder: (context, index) {
                           Color color;
                           bool isbooked = false;
-                          if (snapshot.data.documents[index].data['color'] ==
-                              'green') {
+                          if (colorSeat[index] == 'green') {
                             color = Colors.green;
                             isbooked = false;
                           } else {
@@ -109,55 +119,54 @@ class SeatsWidgets extends StatelessWidget {
                                     _save();
                                     updateListView();
                                     SigninFiresotre().updateBooking(
-                                        snapshot
-                                            .data.documents[index].documentID
-                                            .toString(),
-                                        info.id,
-                                        info.name,
-                                        info.phone);
+                                      cafeName,
+                                      info.id,
+                                      info.name,
+                                      info.phone,
+                                      numSeat[index],
+                                    );
                                     SigninFiresotre().updateUser(
                                       info.id,
-                                      snapshot.data.documents[index].data['sit']
-                                          .toString(),
+                                      numSeat[index],
                                       cafeName,
-                                      snapshot.data.documents[index].documentID
-                                          .toString(),
+                                      idSeat[index],
                                     );
 
                                     _onItemTapped(2);
                                   },
                             splashColor: Colors.purple,
                             borderRadius: BorderRadius.circular(15),
-                            child: FadeAnimation(
-                              1,
-                              Container(
-                                padding: const EdgeInsets.all(15),
-                                child: Center(
-                                  child: Text(
-                                    snapshot.data.documents[index].data['sit']
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              child: Center(
+                                child: Text(
+                                  numSeat[index].toString(),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [color.withOpacity(0.1), color],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(15)),
                               ),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [color.withOpacity(0.1), color],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15)),
                             ),
                           );
                         },
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 100,
-                          childAspectRatio: 3 / 2,
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20,
-                        ),
+                     gridDelegate:
+                                                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  crossAxisCount:
+                                                                     4,
+                                                                  childAspectRatio:
+                                                                      3 / 2,
+                                                                  crossAxisSpacing:
+                                                                      10,
+                                                                  mainAxisSpacing:
+                                                                      10,
+                                                                ),
                       );
                     }
                   },

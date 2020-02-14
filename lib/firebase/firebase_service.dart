@@ -41,23 +41,57 @@ class SigninFiresotre {
   }
 
 //Update seat stauts
-  Future updateBooking(
-          String id, String userid, String username, String userphone) async =>
-      await Firestore.instance.collection('sitting').document(id).updateData({
-        'color': 'grey',
-        'userid': userid,
-        'username': username,
-        'userphone': userphone,
-      });
-  Future calnceBooking(String id) async =>
-      await Firestore.instance.collection('sitting').document(id).updateData({
-        'color': 'green',
-        'userid': '',
-        'username': '',
-        'userphone': '',
-      });
-  // Future deleteUser(String id) async =>
-  //     await collectionReferenceUsers.document(id).delete();
+  Future updateBooking(String id, String userid, String username,
+      String userphone, String seatNum) async {
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayRemove([
+        {
+          'seat': seatNum,
+          'color': 'green',
+          'userid': '',
+          'username': '',
+          'userphone': '',
+        }
+      ]),
+    });
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayUnion([
+        {
+          'seat': seatNum,
+          'color': 'grey',
+          'userid': userid,
+          'username': username,
+          'userphone': userphone,
+        }
+      ]),
+    });
+  }
+
+  Future calnceBooking(String id, String userid, String username,
+      String userphone, String seatNum) async {
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayRemove([
+        {
+          'seat': seatNum,
+          'color': 'grey',
+          'userid': userid,
+          'username': username,
+          'userphone': userphone,
+        }
+      ]),
+    });
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayUnion([
+        {
+          'seat': seatNum,
+          'color': 'green',
+          'userid': '',
+          'username': '',
+          'userphone': '',
+        }
+      ]),
+    });
+  }
 
   //Add seat to a user
   Future updateUser(
@@ -110,7 +144,7 @@ class SigninFiresotre {
       },
     ];
     Firestore.instance.collection('cart').document().setData({
-      'name':name,
+      'name': name,
       'phone': phone,
       'cafename': cafeName,
       'seatnum': seatnum,

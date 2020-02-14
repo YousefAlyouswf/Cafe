@@ -175,7 +175,7 @@ class _ReviewsState extends State<Reviews> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(161, 141, 114, 1),
         title: Center(
-          child:  Text(
+          child: Text(
             cafeName,
             style: TextStyle(
                 fontFamily: 'arbaeen',
@@ -233,7 +233,7 @@ class _ReviewsState extends State<Reviews> {
           SeatsWidgets(seatScreen, info, count, updateListView, _save,
               _onItemTapped, cafeName, getUserResrevation, reservation),
           SelectedWidgets(selectedScreen, info, hasBookinginSelected, _delete,
-              _onItemTapped, seatnum, cafeName),
+              _onItemTapped, seatnum, cafeName, reservation),
         ],
       ),
     );
