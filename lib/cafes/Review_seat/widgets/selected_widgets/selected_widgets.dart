@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 import '../../../../utils/database_helper.dart';
+import 'header_buttons.dart';
+import 'order_body.dart';
 
 class SelectedWidgets extends StatefulWidget {
   final bool selectedScreen;
@@ -148,361 +150,47 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     double height = MediaQuery.of(context).size.height;
     return Visibility(
       visible: widget.selectedScreen,
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: widget.reservation == ''
-                    ? Text("")
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          RaisedButton(
-                              color: Color.fromRGBO(0, 141, 114, 1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(10.0),
-                                side: BorderSide(color: Colors.red, width: 2),
-                              ),
-                              child: Column(
-                                children: <Widget>[
-                                 
-                                  Text(
-                                    "أضغط لأتمام الطلب",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.end,
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                                  Text(
-                                    "السعر: $cartPrice ريال",
-                                    style: TextStyle(color: Colors.white),
-                                    textAlign: TextAlign.end,
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                                ],
-                              ),
-                              onPressed: () {
-                                showModalSheet(context);
-                              }),
-                          RaisedButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(5),
-                                side: BorderSide(color: Colors.red)),
-                            color: Colors.blue,
-                            child: pressed
-                                ? Text(
-                                    "من فضلك أنتظر...",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                    textDirection: TextDirection.rtl,
-                                  )
-                                : Text(
-                                    "أريد خدمة",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                            onPressed: () async {
-                              needService();
-                              countOrderINCart();
-                              bool faham = true;
-                              final QuerySnapshot result = await Firestore
-                                  .instance
-                                  .collection('faham')
-                                  .getDocuments();
-                              final List<DocumentSnapshot> documents =
-                                  result.documents;
-                              documents.forEach((data) {
-                                if (data['userid'] == widget.info.id) {
-                                  String docID = data.documentID;
-                                  Firestore.instance
-                                      .collection('faham')
-                                      .document(docID)
-                                      .delete();
-                                  faham = false;
-                                }
-                              });
-                              if (faham) {
-                                var now = DateTime.now().millisecondsSinceEpoch;
-                                SigninFiresotre().faham(
-                                    reserveCafe,
-                                    widget.seatnum,
-                                    now.toString(),
-                                    widget.info.name,
-                                    widget.info.id);
-                                //------
-
-                              }
-                            },
-                          ),
-                          RaisedButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(50.0),
-                              side: BorderSide(color: Colors.red),
-                            ),
-                            color: Colors.black54,
-                            child: Text(
-                              "إلغاء الحجز",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: () async {
-                              //Delete from SQLITE
-                              widget._delete();
-
-                              //Delete faham from firebase
-                              final QuerySnapshot result = await Firestore
-                                  .instance
-                                  .collection('faham')
-                                  .getDocuments();
-                              final List<DocumentSnapshot> documents =
-                                  result.documents;
-                              documents.forEach((data) {
-                                if (data['userid'] == widget.info.id) {
-                                  String docID = data.documentID;
-                                  Firestore.instance
-                                      .collection('faham')
-                                      .document(docID)
-                                      .delete();
-                                }
-                              });
-                              //------------
-                              //Delete cart from firebase
-                              final QuerySnapshot cartResult = await Firestore
-                                  .instance
-                                  .collection('cart')
-                                  .getDocuments();
-                              final List<DocumentSnapshot> documentsCart =
-                                  cartResult.documents;
-                              documentsCart.forEach((data) {
-                                if (data['userid'] == widget.info.id) {
-                                  String docID = data.documentID;
-                                  Firestore.instance
-                                      .collection('cart')
-                                      .document(docID)
-                                      .delete();
-                                }
-                              });
-                              //----------
-                              needService();
-
-                              SigninFiresotre().calnceBooking(
-                                  widget.cafeName,
-                                  widget.info.id,
-                                  widget.info.name,
-                                  widget.info.phone,
-                                  widget.seatnum);
-                              widget.hasBookinginSelected = false;
-
-                              SigninFiresotre().cancleupdateUser(
-                                  widget.info.id, widget.seatnum);
-                              widget._onItemTapped(1);
-                            },
-                          ),
-                        ],
-                      ),
-              ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            child: Column(
+              children: <Widget>[
+                HeaderButtons(
+                  widget.seatnum,
+                  cartPrice,
+                  widget.reservation,
+                  showModalSheet,
+                  needService,
+                  countOrderINCart,
+                  widget._delete,
+                  widget._onItemTapped,
+                  pressed,
+                  reserveCafe,
+                  widget.cafeName,
+                  widget.hasBookinginSelected,
+                  widget.info.id,
+                  widget.info.name,
+                  widget.info.phone,
+                ),
+                OrderBody(
+                    height,
+                    widget.info.phone,
+                    checkSeat,
+                    widget._delete,
+                    _saveCart,
+                    updateListView,
+                    widget.hasBookinginSelected,
+                    widget.seatnum,
+                    reserveCafe,
+                    seatID,
+                    orderName,
+                    price,
+                    orderID,
+                    widget.cafeName),
+              ],
             ),
-            Container(
-              height: height / 2.035,
-              child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection('users')
-                    .where('phone', isEqualTo: widget.info.phone)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return Text("Loading..");
-                  checkSeat();
-                  return ListView.builder(
-                    itemCount: snapshot.data.documents.length,
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot myBooking =
-                          snapshot.data.documents[index];
-                      if (myBooking['cafename'] != '') {
-                        widget.hasBookinginSelected = true;
-                      } else {
-                        widget.hasBookinginSelected = false;
-                        widget._delete();
-                      }
-                      widget.seatnum = myBooking['booked'];
-                      reserveCafe = myBooking['cafename'];
-
-                      seatID = myBooking.documentID;
-
-                      return Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            widget.hasBookinginSelected
-                                ? Container(
-                                    child: Column(
-                                      children: <Widget>[
-                                        reserveCafe != widget.cafeName
-                                            ? Text(
-                                                " لديك حجز في مقهى " +
-                                                    reserveCafe +
-                                                    " جلسة رقم: " +
-                                                    widget.seatnum,
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontFamily: 'topaz'),
-                                              )
-                                            :
-                                            // : Column(
-                                            //     children: <Widget>[
-                                            //       Text(
-                                            //         " جلسة رقم: " +
-                                            //             widget.seatnum,
-                                            //         style: TextStyle(
-                                            //             fontSize: 20,
-                                            //             fontFamily: 'topaz'),
-                                            //       ),
-                                            //     ],
-                                            //   ),
-
-                                            Container(
-                                                height: height / 2.035,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      15.0),
-                                                  child: reserveCafe !=
-                                                          widget.cafeName
-                                                      ? Text(
-                                                          "لا يمكن عرض طلبات مقهى $reserveCafe في صفحة مقهى ${widget.cafeName}")
-                                                      : StreamBuilder(
-                                                          stream: Firestore
-                                                              .instance
-                                                              .collection(
-                                                                  'order')
-                                                              .where('cafename',
-                                                                  isEqualTo: widget
-                                                                      .cafeName)
-                                                              .snapshots(),
-                                                          builder: (context,
-                                                              snapshot) {
-                                                            if (!snapshot
-                                                                .hasData) {
-                                                              return Text("");
-                                                            } else {
-                                                              return GridView
-                                                                  .builder(
-                                                                itemCount:
-                                                                    snapshot
-                                                                        .data
-                                                                        .documents
-                                                                        .length,
-                                                                itemBuilder:
-                                                                    (context,
-                                                                        index) {
-                                                                  return InkWell(
-                                                                    onTap: () {
-                                                                      orderName = snapshot
-                                                                          .data
-                                                                          .documents[
-                                                                              index]
-                                                                          .data['order'];
-                                                                      price = snapshot
-                                                                          .data
-                                                                          .documents[
-                                                                              index]
-                                                                          .data['price'];
-                                                                      orderID = snapshot
-                                                                          .data
-                                                                          .documents[
-                                                                              index]
-                                                                          .documentID;
-
-                                                                      _saveCart();
-                                                                      updateListView();
-                                                                    },
-                                                                    splashColor:
-                                                                        Colors
-                                                                            .red,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(5),
-                                                                    child: Card(
-                                                                      child:
-                                                                          Column(
-                                                                        children: <
-                                                                            Widget>[
-                                                                          Flexible(
-                                                                            child:
-                                                                                Text(
-                                                                              snapshot.data.documents[index].data['order'],
-                                                                              textAlign: TextAlign.center,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            height:
-                                                                                15,
-                                                                          ),
-                                                                          Text(
-                                                                            "السعر: " +
-                                                                                snapshot.data.documents[index].data['price'] +
-                                                                                " ريال",
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                gridDelegate:
-                                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  crossAxisCount:
-                                                                      3,
-                                                                  childAspectRatio:
-                                                                      3 / 2,
-                                                                  crossAxisSpacing:
-                                                                      10,
-                                                                  mainAxisSpacing:
-                                                                      10,
-                                                                ),
-                                                              );
-                                                            }
-                                                          }),
-                                                ),
-                                              ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    height: height / 2,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          "عفوا, لا يوجد لديك حجز",
-                                          style: TextStyle(
-                                              fontFamily: 'topaz',
-                                              fontSize: 20),
-                                        ),
-                                        SizedBox(
-                                          height: 70,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
