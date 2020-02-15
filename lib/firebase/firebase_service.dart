@@ -92,6 +92,33 @@ class SigninFiresotre {
       ]),
     });
   }
+  //Cancel Duplicate reservation
+  Future calncedupleBooking(String id, String userid, String username,
+      String userphone, String seatNum) async {
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayRemove([
+        {
+          'seat': seatNum,
+          'color': 'grey',
+          'userid': userid,
+          'username': username,
+          'userphone': userphone,
+        }
+      ]),
+    });
+    Firestore.instance.collection('seats').document(id).updateData({
+      'allseats': FieldValue.arrayUnion([
+        {
+          'seat': seatNum,
+          'color': 'green',
+          'userid': '',
+          'username': '',
+          'userphone': '',
+        }
+      ]),
+    });
+   
+  }
 
   //Add seat to a user
   Future updateUser(

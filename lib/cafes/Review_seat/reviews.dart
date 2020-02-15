@@ -80,6 +80,7 @@ class _ReviewsState extends State<Reviews> {
   IconData star = Icons.star;
   Color starColor = Colors.yellow;
   Color staremptyColor = Colors.black;
+  String seatSelect;
   // Switch between 3 screens
   int control = 0;
   bool reviewScreen = true;
@@ -230,10 +231,27 @@ class _ReviewsState extends State<Reviews> {
             date,
             height,
           ),
-          SeatsWidgets(seatScreen, info, count, updateListView, _save,
-              _onItemTapped, cafeName, getUserResrevation, reservation),
-          SelectedWidgets(selectedScreen, info, hasBookinginSelected, _delete,
-              _onItemTapped, seatnum, cafeName, reservation),
+          SeatsWidgets(
+              seatScreen,
+              info,
+              count,
+              updateListView,
+              _save,
+              _onItemTapped,
+              cafeName,
+              getUserResrevation,
+              reservation,
+              seatSelect),
+          SelectedWidgets(
+            selectedScreen,
+            info,
+            hasBookinginSelected,
+            _delete,
+            _onItemTapped,
+            seatnum,
+            cafeName,
+            reservation,
+          ),
         ],
       ),
     );

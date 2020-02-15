@@ -72,6 +72,71 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     }
   }
 
+  void cancleSeat() async {
+    //Delete from SQLITE
+    widget._delete();
+
+    //Delete faham from firebase
+    final QuerySnapshot result =
+        await Firestore.instance.collection('faham').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      if (data['userid'] == widget.info.id) {
+        String docID = data.documentID;
+        Firestore.instance.collection('faham').document(docID).delete();
+      }
+    });
+    //------------
+    //Delete cart from firebase
+    final QuerySnapshot cartResult =
+        await Firestore.instance.collection('cart').getDocuments();
+    final List<DocumentSnapshot> documentsCart = cartResult.documents;
+    documentsCart.forEach((data) {
+      if (data['userid'] == widget.info.id) {
+        String docID = data.documentID;
+        Firestore.instance.collection('cart').document(docID).delete();
+      }
+    });
+    //----------
+    needService();
+
+    SigninFiresotre().calnceBooking(widget.cafeName, widget.info.id,
+        widget.info.name, widget.info.phone, widget.seatnum);
+    widget.hasBookinginSelected = false;
+
+    SigninFiresotre().cancleupdateUser(widget.info.id, widget.seatnum);
+
+    Firestore.instance
+        .collection('seats')
+        .document(widget.cafeName)
+        .updateData({
+      'allseats': FieldValue.arrayRemove([
+        {
+          'seat': null,
+          'color': 'green',
+          'userid': '',
+          'username': '',
+          'userphone': '',
+        }
+      ]),
+    });
+    widget._onItemTapped(1);
+  }
+
+  void checkSeat() async {
+    var document = Firestore.instance.document('seats/${widget.cafeName}');
+    document.get().then((data) {
+      for (var i = 0; i < data['allseats'].length; i++) {
+        if (data['allseats'][i]['seat'] == widget.seatnum) {
+          if (data['allseats'][i]['userid'] != widget.info.id) {
+            cancleSeat();
+            break;
+          }
+        }
+      }
+    });
+  }
+
   String orderName;
   String price;
   String orderID;
@@ -91,92 +156,92 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
               child: Align(
                 alignment: Alignment.topRight,
                 child: widget.reservation == ''
-                        ? Text("")
-                        :  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                  RaisedButton(
-                        color: Color.fromRGBO(0, 141, 114, 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(10.0),
-                          side: BorderSide(color: Colors.red, width: 2),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              "الطلبات: $orderCount",
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.end,
-                              textDirection: TextDirection.rtl,
-                            ),
-                            Text(
-                              "أضغط لأتمام الطلب",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.end,
-                              textDirection: TextDirection.rtl,
-                            ),
-                            Text(
-                              "السعر: $cartPrice ريال",
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.end,
-                              textDirection: TextDirection.rtl,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          showModalSheet(context);
-                        }),
-                   RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5),
-                          side: BorderSide(color: Colors.red)),
-                      color: Colors.blue,
-                      child: pressed
-                          ? Text(
-                              "من فضلك أنتظر...",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                              textDirection: TextDirection.rtl,
-                            )
-                          : Text(
-                              "أريد خدمة",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                              textDirection: TextDirection.rtl,
-                            ),
-                      onPressed: () async {
-                        needService();
-                        countOrderINCart();
-                        bool faham = true;
-                        final QuerySnapshot result = await Firestore.instance
-                            .collection('faham')
-                            .getDocuments();
-                        final List<DocumentSnapshot> documents =
-                            result.documents;
-                        documents.forEach((data) {
-                          if (data['userid'] == widget.info.id) {
-                            String docID = data.documentID;
-                            Firestore.instance
-                                .collection('faham')
-                                .document(docID)
-                                .delete();
-                            faham = false;
-                          }
-                        });
-                        if (faham) {
-                          var now = DateTime.now().millisecondsSinceEpoch;
-                          SigninFiresotre().faham(reserveCafe, widget.seatnum,
-                              now.toString(), widget.info.name, widget.info.id);
-                          //------
+                    ? Text("")
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          RaisedButton(
+                              color: Color.fromRGBO(0, 141, 114, 1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(10.0),
+                                side: BorderSide(color: Colors.red, width: 2),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                 
+                                  Text(
+                                    "أضغط لأتمام الطلب",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.end,
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  Text(
+                                    "السعر: $cartPrice ريال",
+                                    style: TextStyle(color: Colors.white),
+                                    textAlign: TextAlign.end,
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                ],
+                              ),
+                              onPressed: () {
+                                showModalSheet(context);
+                              }),
+                          RaisedButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(5),
+                                side: BorderSide(color: Colors.red)),
+                            color: Colors.blue,
+                            child: pressed
+                                ? Text(
+                                    "من فضلك أنتظر...",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    textDirection: TextDirection.rtl,
+                                  )
+                                : Text(
+                                    "أريد خدمة",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                            onPressed: () async {
+                              needService();
+                              countOrderINCart();
+                              bool faham = true;
+                              final QuerySnapshot result = await Firestore
+                                  .instance
+                                  .collection('faham')
+                                  .getDocuments();
+                              final List<DocumentSnapshot> documents =
+                                  result.documents;
+                              documents.forEach((data) {
+                                if (data['userid'] == widget.info.id) {
+                                  String docID = data.documentID;
+                                  Firestore.instance
+                                      .collection('faham')
+                                      .document(docID)
+                                      .delete();
+                                  faham = false;
+                                }
+                              });
+                              if (faham) {
+                                var now = DateTime.now().millisecondsSinceEpoch;
+                                SigninFiresotre().faham(
+                                    reserveCafe,
+                                    widget.seatnum,
+                                    now.toString(),
+                                    widget.info.name,
+                                    widget.info.id);
+                                //------
 
-                        }
-                      },
-                    ),
-                   RaisedButton(
+                              }
+                            },
+                          ),
+                          RaisedButton(
                             shape: RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(50.0),
                               side: BorderSide(color: Colors.red),
@@ -241,8 +306,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                               widget._onItemTapped(1);
                             },
                           ),
-                  ],
-                ),
+                        ],
+                      ),
               ),
             ),
             Container(
@@ -254,6 +319,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Text("Loading..");
+                  checkSeat();
                   return ListView.builder(
                     itemCount: snapshot.data.documents.length,
                     itemBuilder: (context, index) {

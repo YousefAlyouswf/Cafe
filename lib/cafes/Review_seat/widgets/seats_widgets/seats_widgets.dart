@@ -14,6 +14,7 @@ class SeatsWidgets extends StatelessWidget {
   final Function _onItemTapped;
   final Function getUserResrevation;
   final String reservation;
+  String seatSelect;
   List<String> colorSeat = new List();
   List<String> numSeat = new List();
   List<String> idSeat = new List();
@@ -27,6 +28,7 @@ class SeatsWidgets extends StatelessWidget {
     this.cafeName,
     this.getUserResrevation,
     this.reservation,
+    this.seatSelect,
   );
 
   @override
@@ -51,6 +53,7 @@ class SeatsWidgets extends StatelessWidget {
                         itemBuilder: (context, index) {
                           DocumentSnapshot myBooking =
                               snapshot.data.documents[index];
+                          seatSelect = myBooking['booked'];
                           return Container(
                             height: height / 2,
                             child: Center(
@@ -64,7 +67,7 @@ class SeatsWidgets extends StatelessWidget {
                                         fontSize: 25, fontFamily: 'topaz'),
                                   ),
                                   Text(
-                                    "جلسة رقم ${myBooking['booked']}",
+                                    "جلسة رقم $seatSelect",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 25, fontFamily: 'topaz'),
@@ -156,17 +159,12 @@ class SeatsWidgets extends StatelessWidget {
                             ),
                           );
                         },
-                     gridDelegate:
-                                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  crossAxisCount:
-                                                                     4,
-                                                                  childAspectRatio:
-                                                                      3 / 2,
-                                                                  crossAxisSpacing:
-                                                                      10,
-                                                                  mainAxisSpacing:
-                                                                      10,
-                                                                ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 3 / 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
                       );
                     }
                   },
