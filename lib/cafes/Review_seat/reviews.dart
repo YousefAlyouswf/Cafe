@@ -26,7 +26,7 @@ class Reviews extends StatefulWidget {
   }
 }
 
-class _ReviewsState extends State<Reviews> {
+class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   //Admob-----------------------
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
@@ -118,10 +118,10 @@ class _ReviewsState extends State<Reviews> {
       } else if (index == 2) {
         control = 2;
       }
-      showToast();
     });
   }
 
+  TabController _controller;
   @override
   void initState() {
     FirebaseAdMob.instance
@@ -138,6 +138,7 @@ class _ReviewsState extends State<Reviews> {
       noteList = List<BookingDB>();
     }
     //Database blocks
+    _controller = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -147,114 +148,77 @@ class _ReviewsState extends State<Reviews> {
     super.dispose();
   }
 
-  void showToast() {
-    setState(() {
-      if (control == 0) {
-        reviewScreen = true;
-        seatScreen = false;
-        selectedScreen = false;
-      } else if (control == 1) {
-        reviewScreen = false;
-        seatScreen = true;
-
-        selectedScreen = false;
-      } else if (control == 2) {
-        reviewScreen = false;
-        seatScreen = false;
-        selectedScreen = true;
-        createInterstitialAd()
-          ..load()
-          ..show();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(161, 141, 114, 1),
-        title: Center(
-          child: Text(
-            cafeName,
-            style: TextStyle(
-                fontFamily: 'arbaeen',
-                fontWeight: FontWeight.bold,
-                fontSize: 28),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
+          title: Center(
+            child: Text(
+              cafeName,
+              style: TextStyle(
+                  fontFamily: 'arbaeen',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28),
+            ),
           ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.rate_review,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              showModalSheet(context);
-            },
-          ),
-        ],
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 50),
-        child: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.comment),
-              title: Text('التعليقات'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_seat),
-              title: Text('الجلسات'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.description),
-              title: Text('الطلبات'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.rate_review,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                showModalSheet(context);
+              },
             ),
           ],
-          currentIndex: _selectedIndex,
-          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
-          iconSize: 45,
-          selectedItemColor: Colors.white,
-          onTap: _onItemTapped,
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.comment),
+                text: 'التعليقات',
+              ),
+              Tab(
+                icon: Icon(Icons.event_seat),
+                text: 'الجلسات',
+              ),
+              Tab(
+                icon: Icon(Icons.description),
+                text: 'الطلبات',
+              )
+            ],
+            controller: _controller,
+          ),
         ),
-      ),
-      body: Column(
-        children: <Widget>[
-          ReviewWidgets(
-            reviewScreen,
-            cafeName,
-            reviews,
-            stars,
-            names,
-            date,
-            height,
+        body: Center(
+          child: TabBarView(
+            children: <Widget>[
+              ReviewWidgets(
+                cafeName,
+                reviews,
+                stars,
+                names,
+                date,
+                height,
+              ),
+              SeatsWidgets(info, count, updateListView, _save, _onItemTapped,
+                  cafeName, getUserResrevation, reservation, seatSelect),
+              SelectedWidgets(
+                info,
+                hasBookinginSelected,
+                _delete,
+                _onItemTapped,
+                seatnum,
+                cafeName,
+                reservation,
+              ),
+            ],
+            controller: _controller,
           ),
-          SeatsWidgets(
-              seatScreen,
-              info,
-              count,
-              updateListView,
-              _save,
-              _onItemTapped,
-              cafeName,
-              getUserResrevation,
-              reservation,
-              seatSelect),
-          SelectedWidgets(
-            selectedScreen,
-            info,
-            hasBookinginSelected,
-            _delete,
-            _onItemTapped,
-            seatnum,
-            cafeName,
-            reservation,
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
 //End of screen

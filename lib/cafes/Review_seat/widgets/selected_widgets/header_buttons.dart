@@ -1,13 +1,13 @@
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../models/user_info.dart';
 
 class HeaderButtons extends StatelessWidget {
   final String id;
   final String name;
   final String phone;
-  final String seatnum;
   final int cartPrice;
   final String reservation;
   final Function showModalSheet;
@@ -20,8 +20,8 @@ class HeaderButtons extends StatelessWidget {
   final String cafeName;
   bool hasBookinginSelected;
 
+  String seatnum;
   HeaderButtons(
-    this.seatnum,
     this.cartPrice,
     this.reservation,
     this.showModalSheet,
@@ -175,12 +175,15 @@ class HeaderButtons extends StatelessWidget {
                       });
                       //----------
                       needService();
-
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          String seatNumer = prefs.getString("seat");
                       SigninFiresotre()
-                          .calnceBooking(cafeName, id, name, phone, seatnum);
+                          .calnceBooking(cafeName, id, name, phone, seatNumer);
+
                       hasBookinginSelected = false;
 
-                      SigninFiresotre().cancleupdateUser(id, seatnum);
+                      SigninFiresotre().cancleupdateUser(id);
                       _onItemTapped(1);
                     },
                   ),

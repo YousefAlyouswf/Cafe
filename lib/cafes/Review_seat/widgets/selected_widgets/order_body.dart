@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class OrderBody extends StatelessWidget {
   final double height;
   final String phone;
-  final Function checkSeat;
   final Function _delete;
   final Function _saveCart;
   final Function updateListView;
@@ -20,7 +19,6 @@ class OrderBody extends StatelessWidget {
   OrderBody(
       this.height,
       this.phone,
-      this.checkSeat,
       this._delete,
       this._saveCart,
       this.updateListView,
@@ -32,10 +30,12 @@ class OrderBody extends StatelessWidget {
       this.price,
       this.orderID,
       this.cafeName);
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height / 2.035,
+      height: MediaQuery.of(context).size.height*0.634,
+      color: Colors.red,
       child: StreamBuilder(
         stream: Firestore.instance
             .collection('users')
@@ -43,7 +43,6 @@ class OrderBody extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return Text("Loading..");
-          checkSeat();
           return ListView.builder(
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index) {
@@ -77,7 +76,8 @@ class OrderBody extends StatelessWidget {
                                             fontSize: 18, fontFamily: 'topaz'),
                                       )
                                     : Container(
-                                        height: height / 2.035,
+                                        height: MediaQuery.of(context).size.height*0.634,
+                                        color: Colors.blue,
                                         child: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: reserveCafe != cafeName

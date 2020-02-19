@@ -40,9 +40,11 @@ class SigninFiresotre {
     return ducoments.length == 1;
   }
 
+ 
 //Update seat stauts
   Future updateBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
+
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -69,7 +71,7 @@ class SigninFiresotre {
 
   Future calnceBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
-    Firestore.instance.collection('seats').document(id).updateData({
+    await Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
           'seat': seatNum,
@@ -80,7 +82,7 @@ class SigninFiresotre {
         }
       ]),
     });
-    Firestore.instance.collection('seats').document(id).updateData({
+    await Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayUnion([
         {
           'seat': seatNum,
@@ -92,6 +94,7 @@ class SigninFiresotre {
       ]),
     });
   }
+
   //Cancel Duplicate reservation
   Future calncedupleBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
@@ -117,7 +120,6 @@ class SigninFiresotre {
         }
       ]),
     });
-   
   }
 
   //Add seat to a user
@@ -130,7 +132,7 @@ class SigninFiresotre {
     });
   }
 
-  Future cancleupdateUser(String id, String sitNum) async {
+  Future cancleupdateUser(String id) async {
     await Firestore.instance.collection('users').document(id).updateData({
       'booked': '',
       'cafename': '',

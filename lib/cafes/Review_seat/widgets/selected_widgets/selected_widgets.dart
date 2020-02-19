@@ -3,6 +3,7 @@ import 'package:cafe/models/cart.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 import '../../../../utils/database_helper.dart';
@@ -10,7 +11,6 @@ import 'header_buttons.dart';
 import 'order_body.dart';
 
 class SelectedWidgets extends StatefulWidget {
-  final bool selectedScreen;
   final UserInfo info;
   bool hasBookinginSelected;
   final Function _delete;
@@ -19,7 +19,6 @@ class SelectedWidgets extends StatefulWidget {
   final String cafeName;
   final String reservation;
   SelectedWidgets(
-    this.selectedScreen,
     this.info,
     this.hasBookinginSelected,
     this._delete,
@@ -106,7 +105,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         widget.info.name, widget.info.phone, widget.seatnum);
     widget.hasBookinginSelected = false;
 
-    SigninFiresotre().cancleupdateUser(widget.info.id, widget.seatnum);
+    SigninFiresotre().cancleupdateUser(widget.info.id);
 
     Firestore.instance
         .collection('seats')
@@ -114,7 +113,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         .updateData({
       'allseats': FieldValue.arrayRemove([
         {
-          'seat': null,
+          'seat': '',
           'color': 'green',
           'userid': '',
           'username': '',
@@ -125,19 +124,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     widget._onItemTapped(1);
   }
 
-  void checkSeat() async {
-    var document = Firestore.instance.document('seats/${widget.cafeName}');
-    document.get().then((data) {
-      for (var i = 0; i < data['allseats'].length; i++) {
-        if (data['allseats'][i]['seat'] == widget.seatnum) {
-          if (data['allseats'][i]['userid'] != widget.info.id) {
-            cancleSeat();
-            break;
-          }
-        }
-      }
-    });
-  }
+
 
   String orderName;
   String price;
@@ -148,50 +135,43 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     needService();
     countOrderINCart();
     double height = MediaQuery.of(context).size.height;
-    return Visibility(
-      visible: widget.selectedScreen,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-            child: Column(
-              children: <Widget>[
-                HeaderButtons(
-                  widget.seatnum,
-                  cartPrice,
-                  widget.reservation,
-                  showModalSheet,
-                  needService,
-                  countOrderINCart,
-                  widget._delete,
-                  widget._onItemTapped,
-                  pressed,
-                  reserveCafe,
-                  widget.cafeName,
-                  widget.hasBookinginSelected,
-                  widget.info.id,
-                  widget.info.name,
-                  widget.info.phone,
-                ),
-                OrderBody(
-                    height,
-                    widget.info.phone,
-                    checkSeat,
-                    widget._delete,
-                    _saveCart,
-                    updateListView,
-                    widget.hasBookinginSelected,
-                    widget.seatnum,
-                    reserveCafe,
-                    seatID,
-                    orderName,
-                    price,
-                    orderID,
-                    widget.cafeName),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: <Widget>[
+            HeaderButtons(
+              cartPrice,
+              widget.reservation,
+              showModalSheet,
+              needService,
+              countOrderINCart,
+              widget._delete,
+              widget._onItemTapped,
+              pressed,
+              reserveCafe,
+              widget.cafeName,
+              widget.hasBookinginSelected,
+              widget.info.id,
+              widget.info.name,
+              widget.info.phone,
             ),
-          );
-        },
-      ),
+            OrderBody(
+                height,
+                widget.info.phone,
+                widget._delete,
+                _saveCart,
+                updateListView,
+                widget.hasBookinginSelected,
+                widget.seatnum,
+                reserveCafe,
+                seatID,
+                orderName,
+                price,
+                orderID,
+                widget.cafeName),
+          ],
+        );
+      },
     );
   }
 
