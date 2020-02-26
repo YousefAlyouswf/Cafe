@@ -148,16 +148,6 @@ class SeatsWidgets extends StatelessWidget {
                                     cafeName,
                                     idSeat[index],
                                   );
-
-                                  SelectedWidgets(
-                                    info,
-                                    true,
-                                    null,
-                                    null,
-                                    numSeat[index],
-                                    cafeName,
-                                    reservation,
-                                  );
                                 },
                           splashColor: Colors.purple,
                           borderRadius: BorderRadius.circular(15),

@@ -79,10 +79,13 @@ class HeaderButtons extends StatelessWidget {
                           }
                         });
                         if (faham) {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String seat = prefs.getString("seat");
                           var now = DateTime.now().millisecondsSinceEpoch;
                           SigninFiresotre().faham(
                             cafeName,
-                            seatnum,
+                            seat,
                             now.toString(),
                             name,
                             id,

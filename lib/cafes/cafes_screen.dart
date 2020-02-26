@@ -130,17 +130,11 @@ class _CafeListState extends State<CafeList> {
     } catch (Ex) {}
 
     return WillPopScope(
-      onWillPop: () {
-        // _deleteLogin();
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => Login()),
-        // );
-      },
+      onWillPop: () => null,
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
+          backgroundColor: Color.fromRGBO(102, 102, 255, 1),
           title: Center(
             child: Text(
               "قائمة المقاهي",
@@ -159,8 +153,9 @@ class _CafeListState extends State<CafeList> {
                   color: Colors.white,
                   size: 30,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   _deleteLogin();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Login()),
@@ -189,7 +184,7 @@ class _CafeListState extends State<CafeList> {
                   title: Center(
                       child: Text(
                     "أختر المدينه",
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   )),
                   trailing: Icon(Icons.map),
                   subtitle: Container(
@@ -224,6 +219,7 @@ class _CafeListState extends State<CafeList> {
                                     //---------------
                                   },
                                   child: Card(
+                                    color: Colors.green[100],
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Center(
@@ -325,7 +321,6 @@ class _CafeListState extends State<CafeList> {
                           ),
                           footer: Container(
                             height: height / 12,
-                            
                             child: GridTileBar(
                               backgroundColor: Colors.black87,
                               leading: Row(
@@ -386,7 +381,7 @@ class _CafeListState extends State<CafeList> {
                                         Text(
                                             'التعليقات ${int.parse(reviewsCountF)}'),
                                         SizedBox(
-                                          width: width/20,
+                                          width: width / 20,
                                         ),
                                         Text(
                                           cafeName,

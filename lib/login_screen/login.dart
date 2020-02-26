@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 StreamSubscription<DocumentSnapshot> subscription;
 
@@ -189,6 +190,10 @@ class _LoginState extends State<Login> {
                                             fontFamily: 'topaz'),
                                       ),
                                       onFieldSubmitted: (value) async {
+                                        SharedPreferences prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+
                                         pr.show();
                                         var info, dbID;
                                         final QuerySnapshot userinfo =
@@ -203,6 +208,13 @@ class _LoginState extends State<Login> {
                                             userinfo.documents;
                                         if (documents.length == 1) {
                                           documents.forEach((data) {
+                                            prefs.setBool('login', true);
+                                            prefs.setString(
+                                                'nmae', data['name']);
+                                            prefs.setString(
+                                                'phone', data['phone']);
+                                            prefs.setString(
+                                                'id', data.documentID);
                                             info = UserInfo(
                                               name: data['name'],
                                               phone: data['phone'],
@@ -257,6 +269,9 @@ class _LoginState extends State<Login> {
                       child: Builder(
                         builder: (context) => InkWell(
                           onTap: () async {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.setBool('login', true);
                             pr.show();
                             var info, dbID;
                             final QuerySnapshot userinfo = await Firestore

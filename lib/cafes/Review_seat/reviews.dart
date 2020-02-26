@@ -153,7 +153,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(161, 141, 114, 1),
+          backgroundColor:  Color.fromRGBO(102, 102, 255, 1),
           title: Center(
             child: Text(
               cafeName,
@@ -175,6 +175,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             ),
           ],
           bottom: TabBar(
+            unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.white,
             tabs: [
               Tab(
@@ -428,7 +429,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                       .updateData({
                     'reviews': FieldValue.arrayUnion(maplist),
                   });
-                  getAllReviews();
+                  // getAllReviews();
                   Navigator.pop(context);
                 },
                 splashColor: Colors.red,
@@ -484,26 +485,26 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
 
   List<int> cafeReviews = new List();
 
-  void getAllReviews() async {
-    int count = 0;
-    cafeReviews = [];
-    final QuerySnapshot result =
-        await Firestore.instance.collection('cafes').getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    documents.forEach((data) {
-      cafeReviews.add(data['reviews'].length);
-      int sum = 0;
-      for (var i = 0; i < cafeReviews[count]; i++) {
-        //should sum all the values
-        sum += data['reviews'][i]['stars'];
-      }
-      Firestore.instance
-          .collection('cafes')
-          .document(data.documentID)
-          .updateData(
-              {'stars': sum.toString(), 'reviewcount': data['reviews'].length});
+  // void getAllReviews() async {
+  //   int count = 0;
+  //   cafeReviews = [];
+  //   final QuerySnapshot result =
+  //       await Firestore.instance.collection('cafes').getDocuments();
+  //   final List<DocumentSnapshot> documents = result.documents;
+  //   documents.forEach((data) {
+  //     cafeReviews.add(data['reviews'].length);
+  //     int sum = 0;
+  //     for (var i = 0; i < cafeReviews[count]; i++) {
+  //       //should sum all the values
+  //       sum += data['reviews'][i]['stars'];
+  //     }
+  //     Firestore.instance
+  //         .collection('cafes')
+  //         .document(data.documentID)
+  //         .updateData(
+  //             {'stars': sum.toString(), 'reviewcount': data['reviews'].length});
 
-      count++;
-    });
-  }
+  //     count++;
+  //   });
+  // }
 }
