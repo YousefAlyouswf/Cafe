@@ -4,6 +4,7 @@ import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../selected_widgets/selected_widgets.dart';
 
 class SeatsWidgets extends StatelessWidget {
   final String cafeName;
@@ -127,7 +128,6 @@ class SeatsWidgets extends StatelessWidget {
                           onTap: isbooked
                               ? null
                               : () async {
-                             
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   prefs.getString("seat");
@@ -148,7 +148,16 @@ class SeatsWidgets extends StatelessWidget {
                                     cafeName,
                                     idSeat[index],
                                   );
-                            
+
+                                  SelectedWidgets(
+                                    info,
+                                    true,
+                                    null,
+                                    null,
+                                    numSeat[index],
+                                    cafeName,
+                                    reservation,
+                                  );
                                 },
                           splashColor: Colors.purple,
                           borderRadius: BorderRadius.circular(15),
@@ -199,7 +208,6 @@ class SeatsWidgets extends StatelessWidget {
         }
       }
     });
-    
   }
 
   DatabaseHelper databaseHelper = DatabaseHelper();

@@ -1,3 +1,5 @@
+import 'package:cafe/models/cart.dart';
+import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -5,8 +7,6 @@ class OrderBody extends StatelessWidget {
   final double height;
   final String phone;
   final Function _delete;
-  final Function _saveCart;
-  final Function updateListView;
   bool hasBookinginSelected;
   String seatnum;
   String reserveCafe;
@@ -15,13 +15,11 @@ class OrderBody extends StatelessWidget {
   String price;
   String orderID;
   final String cafeName;
-
+  UserInfo info;
   OrderBody(
       this.height,
       this.phone,
       this._delete,
-      this._saveCart,
-      this.updateListView,
       this.hasBookinginSelected,
       this.seatnum,
       this.reserveCafe,
@@ -34,8 +32,8 @@ class OrderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height*0.634,
-      color: Colors.red,
+      height: MediaQuery.of(context).size.height * 0.6,
+    
       child: StreamBuilder(
         stream: Firestore.instance
             .collection('users')
@@ -76,8 +74,10 @@ class OrderBody extends StatelessWidget {
                                             fontSize: 18, fontFamily: 'topaz'),
                                       )
                                     : Container(
-                                        height: MediaQuery.of(context).size.height*0.634,
-                                        color: Colors.blue,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                              
                                         child: Padding(
                                           padding: const EdgeInsets.all(15.0),
                                           child: reserveCafe != cafeName
@@ -98,65 +98,37 @@ class OrderBody extends StatelessWidget {
                                                             .documents.length,
                                                         itemBuilder:
                                                             (context, index) {
-                                                          return InkWell(
-                                                            onTap: () {
-                                                              orderName = snapshot
-                                                                  .data
-                                                                  .documents[
-                                                                      index]
-                                                                  .data['order'];
-                                                              price = snapshot
-                                                                  .data
-                                                                  .documents[
-                                                                      index]
-                                                                  .data['price'];
-                                                              orderID = snapshot
-                                                                  .data
-                                                                  .documents[
-                                                                      index]
-                                                                  .documentID;
-
-                                                              _saveCart();
-                                                              updateListView();
-                                                            },
-                                                            splashColor:
-                                                                Colors.red,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5),
-                                                            child: Card(
-                                                              child: Column(
-                                                                children: <
-                                                                    Widget>[
-                                                                  Flexible(
-                                                                    child: Text(
-                                                                      snapshot
-                                                                          .data
-                                                                          .documents[
-                                                                              index]
-                                                                          .data['order'],
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 15,
-                                                                  ),
-                                                                  Text(
-                                                                    "السعر: " +
-                                                                        snapshot
-                                                                            .data
-                                                                            .documents[index]
-                                                                            .data['price'] +
-                                                                        " ريال",
+                                                          return Card(
+                                                            child: Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    snapshot
+                                                                        .data
+                                                                        .documents[
+                                                                            index]
+                                                                        .data['order'],
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 15,
+                                                                ),
+                                                                Text(
+                                                                  "السعر: " +
+                                                                      snapshot
+                                                                          .data
+                                                                          .documents[index]
+                                                                          .data['price'] +
+                                                                      " ريال",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ],
                                                             ),
                                                           );
                                                         },

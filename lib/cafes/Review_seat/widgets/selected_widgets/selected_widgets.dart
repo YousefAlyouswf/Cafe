@@ -15,7 +15,7 @@ class SelectedWidgets extends StatefulWidget {
   bool hasBookinginSelected;
   final Function _delete;
   final Function _onItemTapped;
-  String seatnum;
+  final String seatnum;
   final String cafeName;
   final String reservation;
   SelectedWidgets(
@@ -124,8 +124,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     widget._onItemTapped(1);
   }
 
-
-
   String orderName;
   String price;
   String orderID;
@@ -140,11 +138,10 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         return Column(
           children: <Widget>[
             HeaderButtons(
+              widget.seatnum,
               cartPrice,
               widget.reservation,
-              showModalSheet,
               needService,
-              countOrderINCart,
               widget._delete,
               widget._onItemTapped,
               pressed,
@@ -159,8 +156,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 height,
                 widget.info.phone,
                 widget._delete,
-                _saveCart,
-                updateListView,
                 widget.hasBookinginSelected,
                 widget.seatnum,
                 reserveCafe,
@@ -176,7 +171,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
   }
 
   void showModalSheet(BuildContext context) {
-    updateListView();
     showModalBottomSheet<void>(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -238,10 +232,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                         ),
                         leading: IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: () {
-                            _deleteCart(cartIndex.orderID);
-                            updateListView();
-                          },
+                          onPressed: () {},
                         ),
                       ),
                     ),
@@ -266,10 +257,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                       ),
                       child: InkWell(
                         onTap: () async {
-                          for (var i = 0; i < cartList.length; i++) {
-                            _deleteCart(cartList[i].orderID);
-                          }
-                          updateListView();
                           Navigator.pop(context);
                         },
                         splashColor: Colors.red,
@@ -312,10 +299,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                               widget.info.name,
                               widget.info.phone);
 
-                          for (var i = 0; i < cartList.length; i++) {
-                            _deleteCart(cartList[i].orderID);
-                          }
-                          updateListView();
                           Navigator.pop(context);
                         },
                         splashColor: Colors.red,
@@ -339,49 +322,5 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         ),
       ),
     );
-  }
-
-  //Cart List Function
-  void updateListView() async {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    await dbFuture.then((database) {
-      Future<List<Cart>> noteListFuture = databaseHelper.getCartList();
-      noteListFuture.then((cartList) {
-        setState(() {
-          this.cartList = cartList;
-          this.count = cartList.length;
-        });
-      });
-    });
-  }
-
-  // Save data to database
-  void _saveCart() async {
-    int result;
-    Cart cart = Cart(widget.info.id, orderName, price);
-    // Case 2: Insert Operation
-    result = await databaseHelper.insertCart(cart);
-
-    if (result != 0) {
-      // Success
-
-      debugPrint('cart Saved Successfully');
-    } else {
-      // Failure
-      debugPrint('Problem Saving Login');
-    }
-  }
-
-  void _deleteCart(int orderid) async {
-    int result;
-    result = await databaseHelper.deleteCart(orderid);
-    if (result != 0) {
-      // Success
-
-      debugPrint('deleted Successfully');
-    } else {
-      // Failure
-      debugPrint('Problem delete Login');
-    }
   }
 }
