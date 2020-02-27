@@ -2,7 +2,6 @@ import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
@@ -28,11 +27,22 @@ class _CafeListState extends State<CafeList> {
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
     nonPersonalizedAds: true,
-    keywords: <String>['Game', 'Mario'],
+    keywords: <String>[
+      'Game',
+      'Mario',
+      'Hotel',
+      'Summer',
+      'Travel',
+      'Mobile',
+      'Business',
+      'Technology'
+    ],
   );
 
   BannerAd _bannerAd;
+  BannerAd _bannerAdIOS;
   InterstitialAd _interstitialAd;
+  InterstitialAd _interstitialAdIOS;
 
   BannerAd createBannerAd() {
     return BannerAd(
@@ -45,9 +55,30 @@ class _CafeListState extends State<CafeList> {
         });
   }
 
+  BannerAd createBannerAdIOS() {
+    return BannerAd(
+        adUnitId: "ca-app-pub-6845451754172569/6339792193",
+        //Change BannerAd adUnitId with Admob ID
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd $event");
+        });
+  }
+
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
         adUnitId: "ca-app-pub-6845451754172569/6501787765",
+        //Change Interstitial AdUnitId with Admob ID
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("IntersttialAd $event");
+        });
+  }
+
+  InterstitialAd createInterstitialAdIOS() {
+    return InterstitialAd(
+        adUnitId: "ca-app-pub-6845451754172569/6380510014",
         //Change Interstitial AdUnitId with Admob ID
         targetingInfo: targetingInfo,
         listener: (MobileAdEvent event) {
@@ -90,10 +121,17 @@ class _CafeListState extends State<CafeList> {
   _CafeListState(this.info, this.bookingDB);
   @override
   void initState() {
+    //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
+    //ios appid admob
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-6845451754172569~2955436171");
     //Change appId With Admob Id
     _bannerAd = createBannerAd()
+      ..load()
+      ..show();
+    _bannerAdIOS = createBannerAdIOS()
       ..load()
       ..show();
     super.initState();
@@ -104,6 +142,8 @@ class _CafeListState extends State<CafeList> {
   void dispose() {
     _bannerAd.dispose();
     _interstitialAd.dispose();
+    _bannerAdIOS.dispose();
+    _interstitialAdIOS.dispose();
     super.dispose();
   }
 
@@ -255,7 +295,7 @@ class _CafeListState extends State<CafeList> {
                     .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: Text("من فضلك أختر المدينة"));
+                return Center(child: Text("جاري تحميل قائمة المقاهي"));
               } else {
                 return GridView.builder(
                   padding: const EdgeInsets.all(10),
@@ -283,6 +323,9 @@ class _CafeListState extends State<CafeList> {
                       child: InkWell(
                         onTap: () {
                           createInterstitialAd()
+                            ..load()
+                            ..show();
+                          createInterstitialAdIOS()
                             ..load()
                             ..show();
                           Navigator.of(context).push(

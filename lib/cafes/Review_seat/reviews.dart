@@ -31,11 +31,20 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
     nonPersonalizedAds: true,
-    keywords: <String>['Game', 'Mario'],
+    keywords: <String>['Game',
+      'Mario',
+      'Hotel',
+      'Summer',
+      'Travel',
+      'Mobile',
+      'Business',
+      'Technology'],
   );
 
-  BannerAd _bannerAd;
+    BannerAd _bannerAd;
+  BannerAd _bannerAdIOS;
   InterstitialAd _interstitialAd;
+  InterstitialAd _interstitialAdIOS;
 
   BannerAd createBannerAd() {
     return BannerAd(
@@ -47,7 +56,16 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
           print("BannerAd $event");
         });
   }
-
+BannerAd createBannerAdIOS() {
+    return BannerAd(
+        adUnitId: "ca-app-pub-6845451754172569/6339792193",
+        //Change BannerAd adUnitId with Admob ID
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("BannerAd $event");
+        });
+  }
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
         adUnitId: "ca-app-pub-6845451754172569/6501787765",
@@ -57,7 +75,15 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
           print("IntersttialAd $event");
         });
   }
-
+InterstitialAd createInterstitialAdIOS() {
+    return InterstitialAd(
+        adUnitId: "ca-app-pub-6845451754172569/6380510014",
+        //Change Interstitial AdUnitId with Admob ID
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("IntersttialAd $event");
+        });
+  }
   //----------------------------
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
@@ -124,10 +150,17 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   TabController _controller;
   @override
   void initState() {
+  //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
+        //ios appid admob
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-6845451754172569~2955436171");
     //Change appId With Admob Id
     _bannerAd = createBannerAd()
+      ..load()
+      ..show();
+      _bannerAdIOS = createBannerAdIOS()
       ..load()
       ..show();
     super.initState();
@@ -143,8 +176,10 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _bannerAd.dispose();
+      _bannerAd.dispose();
     _interstitialAd.dispose();
+    _bannerAdIOS.dispose();
+    _interstitialAdIOS.dispose();
     super.dispose();
   }
 
