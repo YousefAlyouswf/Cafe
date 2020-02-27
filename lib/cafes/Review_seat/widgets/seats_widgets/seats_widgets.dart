@@ -3,10 +3,11 @@ import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../selected_widgets/selected_widgets.dart';
 
-class SeatsWidgets extends StatelessWidget {
+class SeatsWidgets extends StatefulWidget {
   final String cafeName;
 
   final UserInfo info;
@@ -17,9 +18,7 @@ class SeatsWidgets extends StatelessWidget {
   final Function getUserResrevation;
   String reservation;
   String seatSelect;
-  List<String> colorSeat = new List();
-  List<String> numSeat = new List();
-  List<String> idSeat = new List();
+
   SeatsWidgets(
     this.info,
     this.count,
@@ -33,16 +32,33 @@ class SeatsWidgets extends StatelessWidget {
   );
 
   @override
+  _SeatsWidgetsState createState() =>
+      _SeatsWidgetsState(this._save, this.updateListView);
+}
+
+class _SeatsWidgetsState extends State<SeatsWidgets> {
+  List<String> colorSeat = new List();
+
+  List<String> numSeat = new List();
+
+  List<String> idSeat = new List();
+
+  String code;
+  TextEditingController controller = TextEditingController();
+  final Function updateListView;
+  final Function _save;
+  _SeatsWidgetsState(this.updateListView, this._save);
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    getUserResrevation();
-    return count > 0 || reservation != ''
+    widget.getUserResrevation();
+    return widget.count > 0 || widget.reservation != ''
         ? Container(
             height: height / 1.56999,
             child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('users')
-                    .where('phone', isEqualTo: info.phone)
+                    .where('phone', isEqualTo: widget.info.phone)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Text("Loading..");
@@ -52,7 +68,7 @@ class SeatsWidgets extends StatelessWidget {
                       itemBuilder: (context, index) {
                         DocumentSnapshot myBooking =
                             snapshot.data.documents[index];
-                        seatSelect = myBooking['booked'];
+                        widget.seatSelect = myBooking['booked'];
                         return Container(
                           height: height / 2,
                           child: Center(
@@ -67,16 +83,23 @@ class SeatsWidgets extends StatelessWidget {
                                             fontSize: 25, fontFamily: 'topaz'),
                                       ),
                                       Text(
-                                        "جلسة رقم $seatSelect",
+                                        "جلسة رقم ${widget.seatSelect}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 25, fontFamily: 'topaz'),
+                                      ),
+                                      SizedBox(height: 50,),
+                                      Text(
+                                        "أسحب الشاشة لعرض قائمة الطلبات وطلب خدمة",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 25, fontFamily: 'topaz', color: Color.fromRGBO(102, 102, 255, 1),),
                                       ),
                                     ],
                                   )
                                 : Center(
                                     child: Text(
-                                      "في واحد حجزها قبلك",
+                                      "حدث خطأ في عرض الجلسات يمكنك إعادة فتح البرنامج",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 25,
@@ -96,7 +119,7 @@ class SeatsWidgets extends StatelessWidget {
               child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('seats')
-                    .document(cafeName)
+                    .document(widget.cafeName)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -130,24 +153,39 @@ class SeatsWidgets extends StatelessWidget {
                               : () async {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
-                                  prefs.getString("seat");
-                                  prefs.setString("seat", numSeat[index]);
-                                  updateListView();
-                                  _save();
-                                  updateListView();
-                                  SigninFiresotre().updateBooking(
-                                    cafeName,
-                                    info.id,
-                                    info.name,
-                                    info.phone,
-                                    numSeat[index],
-                                  );
-                                  SigninFiresotre().updateUser(
-                                    info.id,
-                                    numSeat[index],
-                                    cafeName,
-                                    idSeat[index],
-                                  );
+                                  _showDialog(context).then((onValue) {
+                                    if (snapshot.data['code'] == onValue) {
+                                      prefs.getString("seat");
+                                      prefs.setString("seat", numSeat[index]);
+                                      updateListView();
+                                      _save();
+                                      updateListView();
+                                      SigninFiresotre().updateBooking(
+                                        widget.cafeName,
+                                        widget.info.id,
+                                        widget.info.name,
+                                        widget.info.phone,
+                                        numSeat[index],
+                                      );
+                                      SigninFiresotre().updateUser(
+                                        widget.info.id,
+                                        numSeat[index],
+                                        widget.cafeName,
+                                        idSeat[index],
+                                      );
+                                    } else {
+                                      SnackBar mySnackBar = SnackBar(
+                                        content: Text(
+                                          "خطأ في إدخال الكود",
+                                          textAlign: TextAlign.end,
+                                        ),
+                                        backgroundColor: Colors.red,
+                                        duration: const Duration(milliseconds: 500) ,
+                                      );
+                                      Scaffold.of(context)
+                                          .showSnackBar(mySnackBar);
+                                    }
+                                  });
                                 },
                           splashColor: Colors.purple,
                           borderRadius: BorderRadius.circular(15),
@@ -187,11 +225,11 @@ class SeatsWidgets extends StatelessWidget {
   void checkSeat() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String seatNumer = prefs.getString("seat");
-    var document = Firestore.instance.document('seats/$cafeName');
+    var document = Firestore.instance.document('seats/${widget.cafeName}');
     document.get().then((data) {
       for (var i = 0; i < data['allseats'].length; i++) {
         if (data['allseats'][i]['seat'] == seatNumer) {
-          if (data['allseats'][i]['userid'] != info.id) {
+          if (data['allseats'][i]['userid'] != widget.info.id) {
             cancleSeat();
             break;
           }
@@ -201,7 +239,9 @@ class SeatsWidgets extends StatelessWidget {
   }
 
   DatabaseHelper databaseHelper = DatabaseHelper();
+
   bool hasBookinginSelected;
+
   void _delete() async {
     await databaseHelper.deleteNote();
   }
@@ -209,17 +249,20 @@ class SeatsWidgets extends StatelessWidget {
   void cancleSeat() async {
     //Delete from SQLITE
     _delete();
-    reservation = '';
+    widget.reservation = '';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String seatNumer = prefs.getString("seat");
 
-    SigninFiresotre()
-        .calnceBooking(cafeName, info.id, info.name, info.phone, seatNumer);
+    SigninFiresotre().calnceBooking(widget.cafeName, widget.info.id,
+        widget.info.name, widget.info.phone, seatNumer);
     hasBookinginSelected = false;
 
-    SigninFiresotre().cancleupdateUser(info.id);
+    SigninFiresotre().cancleupdateUser(widget.info.id);
 
-    Firestore.instance.collection('seats').document(cafeName).updateData({
+    Firestore.instance
+        .collection('seats')
+        .document(widget.cafeName)
+        .updateData({
       'allseats': FieldValue.arrayRemove([
         {
           'seat': 'null',
@@ -230,5 +273,60 @@ class SeatsWidgets extends StatelessWidget {
         }
       ]),
     });
+  }
+
+  Future<String> _showDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (_) => new _SystemPadding(
+        child: new AlertDialog(
+          title: Text(
+            'أدخل الكود',
+            textAlign: TextAlign.end,
+            style: TextStyle(color: Colors.blue),
+          ),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new TextField(
+                  keyboardType: TextInputType.number,
+                  controller: controller,
+                  textAlign: TextAlign.end,
+                  autofocus: true,
+                  decoration: new InputDecoration(
+                    hintText: 'الكود عند باب المقهى',
+                  ),
+                ),
+              )
+            ],
+          ),
+          actions: <Widget>[
+            new FlatButton(
+                child: const Text('خروج'),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            new FlatButton(
+                child: const Text('إدخال'),
+                onPressed: () {
+                  Navigator.of(context).pop(controller.text.toString());
+                })
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SystemPadding extends StatelessWidget {
+  final Widget child;
+
+  _SystemPadding({Key key, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new AnimatedContainer(
+        duration: const Duration(milliseconds: 300), child: child);
   }
 }
