@@ -88,12 +88,18 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                         style: TextStyle(
                                             fontSize: 25, fontFamily: 'topaz'),
                                       ),
-                                      SizedBox(height: 50,),
+                                      SizedBox(
+                                        height: 50,
+                                      ),
                                       Text(
                                         "أسحب الشاشة لعرض قائمة الطلبات وطلب خدمة",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            fontSize: 25, fontFamily: 'topaz', color: Color.fromRGBO(102, 102, 255, 1),),
+                                          fontSize: 25,
+                                          fontFamily: 'topaz',
+                                          color:
+                                              Color.fromRGBO(102, 102, 255, 1),
+                                        ),
                                       ),
                                     ],
                                   )
@@ -157,6 +163,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                     if (snapshot.data['code'] == onValue) {
                                       prefs.getString("seat");
                                       prefs.setString("seat", numSeat[index]);
+                                      prefs.setString(
+                                          'cafeNameForOrder', widget.cafeName);
                                       updateListView();
                                       _save();
                                       updateListView();
@@ -180,7 +188,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                           textAlign: TextAlign.end,
                                         ),
                                         backgroundColor: Colors.red,
-                                        duration: const Duration(milliseconds: 500) ,
+                                        duration:
+                                            const Duration(milliseconds: 500),
                                       );
                                       Scaffold.of(context)
                                           .showSnackBar(mySnackBar);

@@ -33,7 +33,9 @@ class HeaderButtons extends StatelessWidget {
     this.id,
     this.name,
     this.phone,
+
   );
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,57 +48,6 @@ class HeaderButtons extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
-                    width: 150,
-                    child: InkWell(
-                      child: pressed
-                          ? Icon(
-                              Icons.notifications_active,
-                              size: 55,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              Icons.notifications_none,
-                              size: 55,
-                              color: Colors.red,
-                            ),
-                      onTap: () async {
-                        needService();
-                        bool faham = true;
-                        final QuerySnapshot result = await Firestore.instance
-                            .collection('faham')
-                            .getDocuments();
-                        final List<DocumentSnapshot> documents =
-                            result.documents;
-                        documents.forEach((data) {
-                          if (data['userid'] == id) {
-                            String docID = data.documentID;
-                            Firestore.instance
-                                .collection('faham')
-                                .document(docID)
-                                .delete();
-                            faham = false;
-                          }
-                        });
-                        if (faham) {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String seat = prefs.getString("seat");
-                          var now = DateTime.now().millisecondsSinceEpoch;
-                          SigninFiresotre().faham(
-                            cafeName,
-                            seat,
-                            now.toString(),
-                            name,
-                            id,
-                          );
-                          //------
-
-                        }
-                      },
-                    ),
-                  ),
-                  Spacer(),
                   RaisedButton(
                     shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(50.0),
@@ -156,6 +107,60 @@ class HeaderButtons extends StatelessWidget {
                       _onItemTapped(1);
                     },
                   ),
+                  Spacer(),
+                  SizedBox(
+                      width: 150,
+                      child: InkWell(
+                              child: pressed
+                                  ? Icon(
+                                      Icons.notifications_active,
+                                      size: 55,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.notifications_none,
+                                      size: 55,
+                                      color: Colors.red,
+                                    ),
+                              onTap: () async {
+                                needService();
+                                bool faham = true;
+                                final QuerySnapshot result = await Firestore
+                                    .instance
+                                    .collection('faham')
+                                    .getDocuments();
+                                final List<DocumentSnapshot> documents =
+                                    result.documents;
+                                documents.forEach((data) {
+                                  if (data['userid'] == id) {
+                                    String docID = data.documentID;
+                                    Firestore.instance
+                                        .collection('faham')
+                                        .document(docID)
+                                        .delete();
+                                    faham = false;
+                                  }
+                                });
+                                if (faham) {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  String seat = prefs.getString("seat");
+                                  String cafeNameForOrder = prefs.getString('cafeNameForOrder');
+                                  var now =
+                                      DateTime.now().millisecondsSinceEpoch;
+                                  SigninFiresotre().faham(
+                                    cafeNameForOrder,
+                                    seat,
+                                    now.toString(),
+                                    name,
+                                    id,
+                                  );
+                                  //------
+
+                                }
+                              },
+                            )
+                         ),
                 ],
               ),
       ),
