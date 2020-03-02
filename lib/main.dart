@@ -28,27 +28,30 @@ class _MyAppState extends State<MyApp> {
   var info1, db1;
   int count = 0;
   String getID;
-  bool whereGo;
+  bool whereGo = false;
   Widget goThere = Loading();
   @override
   void initState() {
+    getAllReviews();
     isLogined().then((onValue) {
-      whereGo = onValue;
-      if (whereGo) {
-        goThere = CafeList(info1, db1);
-      } else {
+      setState(() {
+        whereGo = onValue;
+      });
+
+      if (!whereGo) {
         goThere = Login();
       }
     });
     super.initState();
-    updateListView();
-
-    getAllReviews();
   }
 
   Future<bool> isLogined() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     bool isLogin = prefs.getBool('isLogin');
+    if (isLogin == null) {
+      isLogin = false;
+    }
     return isLogin;
   }
 
@@ -61,7 +64,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: goThere,
+      home: whereGo ? CafeList(info1, db1) : goThere,
     );
   }
 

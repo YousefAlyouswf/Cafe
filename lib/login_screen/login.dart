@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cafe/animation/fadeAnimation.dart';
 import 'package:cafe/cafes/cafes_screen.dart';
 import 'package:cafe/firebase/firebase_service.dart';
+import 'package:cafe/loading/loading.dart';
 import 'package:cafe/login_screen/widgets/header_login.dart';
 import 'package:cafe/login_screen/widgets/push_to_signup.dart';
 import 'package:cafe/models/booking.dart';
@@ -60,19 +61,6 @@ class _LoginState extends State<Login> {
     });
   }
 
-  bool isNew;
-  _ifUserNew() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isNew = prefs.getBool('isNew');
-  }
-
-  @override
-  void initState() {
-    _ifUserNew();
-    super.initState();
-    getAllReviews();
-  }
-
   int control = 1;
   bool login = true;
   bool signup = false;
@@ -101,6 +89,34 @@ class _LoginState extends State<Login> {
   final FocusNode _phoneFocusReg = FocusNode();
   final FocusNode _passwordFocusReg = FocusNode();
   final FocusNode _nameFocusReg = FocusNode();
+//-- determine if user is new or not
+  bool isNew = false;
+
+  @override
+  void initState() {
+    isUserNew().then((onValue) {
+      setState(() {
+        isNew = onValue;
+      });
+
+      if (!isNew) {
+        goThere = Tutorials();
+      }
+    });
+    super.initState();
+    getAllReviews();
+  }
+
+  Widget goThere = Loading();
+  Future<bool> isUserNew() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    isNew = prefs.getBool('isNew');
+    if (isNew == null) {
+      isNew = false;
+    }
+    return isNew;
+  }
+
   @override
   Widget build(BuildContext context) {
 //progress dialog
@@ -110,8 +126,8 @@ class _LoginState extends State<Login> {
 //----------
 
     final width = MediaQuery.of(context).size.width;
-    return isNew == false || isNew == null
-        ? Tutorials()
+    return isNew == false
+        ? goThere
         : WillPopScope(
             onWillPop: () {
               SystemChannels.platform.invokeMethod('SystemNavigator.pop');
