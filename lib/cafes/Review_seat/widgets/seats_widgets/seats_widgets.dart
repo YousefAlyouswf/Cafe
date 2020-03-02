@@ -18,7 +18,6 @@ class SeatsWidgets extends StatefulWidget {
   final Function getUserResrevation;
   String reservation;
   String seatSelect;
-
   SeatsWidgets(
     this.info,
     this.count,
@@ -37,12 +36,6 @@ class SeatsWidgets extends StatefulWidget {
 }
 
 class _SeatsWidgetsState extends State<SeatsWidgets> {
-  List<String> colorSeat = new List();
-
-  List<String> numSeat = new List();
-
-  List<String> idSeat = new List();
-
   String code;
   TextEditingController controller = TextEditingController();
   final Function updateListView;
@@ -52,7 +45,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     widget.getUserResrevation();
-    return widget.count > 0 || widget.reservation != ''
+    return widget.count > 0 && widget.reservation != ''
         ? Container(
             height: height / 1.56999,
             child: StreamBuilder(
@@ -69,10 +62,12 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                         DocumentSnapshot myBooking =
                             snapshot.data.documents[index];
                         widget.seatSelect = myBooking['booked'];
+                        updateListView();
                         return Container(
                           height: height / 2,
                           child: Center(
-                            child: myBooking['cafename'] != ''
+                            child: myBooking['cafename'] != '' &&
+                                    widget.count > 0
                                 ? Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -104,13 +99,30 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                     ],
                                   )
                                 : Center(
-                                    child: Text(
-                                      "حدث خطأ في عرض الجلسات يمكنك إعادة فتح البرنامج",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 25,
-                                        fontFamily: 'topaz',
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "تم إلغاء حجزك أو حدث خطأ في التحميل",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 25,
+                                            fontFamily: 'topaz',
+                                          ),
+                                        ),
+                                        IconButton(
+                                            icon: Icon(Icons.refresh),
+                                            onPressed: () async {
+                                              SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              _delete();
+                                              updateListView();
+                                            })
+                                      ],
                                     ),
                                   ),
                           ),
@@ -131,28 +143,22 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                   if (!snapshot.hasData) {
                     return Text("");
                   } else {
-                    int lengthCheck = snapshot.data['allseats'].length;
-
-                    for (var i = 0; i < lengthCheck; i++) {
-                      colorSeat.add(
-                          snapshot.data['allseats'][i]['color'].toString());
-                      numSeat
-                          .add(snapshot.data['allseats'][i]['seat'].toString());
-                      idSeat.add(i.toString());
-                    }
                     return GridView.builder(
-                      itemCount: lengthCheck,
+                      itemCount: snapshot.data['allseats'].length,
                       itemBuilder: (context, index) {
                         Color color;
                         bool isbooked = false;
-                        if (colorSeat[index] == 'green') {
+                        if (snapshot.data['allseats'][index]['color'] ==
+                            'green') {
                           color = Colors.green;
                           isbooked = false;
                         } else {
                           color = Colors.grey;
                           isbooked = true;
                         }
-
+                        String idSeat = index.toString();
+                        String seatNum =
+                            snapshot.data['allseats'][index]['seat'].toString();
                         return InkWell(
                           onTap: isbooked
                               ? null
@@ -161,31 +167,49 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                       await SharedPreferences.getInstance();
                                   _showDialog(context).then((onValue) {
                                     if (snapshot.data['code'] == onValue) {
-                                      prefs.getString("seat");
-                                      prefs.setString("seat", numSeat[index]);
-                                      prefs.setString(
-                                          'cafeNameForOrder', widget.cafeName);
-                                      updateListView();
-                                      _save();
-                                      updateListView();
-                                      SigninFiresotre().updateBooking(
-                                        widget.cafeName,
-                                        widget.info.id,
-                                        widget.info.name,
-                                        widget.info.phone,
-                                        numSeat[index],
-                                      );
-                                      SigninFiresotre().updateUser(
-                                        widget.info.id,
-                                        numSeat[index],
-                                        widget.cafeName,
-                                        idSeat[index],
-                                      );
+                                      checkIfResirved(seatNum).then((onValue1) {
+                                        if (onValue1 == false) {
+                                          SnackBar mySnackBar = SnackBar(
+                                            content: Text(
+                                              "تم حجز الجلسة قبلك",
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(fontSize: 24),
+                                            ),
+                                            backgroundColor: Colors.red,
+                                            duration: const Duration(
+                                                milliseconds: 2000),
+                                          );
+                                          Scaffold.of(context)
+                                              .showSnackBar(mySnackBar);
+                                        } else {
+                                          prefs.getString("seat");
+                                          prefs.setString("seat", seatNum);
+                                          prefs.setString('cafeNameForOrder',
+                                              widget.cafeName);
+                                          updateListView();
+                                          _save();
+                                          updateListView();
+                                          SigninFiresotre().updateBooking(
+                                            widget.cafeName,
+                                            widget.info.id,
+                                            widget.info.name,
+                                            widget.info.phone,
+                                            seatNum,
+                                          );
+                                          SigninFiresotre().updateUser(
+                                            widget.info.id,
+                                            seatNum,
+                                            widget.cafeName,
+                                            idSeat,
+                                          );
+                                        }
+                                      });
                                     } else {
                                       SnackBar mySnackBar = SnackBar(
                                         content: Text(
                                           "خطأ في إدخال الكود",
                                           textAlign: TextAlign.end,
+                                          style: TextStyle(fontSize: 24),
                                         ),
                                         backgroundColor: Colors.red,
                                         duration:
@@ -202,7 +226,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                             padding: const EdgeInsets.all(15),
                             child: Center(
                               child: Text(
-                                numSeat[index].toString(),
+                                snapshot.data['allseats'][index]['seat']
+                                    .toString(),
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -282,6 +307,44 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
         }
       ]),
     });
+  }
+
+  Future<bool> checkIfResirved(String seatNumber) async {
+    bool valid = true;
+    final QuerySnapshot result =
+        await Firestore.instance.collection('seats').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      if (data.documentID == widget.cafeName) {
+        for (var i = 0; i < data['allseats'].length; i++) {
+          if (seatNumber == data['allseats'][i]['seat']) {
+            if (data['allseats'][i]['userid'] != '') {
+              valid = false;
+            }
+          }
+        }
+      }
+    });
+    return valid;
+  }
+
+  Future<bool> checkIfDouplicate(String userID) async {
+    bool valid = true;
+    final QuerySnapshot result =
+        await Firestore.instance.collection('seats').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      if (data.documentID == widget.cafeName) {
+        for (var i = 0; i < data['allseats'].length; i++) {
+          if (userID == data['allseats'][i]['userid']) {
+            if (data['allseats'][i]['userid'] != '') {
+              valid = false;
+            }
+          }
+        }
+      }
+    });
+    return valid;
   }
 
   Future<String> _showDialog(BuildContext context) async {

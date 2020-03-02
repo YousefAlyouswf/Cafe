@@ -31,17 +31,19 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
     nonPersonalizedAds: true,
-    keywords: <String>['Game',
+    keywords: <String>[
+      'Game',
       'Mario',
       'Hotel',
       'Summer',
       'Travel',
       'Mobile',
       'Business',
-      'Technology'],
+      'Technology'
+    ],
   );
 
-    BannerAd _bannerAd;
+  BannerAd _bannerAd;
   BannerAd _bannerAdIOS;
   InterstitialAd _interstitialAd;
   InterstitialAd _interstitialAdIOS;
@@ -56,7 +58,8 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
           print("BannerAd $event");
         });
   }
-BannerAd createBannerAdIOS() {
+
+  BannerAd createBannerAdIOS() {
     return BannerAd(
         adUnitId: "ca-app-pub-6845451754172569/6339792193",
         //Change BannerAd adUnitId with Admob ID
@@ -66,6 +69,7 @@ BannerAd createBannerAdIOS() {
           print("BannerAd $event");
         });
   }
+
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
         adUnitId: "ca-app-pub-6845451754172569/6501787765",
@@ -75,7 +79,8 @@ BannerAd createBannerAdIOS() {
           print("IntersttialAd $event");
         });
   }
-InterstitialAd createInterstitialAdIOS() {
+
+  InterstitialAd createInterstitialAdIOS() {
     return InterstitialAd(
         adUnitId: "ca-app-pub-6845451754172569/6380510014",
         //Change Interstitial AdUnitId with Admob ID
@@ -84,6 +89,7 @@ InterstitialAd createInterstitialAdIOS() {
           print("IntersttialAd $event");
         });
   }
+
   //----------------------------
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
@@ -113,7 +119,6 @@ InterstitialAd createInterstitialAdIOS() {
   bool seatScreen = false;
   bool selectedScreen = false;
   int _selectedIndex = 0;
-
   bool hasBookinginSelected;
 
   String seatnum;
@@ -150,17 +155,17 @@ InterstitialAd createInterstitialAdIOS() {
   TabController _controller;
   @override
   void initState() {
-  //android admob appid
+    //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
-        //ios appid admob
+    //ios appid admob
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~2955436171");
     //Change appId With Admob Id
     _bannerAd = createBannerAd()
       ..load()
       ..show();
-      _bannerAdIOS = createBannerAdIOS()
+    _bannerAdIOS = createBannerAdIOS()
       ..load()
       ..show();
     super.initState();
@@ -176,7 +181,7 @@ InterstitialAd createInterstitialAdIOS() {
 
   @override
   void dispose() {
-      _bannerAd.dispose();
+    _bannerAd.dispose();
     _interstitialAd.dispose();
     _bannerAdIOS.dispose();
     _interstitialAdIOS.dispose();
@@ -188,7 +193,7 @@ InterstitialAd createInterstitialAdIOS() {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor:  Color.fromRGBO(102, 102, 255, 1),
+          backgroundColor: Color.fromRGBO(102, 102, 255, 1),
           title: Center(
             child: Text(
               cafeName,
@@ -240,8 +245,16 @@ InterstitialAd createInterstitialAdIOS() {
                 date,
                 height,
               ),
-              SeatsWidgets(info, count, updateListView, _save, _onItemTapped,
-                  cafeName, getUserResrevation, reservation, seatSelect),
+              SeatsWidgets(
+                  info,
+                  count,
+                  updateListView,
+                  _save,
+                  _onItemTapped,
+                  cafeName,
+                  getUserResrevation,
+                  reservation,
+                  seatSelect),
               SelectedWidgets(
                 info,
                 hasBookinginSelected,

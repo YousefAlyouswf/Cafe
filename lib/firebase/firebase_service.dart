@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninFiresotre {
   // initilaize
@@ -40,11 +41,137 @@ class SigninFiresotre {
     return ducoments.length == 1;
   }
 
- 
 //Update seat stauts
   Future updateBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
+    String hour = DateTime.now().hour.toString();
+    String minute = DateTime.now().minute.toString();
+    String second = DateTime.now().second.toString();
 
+    switch (hour) {
+      case "1":
+        second = "$second AM";
+
+        break;
+      case "2":
+        second = "$second AM";
+
+        break;
+      case "3":
+        second = "$second AM";
+
+        break;
+      case "4":
+        second = "$second AM";
+
+        break;
+      case "5":
+        second = "$second AM";
+
+        break;
+      case "6":
+        second = "$second AM";
+
+        break;
+      case "7":
+        second = "$second AM";
+
+        break;
+      case "8":
+        second = "$second AM";
+
+        break;
+      case "9":
+        second = "$second AM";
+
+        break;
+      case "10":
+        second = "$second AM";
+
+        break;
+      case "11":
+        second = "$second AM";
+
+        break;
+      case "12":
+        second = "$second PM";
+
+        break;
+      case "13":
+        second = "$second PM";
+        hour = "1";
+
+        break;
+        break;
+      case "14":
+        second = "$second PM";
+        hour = "2";
+
+        break;
+        break;
+      case "15":
+        second = "$second PM";
+        hour = "3";
+
+        break;
+        break;
+      case "16":
+        second = "$second PM";
+        hour = "4";
+
+        break;
+        break;
+      case "17":
+        second = "$second PM";
+        hour = "5";
+
+        break;
+        break;
+      case "18":
+        second = "$second PM";
+        hour = "6";
+
+        break;
+        break;
+      case "19":
+        second = "$second PM";
+        hour = "7";
+
+        break;
+        break;
+      case "20":
+        second = "$second PM";
+        hour = "8";
+
+        break;
+        break;
+      case "21":
+        second = "$second PM";
+        hour = "9";
+
+        break;
+        break;
+      case "22":
+        second = "$second PM";
+        hour = "10";
+
+        break;
+        break;
+      case "23":
+        second = "$second PM";
+        hour = "11";
+
+        break;
+        break;
+      case "00":
+        second = "$second PM";
+        hour = "12";
+
+        break;
+    }
+    String time = '$hour:$minute:$second';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('time', time);
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -53,6 +180,7 @@ class SigninFiresotre {
           'userid': '',
           'username': '',
           'userphone': '',
+          'time': '',
         }
       ]),
     });
@@ -64,6 +192,7 @@ class SigninFiresotre {
           'userid': userid,
           'username': username,
           'userphone': userphone,
+          'time': time
         }
       ]),
     });
@@ -71,6 +200,8 @@ class SigninFiresotre {
 
   Future calnceBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String time = prefs.getString('time');
     await Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -79,6 +210,7 @@ class SigninFiresotre {
           'userid': userid,
           'username': username,
           'userphone': userphone,
+          'time': time
         }
       ]),
     });
@@ -90,6 +222,7 @@ class SigninFiresotre {
           'userid': '',
           'username': '',
           'userphone': '',
+          'time': '',
         }
       ]),
     });
