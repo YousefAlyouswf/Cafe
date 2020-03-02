@@ -1,8 +1,10 @@
+import 'package:cafe/loading/loading.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
 import 'Review_seat/reviews.dart';
@@ -195,7 +197,9 @@ class _CafeListState extends State<CafeList> {
                 ),
                 onPressed: () async {
                   _deleteLogin();
-
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setBool('isLogin', false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Login()),
@@ -295,162 +299,169 @@ class _CafeListState extends State<CafeList> {
                     .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: Text("جاري تحميل قائمة المقاهي"));
+                return Center(child: Loading());
               } else {
-                return GridView.builder(
-                  padding: const EdgeInsets.all(10),
-                  itemCount: snapshot.data.documents.length,
-                  itemBuilder: (context, index) {
-                    String image =
-                        snapshot.data.documents[index].data['image'].toString();
-                    String cafeName =
-                        snapshot.data.documents[index].data['name'].toString();
+                try {
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (context, index) {
+                      String image = snapshot
+                          .data.documents[index].data['image']
+                          .toString();
+                      String cafeName = snapshot
+                          .data.documents[index].data['name']
+                          .toString();
 
-                    String starsSumF =
-                        snapshot.data.documents[index].data['stars'].toString();
+                      String starsSumF = snapshot
+                          .data.documents[index].data['stars']
+                          .toString();
 
-                    String reviewsCountF = snapshot
-                        .data.documents[index].data['reviewcount']
-                        .toString();
-                    String cafeID = snapshot.data.documents[index].documentID;
+                      String reviewsCountF = snapshot
+                          .data.documents[index].data['reviewcount']
+                          .toString();
+                      String cafeID = snapshot.data.documents[index].documentID;
 
-                    try {} catch (e) {}
+                      try {} catch (e) {}
 
-                    double result =
-                        int.parse(starsSumF) / int.parse(reviewsCountF);
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: InkWell(
-                        onTap: () {
-                          createInterstitialAd()
-                            ..load()
-                            ..show();
-                          createInterstitialAdIOS()
-                            ..load()
-                            ..show();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) {
-                                return Reviews(
-                                  widget.info,
-                                  cafeName,
-                                  cafeID,
-                                  widget.bookingDB,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                        child: GridTile(
-                          child: Image.network(
-                            image,
-                            fit: BoxFit.fill,
-                          ),
-                          header: Align(
-                            alignment: Alignment.bottomRight,
-                            child: IconButton(
-                                icon: Icon(
-                                  Icons.location_on,
-                                  color: Colors.red,
-                                  size: 35,
-                                ),
-                                onPressed: () {
-                                  String lat = snapshot
-                                      .data.documents[index].data['lat'];
-                                  String long = snapshot
-                                      .data.documents[index].data['long'];
-                                  openMap(lat, long);
-                                }),
-                          ),
-                          footer: Container(
-                            height: height / 12,
-                            child: GridTileBar(
-                              backgroundColor: Colors.black87,
-                              leading: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.star,
-                                    color: result >= 1
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: result >= 1.7
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: result >= 2.7
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: result >= 3.7
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
-                                  Icon(
-                                    Icons.star,
-                                    color: result >= 4.7
-                                        ? Colors.yellow
-                                        : Colors.grey,
-                                  ),
-                                ],
+                      double result =
+                          int.parse(starsSumF) / int.parse(reviewsCountF);
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: InkWell(
+                          onTap: () {
+                            createInterstitialAd()
+                              ..load()
+                              ..show();
+                            createInterstitialAdIOS()
+                              ..load()
+                              ..show();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) {
+                                  return Reviews(
+                                    widget.info,
+                                    cafeName,
+                                    cafeID,
+                                    widget.bookingDB,
+                                  );
+                                },
                               ),
-                              title: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () {
-                                      print(cafeID);
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) {
-                                            return Reviews(
-                                              widget.info,
-                                              cafeName,
-                                              cafeID,
-                                              widget.bookingDB,
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(
-                                            'التعليقات ${int.parse(reviewsCountF)}'),
-                                        SizedBox(
-                                          width: width / 20,
-                                        ),
-                                        Text(
-                                          cafeName,
-                                          style: TextStyle(
-                                              fontFamily: 'topaz',
-                                              fontSize: 23),
-                                          textAlign: TextAlign.end,
-                                        ),
-                                      ],
-                                    ),
+                            );
+                          },
+                          child: GridTile(
+                            child: Image.network(
+                              image,
+                              fit: BoxFit.fill,
+                            ),
+                            header: Align(
+                              alignment: Alignment.bottomRight,
+                              child: IconButton(
+                                  icon: Icon(
+                                    Icons.location_on,
+                                    color: Colors.red,
+                                    size: 35,
                                   ),
-                                ],
+                                  onPressed: () {
+                                    String lat = snapshot
+                                        .data.documents[index].data['lat'];
+                                    String long = snapshot
+                                        .data.documents[index].data['long'];
+                                    openMap(lat, long);
+                                  }),
+                            ),
+                            footer: Container(
+                              height: height / 12,
+                              child: GridTileBar(
+                                backgroundColor: Colors.black87,
+                                leading: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.star,
+                                      color: result >= 1
+                                          ? Colors.yellow
+                                          : Colors.grey,
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: result >= 1.7
+                                          ? Colors.yellow
+                                          : Colors.grey,
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: result >= 2.7
+                                          ? Colors.yellow
+                                          : Colors.grey,
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: result >= 3.7
+                                          ? Colors.yellow
+                                          : Colors.grey,
+                                    ),
+                                    Icon(
+                                      Icons.star,
+                                      color: result >= 4.7
+                                          ? Colors.yellow
+                                          : Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                                title: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: () {
+                                        print(cafeID);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) {
+                                              return Reviews(
+                                                widget.info,
+                                                cafeName,
+                                                cafeID,
+                                                widget.bookingDB,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                              'التعليقات ${int.parse(reviewsCountF)}'),
+                                          SizedBox(
+                                            width: width / 20,
+                                          ),
+                                          Text(
+                                            cafeName,
+                                            style: TextStyle(
+                                                fontFamily: 'topaz',
+                                                fontSize: 23),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 3 / 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                );
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      childAspectRatio: 3 / 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                  );
+                } catch (e) {
+                  return Loading();
+                }
               }
             },
           ),

@@ -1,8 +1,10 @@
 import 'package:cafe/cafes/cafes_screen.dart';
+import 'package:cafe/loading/loading.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'login_screen/login.dart';
 import 'models/booking.dart';
@@ -26,24 +28,41 @@ class _MyAppState extends State<MyApp> {
   var info1, db1;
   int count = 0;
   String getID;
-
+  bool whereGo;
+  Widget goThere = Loading();
   @override
   void initState() {
+    isLogined().then((onValue) {
+      whereGo = onValue;
+      if (whereGo) {
+        goThere = CafeList(info1, db1);
+      } else {
+        goThere = Login();
+      }
+    });
     super.initState();
     updateListView();
 
     getAllReviews();
   }
 
+  Future<bool> isLogined() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLogin = prefs.getBool('isLogin');
+    return isLogin;
+  }
+
   @override
   Widget build(BuildContext context) {
     updateListView();
+
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: count == 0 ? Login() : CafeList(info1, db1));
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: goThere,
+    );
   }
 
   void updateListView() async {
@@ -96,7 +115,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getAllReviews() async {
-  int count = 0;
+    int count = 0;
     cafeReviews = [];
     final QuerySnapshot result =
         await Firestore.instance.collection('cafes').getDocuments();
@@ -111,11 +130,9 @@ class _MyAppState extends State<MyApp> {
       Firestore.instance
           .collection('cafes')
           .document(data.documentID)
-          .updateData({
-        'stars': sum.toString(),
-        'reviewcount': data['reviews'].length
-      });
-  
+          .updateData(
+              {'stars': sum.toString(), 'reviewcount': data['reviews'].length});
+
       count++;
     });
   }

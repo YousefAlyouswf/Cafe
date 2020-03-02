@@ -1,4 +1,5 @@
 import 'package:cafe/firebase/firebase_service.dart';
+import 'package:cafe/loading/loading.dart';
 import 'package:cafe/models/cart.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -133,37 +134,41 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     double height = MediaQuery.of(context).size.height;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          children: <Widget>[
-            HeaderButtons(
-              widget.seatnum,
-              cartPrice,
-              widget.reservation,
-              needService,
-              widget._delete,
-              pressed,
-              reserveCafe,
-              widget.cafeName,
-              widget.hasBookinginSelected,
-              widget.info.id,
-              widget.info.name,
-              widget.info.phone,
-              widget._controller,
-            ),
-            OrderBody(
-                height,
-                widget.info.phone,
-                widget._delete,
-                widget.hasBookinginSelected,
+        try {
+          return Column(
+            children: <Widget>[
+              HeaderButtons(
                 widget.seatnum,
+                cartPrice,
+                widget.reservation,
+                needService,
+                widget._delete,
+                pressed,
                 reserveCafe,
-                seatID,
-                orderName,
-                price,
-                orderID,
-                widget.cafeName),
-          ],
-        );
+                widget.cafeName,
+                widget.hasBookinginSelected,
+                widget.info.id,
+                widget.info.name,
+                widget.info.phone,
+                widget._controller,
+              ),
+              OrderBody(
+                  height,
+                  widget.info.phone,
+                  widget._delete,
+                  widget.hasBookinginSelected,
+                  widget.seatnum,
+                  reserveCafe,
+                  seatID,
+                  orderName,
+                  price,
+                  orderID,
+                  widget.cafeName),
+            ],
+          );
+        } catch (e) {
+          return Loading();
+        }
       },
     );
   }

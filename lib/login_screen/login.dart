@@ -206,7 +206,7 @@ class _LoginState extends State<Login> {
                                               SharedPreferences prefs =
                                                   await SharedPreferences
                                                       .getInstance();
-
+                                              prefs.setBool('isLogin', true);
                                               pr.show();
                                               var info, dbID;
                                               final QuerySnapshot userinfo =
@@ -287,6 +287,7 @@ class _LoginState extends State<Login> {
                                 onTap: () async {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
+                                  prefs.setBool('isLogin', true);
                                   prefs.setBool('login', true);
                                   pr.show();
                                   var info, dbID;

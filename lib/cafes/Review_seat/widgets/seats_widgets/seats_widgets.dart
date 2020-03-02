@@ -1,4 +1,5 @@
 import 'package:cafe/firebase/firebase_service.dart';
+import 'package:cafe/loading/loading.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,16 +19,15 @@ class SeatsWidgets extends StatefulWidget {
   String seatSelect;
   TabController _controller;
   SeatsWidgets(
-    this.info,
-    this.count,
-    this.updateListView,
-    this._save,
-    this.cafeName,
-    this.getUserResrevation,
-    this.reservation,
-    this.seatSelect,
-    this._controller
-  );
+      this.info,
+      this.count,
+      this.updateListView,
+      this._save,
+      this.cafeName,
+      this.getUserResrevation,
+      this.reservation,
+      this.seatSelect,
+      this._controller);
 
   @override
   _SeatsWidgetsState createState() =>
@@ -35,7 +35,6 @@ class SeatsWidgets extends StatefulWidget {
 }
 
 class _SeatsWidgetsState extends State<SeatsWidgets> {
-  
   String code;
   TextEditingController controller = TextEditingController();
   final Function updateListView;
@@ -143,115 +142,122 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                   if (!snapshot.hasData) {
                     return Text("");
                   } else {
-                    return GridView.builder(
-                      itemCount: snapshot.data['allseats'].length,
-                      itemBuilder: (context, index) {
-                        Color color;
-                        bool isbooked = false;
-                        if (snapshot.data['allseats'][index]['color'] ==
-                            'green') {
-                          color = Colors.green;
-                          isbooked = false;
-                        } else {
-                          color = Colors.grey;
-                          isbooked = true;
-                        }
-                        String idSeat = index.toString();
-                        String seatNum =
-                            snapshot.data['allseats'][index]['seat'].toString();
-                        return InkWell(
-                          onTap: isbooked
-                              ? null
-                              : () async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  _showDialog(context).then((onValue) {
-                                    if (snapshot.data['code'] == onValue) {
-                                      checkIfResirved(seatNum).then((onValue1) {
-                                        if (onValue1 == false) {
-                                          SnackBar mySnackBar = SnackBar(
-                                            content: Text(
-                                              "تم حجز الجلسة قبلك",
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(fontSize: 24),
-                                            ),
-                                            backgroundColor: Colors.red,
-                                            duration: const Duration(
-                                                milliseconds: 2000),
-                                          );
-                                          Scaffold.of(context)
-                                              .showSnackBar(mySnackBar);
-                                        } else {
-                                          prefs.getString("seat");
-                                          prefs.setString("seat", seatNum);
-                                          prefs.setString('cafeNameForOrder',
-                                              widget.cafeName);
-                                          updateListView();
-                                          _save();
-                                          updateListView();
-                                          SigninFiresotre().updateBooking(
-                                            widget.cafeName,
-                                            widget.info.id,
-                                            widget.info.name,
-                                            widget.info.phone,
-                                            seatNum,
-                                          );
-                                          SigninFiresotre().updateUser(
-                                            widget.info.id,
-                                            seatNum,
-                                            widget.cafeName,
-                                            idSeat,
-                                          );
+                    try {
+                      return GridView.builder(
+                        itemCount: snapshot.data['allseats'].length,
+                        itemBuilder: (context, index) {
+                          Color color;
+                          bool isbooked = false;
+                          if (snapshot.data['allseats'][index]['color'] ==
+                              'green') {
+                            color = Colors.green;
+                            isbooked = false;
+                          } else {
+                            color = Colors.grey;
+                            isbooked = true;
+                          }
+                          String idSeat = index.toString();
+                          String seatNum = snapshot.data['allseats'][index]
+                                  ['seat']
+                              .toString();
+                          return InkWell(
+                            onTap: isbooked
+                                ? null
+                                : () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    _showDialog(context).then((onValue) {
+                                      if (snapshot.data['code'] == onValue) {
+                                        checkIfResirved(seatNum)
+                                            .then((onValue1) {
+                                          if (onValue1 == false) {
+                                            SnackBar mySnackBar = SnackBar(
+                                              content: Text(
+                                                "تم حجز الجلسة قبلك",
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(fontSize: 24),
+                                              ),
+                                              backgroundColor: Colors.red,
+                                              duration: const Duration(
+                                                  milliseconds: 2000),
+                                            );
+                                            Scaffold.of(context)
+                                                .showSnackBar(mySnackBar);
+                                          } else {
+                                            prefs.getString("seat");
+                                            prefs.setString("seat", seatNum);
+                                            prefs.setString('cafeNameForOrder',
+                                                widget.cafeName);
+                                            updateListView();
+                                            _save();
+                                            updateListView();
+                                            SigninFiresotre().updateBooking(
+                                              widget.cafeName,
+                                              widget.info.id,
+                                              widget.info.name,
+                                              widget.info.phone,
+                                              seatNum,
+                                            );
+                                            SigninFiresotre().updateUser(
+                                              widget.info.id,
+                                              seatNum,
+                                              widget.cafeName,
+                                              idSeat,
+                                            );
 
-                                          //---------Go to selected Seats
-                                         widget._controller.index = 2;
-                                        }
-                                      });
-                                    } else {
-                                      SnackBar mySnackBar = SnackBar(
-                                        content: Text(
-                                          "خطأ في إدخال الكود",
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(fontSize: 24),
-                                        ),
-                                        backgroundColor: Colors.red,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                      );
-                                      Scaffold.of(context)
-                                          .showSnackBar(mySnackBar);
-                                    }
-                                  });
-                                },
-                          splashColor: Colors.purple,
-                          borderRadius: BorderRadius.circular(15),
-                          child: Container(
-                            padding: const EdgeInsets.all(15),
-                            child: Center(
-                              child: Text(
-                                snapshot.data['allseats'][index]['seat']
-                                    .toString(),
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [color.withOpacity(0.1), color],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                                            //---------Go to selected Seats
+                                            widget._controller.index = 2;
+                                          }
+                                        });
+                                      } else {
+                                        SnackBar mySnackBar = SnackBar(
+                                          content: Text(
+                                            "خطأ في إدخال الكود",
+                                            textAlign: TextAlign.end,
+                                            style: TextStyle(fontSize: 24),
+                                          ),
+                                          backgroundColor: Colors.red,
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                        );
+                                        Scaffold.of(context)
+                                            .showSnackBar(mySnackBar);
+                                      }
+                                    });
+                                  },
+                            splashColor: Colors.purple,
+                            borderRadius: BorderRadius.circular(15),
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              child: Center(
+                                child: Text(
+                                  snapshot.data['allseats'][index]['seat']
+                                      .toString(),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
-                        );
-                      },
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 3 / 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                    );
+                              ),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [color.withOpacity(0.1), color],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 3 / 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                      );
+                    } catch (e) {
+                      return Loading();
+                    }
                   }
                 },
               ),
