@@ -3,8 +3,6 @@ import 'package:cafe/models/cart.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 import '../../../../utils/database_helper.dart';
 import 'header_buttons.dart';
@@ -14,18 +12,18 @@ class SelectedWidgets extends StatefulWidget {
   final UserInfo info;
   bool hasBookinginSelected;
   final Function _delete;
-  final Function _onItemTapped;
   final String seatnum;
   final String cafeName;
   final String reservation;
+  TabController _controller;
   SelectedWidgets(
     this.info,
     this.hasBookinginSelected,
     this._delete,
-    this._onItemTapped,
     this.seatnum,
     this.cafeName,
     this.reservation,
+    this._controller,
   );
 
   @override
@@ -121,7 +119,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
         }
       ]),
     });
-    widget._onItemTapped(1);
   }
 
   String orderName;
@@ -144,7 +141,6 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
               widget.reservation,
               needService,
               widget._delete,
-              widget._onItemTapped,
               pressed,
               reserveCafe,
               widget.cafeName,
@@ -152,6 +148,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
               widget.info.id,
               widget.info.name,
               widget.info.phone,
+              widget._controller,
             ),
             OrderBody(
                 height,

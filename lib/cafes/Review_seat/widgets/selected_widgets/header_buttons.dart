@@ -12,12 +12,12 @@ class HeaderButtons extends StatelessWidget {
   final String reservation;
   final Function needService;
   final Function _delete;
-  final Function _onItemTapped;
   final bool pressed;
   final String reserveCafe;
   final String cafeName;
   bool hasBookinginSelected;
   final String seatnum;
+  TabController _controller;
 
   HeaderButtons(
     this.seatnum,
@@ -25,7 +25,6 @@ class HeaderButtons extends StatelessWidget {
     this.reservation,
     this.needService,
     this._delete,
-    this._onItemTapped,
     this.pressed,
     this.reserveCafe,
     this.cafeName,
@@ -33,9 +32,8 @@ class HeaderButtons extends StatelessWidget {
     this.id,
     this.name,
     this.phone,
-
+    this._controller,
   );
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,63 +102,61 @@ class HeaderButtons extends StatelessWidget {
                       hasBookinginSelected = false;
 
                       SigninFiresotre().cancleupdateUser(id);
-                      _onItemTapped(1);
+                      _controller.index = 1;
                     },
                   ),
                   Spacer(),
                   SizedBox(
                       width: 150,
                       child: InkWell(
-                              child: pressed
-                                  ? Icon(
-                                      Icons.notifications_active,
-                                      size: 55,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.notifications_none,
-                                      size: 55,
-                                      color: Colors.red,
-                                    ),
-                              onTap: () async {
-                                needService();
-                                bool faham = true;
-                                final QuerySnapshot result = await Firestore
-                                    .instance
-                                    .collection('faham')
-                                    .getDocuments();
-                                final List<DocumentSnapshot> documents =
-                                    result.documents;
-                                documents.forEach((data) {
-                                  if (data['userid'] == id) {
-                                    String docID = data.documentID;
-                                    Firestore.instance
-                                        .collection('faham')
-                                        .document(docID)
-                                        .delete();
-                                    faham = false;
-                                  }
-                                });
-                                if (faham) {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  String seat = prefs.getString("seat");
-                                  String cafeNameForOrder = prefs.getString('cafeNameForOrder');
-                                  var now =
-                                      DateTime.now().millisecondsSinceEpoch;
-                                  SigninFiresotre().faham(
-                                    cafeNameForOrder,
-                                    seat,
-                                    now.toString(),
-                                    name,
-                                    id,
-                                  );
-                                  //------
+                        child: pressed
+                            ? Icon(
+                                Icons.notifications_active,
+                                size: 55,
+                                color: Colors.red,
+                              )
+                            : Icon(
+                                Icons.notifications_none,
+                                size: 55,
+                                color: Colors.red,
+                              ),
+                        onTap: () async {
+                          needService();
+                          bool faham = true;
+                          final QuerySnapshot result = await Firestore.instance
+                              .collection('faham')
+                              .getDocuments();
+                          final List<DocumentSnapshot> documents =
+                              result.documents;
+                          documents.forEach((data) {
+                            if (data['userid'] == id) {
+                              String docID = data.documentID;
+                              Firestore.instance
+                                  .collection('faham')
+                                  .document(docID)
+                                  .delete();
+                              faham = false;
+                            }
+                          });
+                          if (faham) {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            String seat = prefs.getString("seat");
+                            String cafeNameForOrder =
+                                prefs.getString('cafeNameForOrder');
+                            var now = DateTime.now().millisecondsSinceEpoch;
+                            SigninFiresotre().faham(
+                              cafeNameForOrder,
+                              seat,
+                              now.toString(),
+                              name,
+                              id,
+                            );
+                            //------
 
-                                }
-                              },
-                            )
-                         ),
+                          }
+                        },
+                      )),
                 ],
               ),
       ),

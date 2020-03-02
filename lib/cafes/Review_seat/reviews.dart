@@ -137,20 +137,6 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   }
 
   _ReviewsState(this.info, this.cafeName, this.cafeID, this.bookingDB);
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      if (index == 0) {
-        control = 0;
-      } else if (index == 1) {
-        updateListView();
-        getUserResrevation();
-        control = 1;
-      } else if (index == 2) {
-        control = 2;
-      }
-    });
-  }
 
   TabController _controller;
   @override
@@ -210,6 +196,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                 color: Colors.white,
               ),
               onPressed: () {
+                _controller.index = 0;
                 showModalSheet(context);
               },
             ),
@@ -246,23 +233,24 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                 height,
               ),
               SeatsWidgets(
-                  info,
-                  count,
-                  updateListView,
-                  _save,
-                  _onItemTapped,
-                  cafeName,
-                  getUserResrevation,
-                  reservation,
-                  seatSelect),
+                info,
+                count,
+                updateListView,
+                _save,
+                cafeName,
+                getUserResrevation,
+                reservation,
+                seatSelect,
+                _controller,
+              ),
               SelectedWidgets(
                 info,
                 hasBookinginSelected,
                 _delete,
-                _onItemTapped,
                 seatnum,
                 cafeName,
                 reservation,
+                _controller,
               ),
             ],
             controller: _controller,
@@ -290,7 +278,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   createBox(BuildContext context, StateSetter state) {
     return SingleChildScrollView(
       child: LimitedBox(
-        maxHeight: 450,
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,

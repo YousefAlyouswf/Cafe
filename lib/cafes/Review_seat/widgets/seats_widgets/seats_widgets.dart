@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../selected_widgets/selected_widgets.dart';
 
 class SeatsWidgets extends StatefulWidget {
   final String cafeName;
@@ -14,20 +13,20 @@ class SeatsWidgets extends StatefulWidget {
   final int count;
   final Function updateListView;
   final Function _save;
-  final Function _onItemTapped;
   final Function getUserResrevation;
   String reservation;
   String seatSelect;
+  TabController _controller;
   SeatsWidgets(
     this.info,
     this.count,
     this.updateListView,
     this._save,
-    this._onItemTapped,
     this.cafeName,
     this.getUserResrevation,
     this.reservation,
     this.seatSelect,
+    this._controller
   );
 
   @override
@@ -36,6 +35,7 @@ class SeatsWidgets extends StatefulWidget {
 }
 
 class _SeatsWidgetsState extends State<SeatsWidgets> {
+  
   String code;
   TextEditingController controller = TextEditingController();
   final Function updateListView;
@@ -202,6 +202,9 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                             widget.cafeName,
                                             idSeat,
                                           );
+
+                                          //---------Go to selected Seats
+                                         widget._controller.index = 2;
                                         }
                                       });
                                     } else {
