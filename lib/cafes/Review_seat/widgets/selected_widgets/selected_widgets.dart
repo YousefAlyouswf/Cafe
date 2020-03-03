@@ -136,6 +136,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
       builder: (context, constraints) {
         try {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               HeaderButtons(
                 widget.seatnum,

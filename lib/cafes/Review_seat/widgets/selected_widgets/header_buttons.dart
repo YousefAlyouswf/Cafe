@@ -112,12 +112,12 @@ class HeaderButtons extends StatelessWidget {
                         child: pressed
                             ? Icon(
                                 Icons.notifications_active,
-                                size: 55,
+                                size: 85,
                                 color: Colors.red,
                               )
                             : Icon(
                                 Icons.notifications_none,
-                                size: 55,
+                                size: 85,
                                 color: Colors.red,
                               ),
                         onTap: () async {
