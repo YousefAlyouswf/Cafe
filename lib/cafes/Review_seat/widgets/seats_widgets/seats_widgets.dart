@@ -1,5 +1,6 @@
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/loading/loading.dart';
+import 'package:cafe/models/seats_models.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -143,13 +144,30 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                     return Text("");
                   } else {
                     try {
+                      List<SeatsModels> seatsModels = new List();
+                      for (var i = 0;
+                          i < snapshot.data['allseats'].length;
+                          i++) {
+                        seatsModels.add(SeatsModels(
+                          snapshot.data['allseats'][i]['color'].toString(),
+                          int.parse(snapshot.data['allseats'][i]['seat']),
+                          snapshot.data['allseats'][i]['userid'],
+                          snapshot.data['allseats'][i]['username'],
+                          snapshot.data['allseats'][i]['userphone'],
+                          snapshot.data['allseats'][i]['time'],
+                        ));
+                      }
+                      seatsModels.sort((a, b) {
+                        var r = a.seat.compareTo(b.seat);
+
+                        return r;
+                      });
                       return GridView.builder(
                         itemCount: snapshot.data['allseats'].length,
                         itemBuilder: (context, index) {
                           Color color;
                           bool isbooked = false;
-                          if (snapshot.data['allseats'][index]['color'] ==
-                              'green') {
+                          if (seatsModels[index].color.toString() == 'green') {
                             color = Colors.green;
                             isbooked = false;
                           } else {
@@ -157,9 +175,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                             isbooked = true;
                           }
                           String idSeat = index.toString();
-                          String seatNum = snapshot.data['allseats'][index]
-                                  ['seat']
-                              .toString();
+                          String seatNum = seatsModels[index].seat.toString();
                           return InkWell(
                             onTap: isbooked
                                 ? null
@@ -231,8 +247,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                               padding: const EdgeInsets.all(15),
                               child: Center(
                                 child: Text(
-                                  snapshot.data['allseats'][index]['seat']
-                                      .toString(),
+                                  seatNum,
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
