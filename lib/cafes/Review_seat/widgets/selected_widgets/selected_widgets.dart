@@ -1,13 +1,15 @@
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/widgets/cancle.dart';
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/widgets/drinks_button.dart';
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/widgets/food_button.dart';
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/widgets/hookah_button.dart';
+import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/widgets/ring_button.dart';
 import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/loading/loading.dart';
 import 'package:cafe/models/cart.dart';
 import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../utils/database_helper.dart';
-import 'header_buttons.dart';
-import 'order_body.dart';
 
 class SelectedWidgets extends StatefulWidget {
   final UserInfo info;
@@ -122,50 +124,74 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     });
   }
 
-  String orderName;
-  String price;
-  String orderID;
-  //---------
-
   @override
   Widget build(BuildContext context) {
     needService();
-    countOrderINCart();
     double height = MediaQuery.of(context).size.height;
     return LayoutBuilder(
       builder: (context, constraints) {
         try {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          return Stack(
             children: <Widget>[
-              HeaderButtons(
-                widget.seatnum,
-                cartPrice,
-                widget.reservation,
-                needService,
-                widget._delete,
-                pressed,
-                reserveCafe,
-                widget.cafeName,
-                widget.hasBookinginSelected,
-                widget.info.id,
-                widget.info.name,
-                widget.info.phone,
-                widget._controller,
+              Align(
+                alignment: Alignment(0, -.5),
+                child: RingButton(
+                  pressed,
+                  needService,
+                  widget.info.name,
+                  widget.info.id,
+                  widget.hasBookinginSelected,
+                  widget.info.phone,
+                  widget._delete,
+                ),
               ),
-              OrderBody(
-                height,
-                widget.info.phone,
-                widget._delete,
-                widget.hasBookinginSelected,
-                widget.seatnum,
-                reserveCafe,
-                seatID,
-                orderName,
-                price,
-                orderID,
-                widget.cafeName,
-                widget.reservation,
+              Align(
+                alignment: Alignment(-.70, -.30),
+                child: CancleButton(
+                    widget._delete,
+                    needService,
+                    widget.info.id,
+                    widget.cafeName,
+                    widget.info.name,
+                    widget.info.phone,
+                    widget.hasBookinginSelected,
+                    widget._controller),
+              ),
+              Align(
+                alignment: Alignment(-.70, -.69),
+                child: HooakahButton(
+                  widget.info.phone,
+                  widget.seatnum,
+                  reserveCafe,
+                  seatID,
+                  widget.cafeName,
+                  widget._delete,
+                  height,
+                ),
+              ),
+              Align(
+                alignment: Alignment(.70, -.69),
+                child: DrinkButtons(
+                  widget.info.phone,
+                  widget.seatnum,
+                  reserveCafe,
+                  seatID,
+                  widget.cafeName,
+                  widget._delete,
+                  height,
+                ),
+              ),
+              Align(
+                alignment: Alignment(.70, -.30),
+                child: FoodButton(
+                  widget.info.phone,
+                  widget.seatnum,
+                  reserveCafe,
+                  seatID,
+                  widget.cafeName,
+                  widget._delete,
+                  height,
+                ),
               ),
             ],
           );

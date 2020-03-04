@@ -115,7 +115,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   String seatSelect;
   // Switch between 3 screens
 
-  bool hasBookinginSelected;
+  bool hasBookinginSelected = false;
 
   String seatnum;
   String cafeName;
