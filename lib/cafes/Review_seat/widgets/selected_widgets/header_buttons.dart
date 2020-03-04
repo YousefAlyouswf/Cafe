@@ -2,7 +2,6 @@ import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../models/user_info.dart';
 
 class HeaderButtons extends StatelessWidget {
   final String id;
@@ -118,7 +117,7 @@ class HeaderButtons extends StatelessWidget {
                             : Icon(
                                 Icons.notifications_none,
                                 size: 85,
-                                color: Colors.red,
+                                color: Colors.black,
                               ),
                         onTap: () async {
                           needService();

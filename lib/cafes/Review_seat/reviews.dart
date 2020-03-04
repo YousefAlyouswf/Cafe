@@ -114,11 +114,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   Color staremptyColor = Colors.black;
   String seatSelect;
   // Switch between 3 screens
-  int control = 0;
-  bool reviewScreen = true;
-  bool seatScreen = false;
-  bool selectedScreen = false;
-  int _selectedIndex = 0;
+
   bool hasBookinginSelected;
 
   String seatnum;
@@ -179,12 +175,13 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(102, 102, 255, 1),
+          backgroundColor: Colors.orange,
           title: Center(
             child: Text(
               cafeName,
               style: TextStyle(
                   fontFamily: 'arbaeen',
+                  color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 28),
             ),
@@ -193,7 +190,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             IconButton(
               icon: Icon(
                 Icons.rate_review,
-                color: Colors.white,
+                color: Colors.black,
               ),
               onPressed: () {
                 _controller.index = 0;
@@ -202,58 +199,60 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             ),
           ],
           bottom: TabBar(
+            labelStyle: TextStyle(fontSize: 20),
+            labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.white,
             tabs: [
               Tab(
-                icon: Icon(Icons.comment),
                 text: 'التعليقات',
               ),
               Tab(
-                icon: Icon(Icons.event_seat),
                 text: 'الجلسات',
               ),
               Tab(
-                icon: Icon(Icons.description),
-                text: 'الطلبات',
+                text: 'الخدمة',
               )
             ],
             controller: _controller,
           ),
         ),
-        body: Center(
-          child: TabBarView(
-            children: <Widget>[
-              ReviewWidgets(
-                cafeName,
-                reviews,
-                stars,
-                names,
-                date,
-                height,
-              ),
-              SeatsWidgets(
-                info,
-                count,
-                updateListView,
-                _save,
-                cafeName,
-                getUserResrevation,
-                reservation,
-                seatSelect,
-                _controller,
-              ),
-              SelectedWidgets(
-                info,
-                hasBookinginSelected,
-                _delete,
-                seatnum,
-                cafeName,
-                reservation,
-                _controller,
-              ),
-            ],
-            controller: _controller,
+        body: Container(
+          color: Colors.orange[100],
+          child: Center(
+            child: TabBarView(
+              children: <Widget>[
+                ReviewWidgets(
+                  cafeName,
+                  reviews,
+                  stars,
+                  names,
+                  date,
+                  height,
+                ),
+                SeatsWidgets(
+                  info,
+                  count,
+                  updateListView,
+                  _save,
+                  cafeName,
+                  getUserResrevation,
+                  reservation,
+                  seatSelect,
+                  _controller,
+                ),
+                SelectedWidgets(
+                  info,
+                  hasBookinginSelected,
+                  _delete,
+                  seatnum,
+                  cafeName,
+                  reservation,
+                  _controller,
+                ),
+              ],
+              controller: _controller,
+            ),
           ),
         ));
   }

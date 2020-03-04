@@ -116,9 +116,6 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                         IconButton(
                                             icon: Icon(Icons.refresh),
                                             onPressed: () async {
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
                                               _delete();
                                               updateListView();
                                             })
@@ -133,7 +130,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
         : Container(
             height: height / 1.57,
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.only(
+                  bottom: 50, top: 15, left: 15, right: 15),
               child: StreamBuilder(
                 stream: Firestore.instance
                     .collection('seats')

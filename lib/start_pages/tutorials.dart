@@ -3,7 +3,6 @@ import 'package:cafe/start_pages/page_three.dart';
 import 'package:cafe/start_pages/page_two.dart';
 import 'package:cafe/start_pages/page_five.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 
 class Tutorials extends StatefulWidget {

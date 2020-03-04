@@ -174,13 +174,14 @@ class _CafeListState extends State<CafeList> {
     return WillPopScope(
       onWillPop: () => null,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.orange[100],
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(102, 102, 255, 1),
+          backgroundColor: Colors.orange,
           title: Center(
             child: Text(
               "قائمة المقاهي",
               style: TextStyle(
+                color: Colors.black,
                   fontFamily: 'arbaeen',
                   fontWeight: FontWeight.bold,
                   fontSize: 28),
@@ -192,7 +193,7 @@ class _CafeListState extends State<CafeList> {
               child: IconButton(
                 icon: Icon(
                   Icons.exit_to_app,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 30,
                 ),
                 onPressed: () async {
@@ -210,21 +211,23 @@ class _CafeListState extends State<CafeList> {
           ],
         ),
         drawer: Drawer(
+          
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
+                margin: EdgeInsets.all(0),
                 accountName: Text(""),
                 accountEmail: Text(""),
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: NetworkImage(
-                      'https://t4.ftcdn.net/jpg/02/57/34/73/240_F_257347345_xMLYoln5APOlAJcmv8x0FPexLUeRMdzA.jpg'),
-                  fit: BoxFit.fitWidth,
+                  image:AssetImage('assests/images/logo-1.png'),
+                  fit: BoxFit.fill,
                 )),
               ),
               Container(
-                color: Color.fromRGBO(254, 254, 254, 1),
+                color: Colors.orange[100],
                 child: ListTile(
+               
                   title: Center(
                       child: Text(
                     "أختر المدينه",
@@ -263,7 +266,7 @@ class _CafeListState extends State<CafeList> {
                                     //---------------
                                   },
                                   child: Card(
-                                    color: Colors.green[100],
+                                    color: Colors.orange,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Center(
