@@ -23,18 +23,19 @@ class CancleButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(topRight: Radius.circular(70)),
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(70)),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width * 0.3,
+          
           child: InkWell(
             child: Card(
-              color: Colors.red,
+               color: Colors.transparent,
               child: Center(
                 child: Text(
                   'خروج',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 25, color: Colors.red, fontWeight: FontWeight.w900),
                 ),
               ),
             ),

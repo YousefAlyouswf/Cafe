@@ -19,8 +19,8 @@ class RingButton extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Colors.grey,
-            border: Border.all(width: 3, color: Colors.grey),
+         
+            border: Border.all(width: 3, color: Colors.black),
           ),
           child: StreamBuilder(
               stream: Firestore.instance
@@ -54,7 +54,7 @@ class RingButton extends StatelessWidget {
                           ? () {
                               SnackBar mySnackBar = SnackBar(
                                 content: Container(
-                                  height:  MediaQuery.of(context).size.height*.5,
+                                  height:  MediaQuery.of(context).size.height*.3,
                                   child: Center(
                                     child: Text(
                                       "لا يوجد لديك حجز",

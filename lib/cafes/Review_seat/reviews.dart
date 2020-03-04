@@ -175,13 +175,13 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.red[900],
           title: Center(
             child: Text(
               cafeName,
               style: TextStyle(
                   fontFamily: 'arbaeen',
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 28),
             ),
@@ -190,7 +190,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             IconButton(
               icon: Icon(
                 Icons.rate_review,
-                color: Colors.black,
+                color: Colors.white,
               ),
               onPressed: () {
                 _controller.index = 0;
@@ -199,8 +199,8 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             ),
           ],
           bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 20),
-            labelColor: Colors.black,
+            labelStyle: TextStyle(fontSize: 20, fontFamily: 'topaz'),
+            labelColor: Colors.white,
             unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.white,
             tabs: [
@@ -218,7 +218,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
           ),
         ),
         body: Container(
-          color: Colors.orange[100],
+          color: Colors.white,
           child: Center(
             child: TabBarView(
               children: <Widget>[

@@ -49,7 +49,7 @@ class ReviewWidgets extends StatelessWidget {
                       date.add(myreview['reviews'][i]['date'].toString());
                     }
 
-                    Color currentColor = Color.fromRGBO(83, 180, 223, 1);
+                    Color currentColor = Colors.black;
                     Color nextColor = Colors.white;
 
                     return Container(

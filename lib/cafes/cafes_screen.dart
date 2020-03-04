@@ -174,14 +174,14 @@ class _CafeListState extends State<CafeList> {
     return WillPopScope(
       onWillPop: () => null,
       child: Scaffold(
-        backgroundColor: Colors.orange[100],
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.red[900],
           title: Center(
             child: Text(
               "قائمة المقاهي",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                   fontFamily: 'arbaeen',
                   fontWeight: FontWeight.bold,
                   fontSize: 28),
@@ -193,7 +193,7 @@ class _CafeListState extends State<CafeList> {
               child: IconButton(
                 icon: Icon(
                   Icons.exit_to_app,
-                  color: Colors.black,
+                color: Colors.white,
                   size: 30,
                 ),
                 onPressed: () async {
@@ -220,12 +220,12 @@ class _CafeListState extends State<CafeList> {
                 accountEmail: Text(""),
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image:AssetImage('assests/images/logo-1.png'),
+                  image:AssetImage('assests/images/logo.jpg'),
                   fit: BoxFit.fill,
                 )),
               ),
               Container(
-                color: Colors.orange[100],
+                color: Colors.white,
                 child: ListTile(
                
                   title: Center(
@@ -266,13 +266,13 @@ class _CafeListState extends State<CafeList> {
                                     //---------------
                                   },
                                   child: Card(
-                                    color: Colors.orange,
+                                    color: Colors.red[900],
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Center(
                                           child: Text(
                                         cityFilter[index],
-                                        style: TextStyle(fontSize: 18),
+                                        style: TextStyle(fontSize: 18, color: Colors.white),
                                       )),
                                     ),
                                   ),
@@ -376,7 +376,7 @@ class _CafeListState extends State<CafeList> {
                             footer: Container(
                               height: height / 12,
                               child: GridTileBar(
-                                backgroundColor: Colors.black87,
+                                backgroundColor: Colors.black54,
                                 leading: Row(
                                   children: <Widget>[
                                     Icon(
@@ -433,7 +433,7 @@ class _CafeListState extends State<CafeList> {
                                       child: Row(
                                         children: <Widget>[
                                           Text(
-                                              'التعليقات ${int.parse(reviewsCountF)}'),
+                                              'التعليقات ${int.parse(reviewsCountF)}', style: TextStyle(color: Colors.white),),
                                           SizedBox(
                                             width: width / 20,
                                           ),
@@ -441,7 +441,7 @@ class _CafeListState extends State<CafeList> {
                                             cafeName,
                                             style: TextStyle(
                                                 fontFamily: 'topaz',
-                                                fontSize: 23),
+                                                fontSize: 23, color: Colors.white),
                                             textAlign: TextAlign.end,
                                           ),
                                         ],

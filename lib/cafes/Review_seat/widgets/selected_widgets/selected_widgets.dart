@@ -134,7 +134,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
           return Stack(
             children: <Widget>[
               Align(
-                alignment: Alignment(0, -.5),
+                alignment: Alignment(0, -.50),
                 child: RingButton(
                   pressed,
                   needService,
@@ -146,19 +146,18 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(-.70, -.30),
-                child: CancleButton(
-                    widget._delete,
-                    needService,
-                    widget.info.id,
-                    widget.cafeName,
-                    widget.info.name,
-                    widget.info.phone,
-                    widget.hasBookinginSelected,
-                    widget._controller),
+                alignment: Alignment(0, -.99),
+                              child: Container(
+                  height: height * .2,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assests/images/logo.jpg'),
+                    ),
+                  ),
+                ),
               ),
               Align(
-                alignment: Alignment(-.70, -.69),
+                alignment: Alignment(-.50, .1),
                 child: HooakahButton(
                   widget.info.phone,
                   widget.seatnum,
@@ -170,7 +169,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(.70, -.69),
+                alignment: Alignment(.50, .1),
                 child: DrinkButtons(
                   widget.info.phone,
                   widget.seatnum,
@@ -182,7 +181,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(.70, -.30),
+                alignment: Alignment(.50, .40),
                 child: FoodButton(
                   widget.info.phone,
                   widget.seatnum,
@@ -192,6 +191,18 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                   widget._delete,
                   height,
                 ),
+              ),
+              Align(
+                alignment: Alignment(-.50, .40),
+                child: CancleButton(
+                    widget._delete,
+                    needService,
+                    widget.info.id,
+                    widget.cafeName,
+                    widget.info.name,
+                    widget.info.phone,
+                    widget.hasBookinginSelected,
+                    widget._controller),
               ),
             ],
           );

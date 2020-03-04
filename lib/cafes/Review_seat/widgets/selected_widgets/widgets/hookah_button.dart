@@ -21,10 +21,12 @@ class HooakahButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(bottomRight: Radius.circular(70)),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(70)),
+        
         child: Container(
           height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width * 0.3,
+         
           child: InkWell(
             onTap: () {
               showBottomSheet(
@@ -184,14 +186,14 @@ class HooakahButton extends StatelessWidget {
                       ));
             },
             child: Card(
-              color: Colors.deepPurple,
+               color: Colors.transparent,
               child: Center(
                 child: Text(
                   'معسلات',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 25,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),

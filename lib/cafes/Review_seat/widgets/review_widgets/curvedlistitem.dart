@@ -28,7 +28,8 @@ class CurvedListItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.0),
       child: Card(
-        color: color,
+        color: Colors.white,
+        elevation: 5,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -65,11 +66,11 @@ class CurvedListItem extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: nextColor),
+                            color: Colors.black),
                       ),
                       Text(
                         time,
-                        style: TextStyle(color: nextColor),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -86,7 +87,7 @@ class CurvedListItem extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   review,
-                  style: TextStyle(color: nextColor),
+                  style: TextStyle(color: Colors.black),
                   textDirection: TextDirection.rtl,
                 ),
               ),
