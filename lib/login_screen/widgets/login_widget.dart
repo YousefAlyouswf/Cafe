@@ -184,7 +184,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   Scaffold.of(context).showSnackBar(SnackBar(
                                     backgroundColor: Colors.red,
                                     content: Text(
-                                      'خطأ في تسجيل الدخول',
+                                      'رقم الجوال أو كلمة المرور غير صحيحة',
                                       textAlign: TextAlign.end,
                                     ),
                                     duration: Duration(seconds: 3),
@@ -249,9 +249,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                     } else {
                       pr.dismiss();
                       Scaffold.of(context).showSnackBar(SnackBar(
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.black,
                         content: Text(
-                          'خطأ في تسجيل الدخول',
+                          'رقم الجوال أو كلمة المرور غير صحيحة',
                           textAlign: TextAlign.end,
                         ),
                         duration: Duration(seconds: 3),
