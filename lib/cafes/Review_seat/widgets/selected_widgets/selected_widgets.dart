@@ -34,6 +34,7 @@ class SelectedWidgets extends StatefulWidget {
   _SelectedWidgetsState createState() => _SelectedWidgetsState();
 }
 
+// with SingleTickerProviderStateMixin
 class _SelectedWidgetsState extends State<SelectedWidgets> {
   String reserveCafe;
 
@@ -132,11 +133,48 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
   static const adUnitIDIOS = "ca-app-pub-6845451754172569/8931463804";
   final _nativeadMobIOS = NativeAdmob();
 
+  // AnimationController animationController;
+  // Animation<double> animationHookah;
+  // Animation<double> animationDrinks;
+  // Animation<double> animationFoods;
+  // Animation<double> animationCancle;
+  // Animation<double> ringService;
+
   @override
   void initState() {
     super.initState();
     _nativeAdMob.initialize(appID: "ca-app-pub-6845451754172569~9603621495");
     _nativeadMobIOS.initialize(appID: "ca-app-pub-6845451754172569~2955436171");
+
+    //   animationController = AnimationController(
+    //     vsync: this,
+    //     duration: Duration(seconds: 2),
+    //   );
+    //   animationHookah =
+    //       Tween<double>(begin: -90, end: 0).animate(animationController)
+    //         ..addListener(() {
+    //           setState(() {});
+    //         });
+    //   animationDrinks =
+    //       Tween<double>(begin: 90, end: 0).animate(animationController)
+    //         ..addListener(() {
+    //           setState(() {});
+    //         });
+    //   animationFoods =
+    //       Tween<double>(begin: 5, end: 0).animate(animationController)
+    //         ..addListener(() {
+    //           setState(() {});
+    //         });
+    //   animationCancle =
+    //       Tween<double>(begin: -5, end: 0).animate(animationController)
+    //         ..addListener(() {
+    //           setState(() {});
+    //         });
+    //  ringService = Tween<double>(begin: 1, end: 0).animate(animationController)
+    //     ..addListener(() {
+    //       setState(() {});
+    //     });
+    //   animationController.forward();
   }
 
   @override
@@ -162,7 +200,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
               ),
 
               Align(
-                alignment: Alignment(-.50, -.5),
+                alignment: Alignment(-.50, -.52),
                 child: HooakahButton(
                   widget.info.phone,
                   widget.seatnum,
@@ -174,7 +212,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(.50, -.5),
+                alignment: Alignment(.50, -.52),
                 child: DrinkButtons(
                   widget.info.phone,
                   widget.seatnum,
@@ -398,4 +436,10 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
       ),
     );
   }
+
+  // @override
+  // void dispose() {
+  //   animationController.dispose();
+  //   super.dispose();
+  // }
 }

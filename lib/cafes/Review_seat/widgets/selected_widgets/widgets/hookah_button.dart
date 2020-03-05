@@ -21,12 +21,20 @@ class HooakahButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(70)),
-        
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(70),
+        ),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width * 0.3,
-         
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.grey.withOpacity(0.1), Colors.grey],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
           child: InkWell(
             onTap: () {
               showBottomSheet(
@@ -187,7 +195,8 @@ class HooakahButton extends StatelessWidget {
                       ));
             },
             child: Card(
-               color: Colors.transparent,
+              color: Colors.transparent,
+              elevation: 0,
               child: Center(
                 child: Text(
                   'معسلات',
@@ -195,6 +204,7 @@ class HooakahButton extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 25,
                     color: Colors.black,
+                    fontFamily: "topaz"
                   ),
                 ),
               ),

@@ -21,11 +21,18 @@ class DrinkButtons extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ClipRRect(
-         borderRadius: BorderRadius.only(topRight: Radius.circular(70) ),
-              child: Container(
+        borderRadius: BorderRadius.only(topRight: Radius.circular(70)),
+        child: Container(
           height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width * 0.3,
-          
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.grey.withOpacity(0.1), Colors.grey],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
           child: InkWell(
             onTap: () {
               showBottomSheet(
@@ -51,7 +58,8 @@ class DrinkButtons extends StatelessWidget {
                                     .where('phone', isEqualTo: phone)
                                     .snapshots(),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData) return Text("Loading..");
+                                  if (!snapshot.hasData)
+                                    return Text("Loading..");
                                   return ListView.builder(
                                     itemCount: snapshot.data.documents.length,
                                     itemBuilder: (context, index) {
@@ -84,7 +92,8 @@ class DrinkButtons extends StatelessWidget {
                                                                     " جلسة رقم: " +
                                                                     seatnum,
                                                                 style: TextStyle(
-                                                                    fontSize: 18,
+                                                                    fontSize:
+                                                                        18,
                                                                     fontFamily:
                                                                         'topaz'),
                                                               )
@@ -106,20 +115,12 @@ class DrinkButtons extends StatelessWidget {
                                                                       : StreamBuilder(
                                                                           stream: Firestore
                                                                               .instance
-                                                                              .collection(
-                                                                                  'order')
-                                                                              .where('cafename',
-                                                                                  isEqualTo:
-                                                                                      cafeName)
-                                                                              .where('section',
-                                                                                  isEqualTo:
-                                                                                      'مشروبات')
+                                                                              .collection('order')
+                                                                              .where('cafename', isEqualTo: cafeName)
+                                                                              .where('section', isEqualTo: 'مشروبات')
                                                                               .snapshots(),
-                                                                          builder:
-                                                                              (context,
-                                                                                  snapshot) {
-                                                                            if (!snapshot
-                                                                                .hasData) {
+                                                                          builder: (context, snapshot) {
+                                                                            if (!snapshot.hasData) {
                                                                               return Text("");
                                                                             } else {
                                                                               return GridView.builder(
@@ -169,7 +170,8 @@ class DrinkButtons extends StatelessWidget {
                                                         Text(
                                                           "عفوا, لا يوجد لديك حجز",
                                                           style: TextStyle(
-                                                              fontFamily: 'topaz',
+                                                              fontFamily:
+                                                                  'topaz',
                                                               fontSize: 20),
                                                         ),
                                                         SizedBox(
@@ -191,12 +193,13 @@ class DrinkButtons extends StatelessWidget {
                       ));
             },
             child: Card(
-             color: Colors.transparent,
+              color: Colors.transparent,
+              elevation: 0,
               child: Center(
                 child: Text(
                   'مشروبات',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 24, fontFamily: "topaz"),
                 ),
               ),
             ),

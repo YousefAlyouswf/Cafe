@@ -7,8 +7,16 @@ class RingButton extends StatelessWidget {
   bool pressed, hasBookinginSelected;
   Function needService, _delete;
   String id, name, phone;
-  RingButton(this.pressed, this.needService, this.name, this.id,
-      this.hasBookinginSelected, this.phone, this._delete);
+
+  RingButton(
+    this.pressed,
+    this.needService,
+    this.name,
+    this.id,
+    this.hasBookinginSelected,
+    this.phone,
+    this._delete,
+  );
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -19,7 +27,6 @@ class RingButton extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-         
             border: Border.all(width: 3, color: Colors.black),
           ),
           child: StreamBuilder(
@@ -40,10 +47,13 @@ class RingButton extends StatelessWidget {
                     }
                     return InkWell(
                       child: pressed
-                          ? Icon(
-                              Icons.notifications_active,
-                              size: 85,
-                              color: Colors.red,
+                          ? Transform.rotate(
+                              angle: .5,
+                              child: Icon(
+                                Icons.notifications_active,
+                                size: 85,
+                                color: Colors.red,
+                              ),
                             )
                           : Icon(
                               Icons.notifications_none,
@@ -54,19 +64,22 @@ class RingButton extends StatelessWidget {
                           ? () {
                               SnackBar mySnackBar = SnackBar(
                                 content: Container(
-                                  height:  MediaQuery.of(context).size.height*.3,
+                                  height:
+                                      MediaQuery.of(context).size.height * .3,
                                   child: Center(
                                     child: Text(
                                       "لا يوجد لديك حجز",
                                       textAlign: TextAlign.end,
-                                      style: TextStyle(fontSize: 32, color: Colors.red , fontFamily: "topaz"),
+                                      style: TextStyle(
+                                          fontSize: 32,
+                                          color: Colors.red,
+                                          fontFamily: "topaz"),
                                     ),
                                   ),
                                 ),
                                 backgroundColor: Colors.transparent,
                                 elevation: 0,
                                 duration: const Duration(milliseconds: 1500),
-                                
                               );
                               Scaffold.of(context).showSnackBar(mySnackBar);
                             }
