@@ -118,22 +118,21 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
 //progress dialog
     pr = ProgressDialog(context, type: ProgressDialogType.Normal);
-    
+
     pr.style(
-        message: '',
+        message: '...أنتظر قليلا',
         progressWidget: Container(
           height: 200,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                  'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/f8442951656711.59353e402767a.gif'),
+                  'https://t4.ftcdn.net/jpg/02/57/34/73/240_F_257347345_xMLYoln5APOlAJcmv8x0FPexLUeRMdzA.jpg'),
               fit: BoxFit.fill,
             ),
           ),
         ));
 
 //----------
-
 
     if (isNew == false) {
       return goThere;
@@ -147,10 +146,13 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(50.0),
             child: AppBar(
-              backgroundColor: Colors.orange,
+              backgroundColor: Colors.red[900],
               bottom: TabBar(
-                labelColor: Colors.black,
-                labelStyle: TextStyle(fontSize: 18),
+                labelColor: Colors.white,
+                labelStyle: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'topaz',
+                    fontWeight: FontWeight.w900),
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.white,
                 tabs: [
@@ -165,12 +167,12 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
-          backgroundColor: Colors.orange[100],
+          backgroundColor: Colors.white,
           body: Container(
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assests/images/logo-1.png'),
+                  image: AssetImage('assests/images/logo.jpg'),
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.topCenter),
             ),

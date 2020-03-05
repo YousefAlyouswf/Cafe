@@ -34,10 +34,11 @@ class HooakahButton extends StatelessWidget {
                   builder: (context) => Column(
                         children: <Widget>[
                           Container(
-                            color: Colors.red,
+                            color: Colors.black,
                             child: IconButton(
                                 icon: Icon(
                                   Icons.arrow_downward,
+                                  color: Colors.white,
                                   size: 25,
                                 ),
                                 onPressed: () => Navigator.of(context).pop()),

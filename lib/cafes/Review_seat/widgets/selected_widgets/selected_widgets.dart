@@ -10,6 +10,7 @@ import 'package:cafe/models/user_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../../utils/database_helper.dart';
+import 'package:flutter_native_admob/flutter_native_admob.dart';
 
 class SelectedWidgets extends StatefulWidget {
   final UserInfo info;
@@ -124,6 +125,20 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
     });
   }
 
+  //Adnroiod ads unit id
+  static const adUnitID = "ca-app-pub-6845451754172569/1211921737";
+  final _nativeAdMob = NativeAdmob();
+  //IOS ads unit id
+  static const adUnitIDIOS = "ca-app-pub-6845451754172569/8931463804";
+  final _nativeadMobIOS = NativeAdmob();
+
+  @override
+  void initState() {
+    super.initState();
+    _nativeAdMob.initialize(appID: "ca-app-pub-6845451754172569~9603621495");
+    _nativeadMobIOS.initialize(appID: "ca-app-pub-6845451754172569~2955436171");
+  }
+
   @override
   Widget build(BuildContext context) {
     needService();
@@ -134,7 +149,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
           return Stack(
             children: <Widget>[
               Align(
-                alignment: Alignment(0, -.50),
+                alignment: Alignment(0, -.95),
                 child: RingButton(
                   pressed,
                   needService,
@@ -145,19 +160,9 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                   widget._delete,
                 ),
               ),
+
               Align(
-                alignment: Alignment(0, -.99),
-                              child: Container(
-                  height: height * .2,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assests/images/logo.jpg'),
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment(-.50, .1),
+                alignment: Alignment(-.50, -.5),
                 child: HooakahButton(
                   widget.info.phone,
                   widget.seatnum,
@@ -169,7 +174,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(.50, .1),
+                alignment: Alignment(.50, -.5),
                 child: DrinkButtons(
                   widget.info.phone,
                   widget.seatnum,
@@ -181,7 +186,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(.50, .40),
+                alignment: Alignment(.50, -.2),
                 child: FoodButton(
                   widget.info.phone,
                   widget.seatnum,
@@ -193,7 +198,7 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                 ),
               ),
               Align(
-                alignment: Alignment(-.50, .40),
+                alignment: Alignment(-.50, -.2),
                 child: CancleButton(
                     widget._delete,
                     needService,
@@ -204,6 +209,33 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
                     widget.hasBookinginSelected,
                     widget._controller),
               ),
+
+              //------------Here Add Native ads
+
+              Align(
+                alignment: Alignment(0, .7),
+                child: Container(
+                  height: height * .3,
+                  child: NativeAdmobBannerView(
+                    adUnitID: adUnitID,
+                    showMedia: true,
+                    style: BannerStyle.dark,
+                    contentPadding: EdgeInsets.fromLTRB(9, 8, 8, 8),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment(0, .7),
+                child: Container(
+                  height: height * .3,
+                  child: NativeAdmobBannerView(
+                    adUnitID: adUnitIDIOS,
+                    showMedia: true,
+                    style: BannerStyle.dark,
+                    contentPadding: EdgeInsets.fromLTRB(9, 8, 8, 8),
+                  ),
+                ),
+              )
             ],
           );
         } catch (e) {

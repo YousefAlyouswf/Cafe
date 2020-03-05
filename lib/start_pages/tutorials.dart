@@ -24,7 +24,7 @@ class _TutorialsState extends State<Tutorials> {
               return Stack(
                 children: <Widget>[
                   Container(
-                    color: Colors.grey[600],
+                    color: Colors.black,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
@@ -79,7 +79,7 @@ class _TutorialsState extends State<Tutorials> {
         ),
         child: Circle(
           size: 12.0,
-          color: Colors.green,
+          color: Colors.red,
         ),
       ),
     );

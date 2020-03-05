@@ -110,7 +110,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                                color: Color.fromRGBO(143, 14, 251, .2),
+                                color: Color.fromRGBO(128, 0, 0, 0.2),
                                 blurRadius: 20,
                                 offset: Offset(0, 10))
                           ]),
@@ -317,7 +317,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       margin: EdgeInsets.symmetric(horizontal: 50),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        color: Color.fromRGBO(49, 39, 79, 0.8),
+                        color: Color.fromRGBO(128, 0, 0, 0.8),
                       ),
                       child: Builder(
                         builder: (context) => InkWell(

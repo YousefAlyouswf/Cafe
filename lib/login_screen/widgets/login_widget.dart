@@ -54,7 +54,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   FocusNode _phoneFocus = FocusNode();
   FocusNode _passwordFocus = FocusNode();
 
-
   String password;
 
   _LoginWidgetState(
@@ -73,7 +72,6 @@ class _LoginWidgetState extends State<LoginWidget> {
       child: Column(
         children: <Widget>[
           HeaderLogin(),
-         
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40),
             child: Column(
@@ -88,7 +86,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                            color: Color.fromRGBO(196, 153, 198, 0.3),
+                            color: Color.fromRGBO(128, 0, 0, 0.2),
                             blurRadius: 20,
                             offset: Offset(0, 10)),
                       ],
@@ -213,7 +211,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               margin: EdgeInsets.symmetric(horizontal: 50),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                color: Color.fromRGBO(49, 39, 79, 0.8),
+                color: Color.fromRGBO(128, 0, 0, 0.8),
               ),
               child: Builder(
                 builder: (context) => InkWell(
@@ -249,6 +247,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         ),
                       );
                     } else {
+                      pr.dismiss();
                       Scaffold.of(context).showSnackBar(SnackBar(
                         backgroundColor: Colors.red,
                         content: Text(
