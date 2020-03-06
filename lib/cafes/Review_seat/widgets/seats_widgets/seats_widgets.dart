@@ -153,6 +153,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                           snapshot.data['allseats'][i]['username'],
                           snapshot.data['allseats'][i]['userphone'],
                           snapshot.data['allseats'][i]['time'],
+                          snapshot.data['allseats'][i]['worker'],
                         ));
                       }
                       seatsModels.sort((a, b) {
@@ -174,6 +175,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                           }
                           String idSeat = index.toString();
                           String seatNum = seatsModels[index].seat.toString();
+                          String worker = seatsModels[index].wroker.toString();
                           return InkWell(
                             onTap: isbooked
                                 ? null
@@ -202,6 +204,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                             prefs.setString("seat", seatNum);
                                             prefs.setString('cafeNameForOrder',
                                                 widget.cafeName);
+                                            prefs.setString('worker', worker);
                                             updateListView();
                                             _save();
                                             updateListView();

@@ -172,6 +172,7 @@ class SigninFiresotre {
     String time = '$hour:$minute:$second';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('time', time);
+    String worker = prefs.get('worker');
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -181,6 +182,7 @@ class SigninFiresotre {
           'username': '',
           'userphone': '',
           'time': '',
+          'worker': worker,
         }
       ]),
     });
@@ -192,7 +194,8 @@ class SigninFiresotre {
           'userid': userid,
           'username': username,
           'userphone': userphone,
-          'time': time
+          'time': time,
+          'worker': worker,
         }
       ]),
     });
@@ -202,6 +205,8 @@ class SigninFiresotre {
       String userphone, String seatNum) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String time = prefs.getString('time');
+
+    String worker = prefs.get('worker');
     await Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -210,7 +215,8 @@ class SigninFiresotre {
           'userid': userid,
           'username': username,
           'userphone': userphone,
-          'time': time
+          'time': time,
+          'worker': worker,
         }
       ]),
     });
@@ -223,6 +229,7 @@ class SigninFiresotre {
           'username': '',
           'userphone': '',
           'time': '',
+          'worker': worker,
         }
       ]),
     });
@@ -231,6 +238,8 @@ class SigninFiresotre {
   //Cancel Duplicate reservation
   Future calncedupleBooking(String id, String userid, String username,
       String userphone, String seatNum) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String worker = prefs.get('worker');
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -239,6 +248,8 @@ class SigninFiresotre {
           'userid': userid,
           'username': username,
           'userphone': userphone,
+          'time': '',
+          'worker': worker,
         }
       ]),
     });
@@ -250,6 +261,8 @@ class SigninFiresotre {
           'userid': '',
           'username': '',
           'userphone': '',
+          'time': '',
+          'worker': worker,
         }
       ]),
     });
