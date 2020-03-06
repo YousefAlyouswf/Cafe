@@ -288,14 +288,18 @@ class SigninFiresotre {
 
   //Add Faham
   Future faham(String cafename, String seatnum, String sort, String username,
-          String userid) async =>
-      await Firestore.instance.collection('faham').document().setData({
-        'cafename': cafename,
-        'seatnum': seatnum,
-        'sort': sort,
-        'username': username,
-        'userid': userid,
-      });
+      String userid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String worker = prefs.get('worker');
+    await Firestore.instance.collection('faham').document().setData({
+      'cafename': cafename,
+      'seatnum': seatnum,
+      'sort': sort,
+      'username': username,
+      'userid': userid,
+      'worker': worker,
+    });
+  }
 
   //Add in Cart
   Future addInCart(String cafename, String seatnum, String order,
