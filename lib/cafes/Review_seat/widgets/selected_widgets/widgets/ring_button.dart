@@ -65,15 +65,19 @@ class RingButton extends StatelessWidget {
                               SnackBar mySnackBar = SnackBar(
                                 content: Container(
                                   height:
-                                      MediaQuery.of(context).size.height * .3,
+                                      MediaQuery.of(context).size.height * .6,
                                   child: Center(
-                                    child: Text(
-                                      "لا يوجد لديك حجز",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                          fontSize: 32,
-                                          color: Colors.red,
-                                          fontFamily: "topaz"),
+                                    child: Container(
+                                      height: 50,
+                                      color: Colors.red,
+                                      child: Text(
+                                        "لا يوجد لديك حجز",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            color: Colors.white,
+                                            fontFamily: "topaz"),
+                                      ),
                                     ),
                                   ),
                                 ),
