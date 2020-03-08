@@ -173,6 +173,7 @@ class SigninFiresotre {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('time', time);
     String worker = prefs.get('worker');
+    String workerName = prefs.get('workerName');
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -183,6 +184,7 @@ class SigninFiresotre {
           'userphone': '',
           'time': '',
           'worker': worker,
+          'workerName': workerName,
         }
       ]),
     });
@@ -196,6 +198,7 @@ class SigninFiresotre {
           'userphone': userphone,
           'time': time,
           'worker': worker,
+          'workerName': workerName,
         }
       ]),
     });
@@ -207,6 +210,7 @@ class SigninFiresotre {
     String time = prefs.getString('time');
 
     String worker = prefs.get('worker');
+    String workerName = prefs.get('workerName');
     await Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -217,6 +221,7 @@ class SigninFiresotre {
           'userphone': userphone,
           'time': time,
           'worker': worker,
+          'workerName': workerName
         }
       ]),
     });
@@ -230,6 +235,7 @@ class SigninFiresotre {
           'userphone': '',
           'time': '',
           'worker': worker,
+          'workerName': workerName
         }
       ]),
     });
@@ -240,6 +246,7 @@ class SigninFiresotre {
       String userphone, String seatNum) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String worker = prefs.get('worker');
+    String workerName = prefs.get('workerName');
     Firestore.instance.collection('seats').document(id).updateData({
       'allseats': FieldValue.arrayRemove([
         {
@@ -250,6 +257,7 @@ class SigninFiresotre {
           'userphone': userphone,
           'time': '',
           'worker': worker,
+          'workerName': workerName
         }
       ]),
     });
@@ -263,6 +271,7 @@ class SigninFiresotre {
           'userphone': '',
           'time': '',
           'worker': worker,
+          'workerName': workerName
         }
       ]),
     });
@@ -291,6 +300,7 @@ class SigninFiresotre {
       String userid) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String worker = prefs.get('worker');
+    String workerName = prefs.get('workerName');
     await Firestore.instance.collection('faham').document().setData({
       'cafename': cafename,
       'seatnum': seatnum,
@@ -298,6 +308,7 @@ class SigninFiresotre {
       'username': username,
       'userid': userid,
       'worker': worker,
+      'workerName': workerName
     });
   }
 

@@ -89,11 +89,12 @@ class RingButton extends StatelessWidget {
                             }
                           : () async {
                               needService();
-                          
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              String workerName = prefs.getString("workerName");
                               if (!pressed) {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
                                 String seat = prefs.getString("seat");
+
                                 String cafeNameForOrder =
                                     prefs.getString('cafeNameForOrder');
                                 var now = DateTime.now().millisecondsSinceEpoch;
@@ -106,37 +107,36 @@ class RingButton extends StatelessWidget {
                                 );
                                 //------
 
-                              }else{
-                                  SnackBar mySnackBar = SnackBar(
-                                content: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .85,
-                                  child: Center(
-                                    child: Container(
-                                      height: 50,
-                                      color: Colors.red[900],
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left:8.0, right: 8.0),
-                                        child: Text(
-                                          " سوف يتم خدمتك ",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 32,
-                                              color: Colors.white,
-                                              fontFamily: "topaz"),
+                              } else {
+                                SnackBar mySnackBar = SnackBar(
+                                  content: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        1,
+                                    child: Center(
+                                      child: Card(
+                              
+                                        color: Colors.red[900],
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 8.0, right: 8.0),
+                                          child: Text(
+                                            "$workerName سوف يخدمك",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 32,
+                                                color: Colors.white,
+                                                ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                duration: const Duration(milliseconds: 1500),
-                              );
-                              Scaffold.of(context).showSnackBar(mySnackBar);
+                                  backgroundColor: Colors.transparent,
+                                  elevation: 0,
+                                  duration: const Duration(milliseconds: 2500),
+                                );
+                                Scaffold.of(context).showSnackBar(mySnackBar);
                               }
-
-
                             },
                     );
                   },

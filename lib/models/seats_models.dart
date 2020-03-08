@@ -6,6 +6,7 @@ class SeatsModels {
   String userPhone;
   String time;
   String wroker;
+  String workerName;
   SeatsModels(
     this.color,
     this.seat,
@@ -14,5 +15,6 @@ class SeatsModels {
     this.userPhone,
     this.time,
     this.wroker,
+    this.workerName,
   );
 }
