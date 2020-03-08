@@ -233,14 +233,27 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                         });
                                       } else {
                                         SnackBar mySnackBar = SnackBar(
-                                          content: Text(
-                                            "خطأ في إدخال الكود",
-                                            textAlign: TextAlign.end,
-                                            style: TextStyle(fontSize: 24),
+                                          elevation: 0,
+                                          content: Container(
+                                            height: height * .5,
+                                            child: Center(
+                                              child: Card(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Text(
+                                                    "خطأ في إدخال الكود",
+                                                    textAlign: TextAlign.end,
+                                                    style: TextStyle(
+                                                        fontSize: 32,
+                                                        color: Colors.red),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          backgroundColor: Colors.red,
-                                          duration:
-                                              const Duration(milliseconds: 500),
+                                          backgroundColor: Colors.transparent,
+                                          duration: const Duration(
+                                              milliseconds: 1000),
                                         );
                                         Scaffold.of(context)
                                             .showSnackBar(mySnackBar);
