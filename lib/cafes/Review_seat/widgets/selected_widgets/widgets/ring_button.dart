@@ -89,24 +89,8 @@ class RingButton extends StatelessWidget {
                             }
                           : () async {
                               needService();
-                              bool faham = true;
-                              final QuerySnapshot result = await Firestore
-                                  .instance
-                                  .collection('faham')
-                                  .getDocuments();
-                              final List<DocumentSnapshot> documents =
-                                  result.documents;
-                              documents.forEach((data) {
-                                if (data['userid'] == id) {
-                                  String docID = data.documentID;
-                                  Firestore.instance
-                                      .collection('faham')
-                                      .document(docID)
-                                      .delete();
-                                  faham = false;
-                                }
-                              });
-                              if (faham) {
+                          
+                              if (!pressed) {
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 String seat = prefs.getString("seat");
@@ -122,7 +106,37 @@ class RingButton extends StatelessWidget {
                                 );
                                 //------
 
+                              }else{
+                                  SnackBar mySnackBar = SnackBar(
+                                content: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .85,
+                                  child: Center(
+                                    child: Container(
+                                      height: 50,
+                                      color: Colors.red[900],
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left:8.0, right: 8.0),
+                                        child: Text(
+                                          " سوف يتم خدمتك ",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 32,
+                                              color: Colors.white,
+                                              fontFamily: "topaz"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                duration: const Duration(milliseconds: 1500),
+                              );
+                              Scaffold.of(context).showSnackBar(mySnackBar);
                               }
+
+
                             },
                     );
                   },
