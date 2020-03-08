@@ -1,9 +1,13 @@
+import 'dart:ffi';
+
 import 'package:cafe/loading/loading.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
+import 'package:cafe/models/cafe_location.dart';
 import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
@@ -121,8 +125,50 @@ class _CafeListState extends State<CafeList> {
   List<dynamic> removeDoublicat = new List();
 
   _CafeListState(this.info, this.bookingDB);
+
+  double getLong;
+  double getLat;
+  String yourCafes;
+  List<CafeLocation> cafeLocation = new List();
+  //get user Location
+  void getCurrentPosition() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    getLong = position.longitude;
+    getLat = position.latitude;
+
+    final QuerySnapshot result =
+        await Firestore.instance.collection('cafes').getDocuments();
+    final List<DocumentSnapshot> documents = result.documents;
+    documents.forEach((data) {
+      double long = double.parse(data['long']);
+      double lat = double.parse(data['lat']);
+      cafeLocation.add(CafeLocation(long, lat, data['city']));
+    });
+
+    for (var i = 0; i < cafeLocation.length; i++) {
+      if (getLong.toInt() == cafeLocation[i].long.toInt() &&
+              getLat.toInt() == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() - 1 == cafeLocation[i].long.toInt() &&
+              getLat.toInt() == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() == cafeLocation[i].long.toInt() &&
+              getLat.toInt() - 1 == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() + 1 == cafeLocation[i].long.toInt() &&
+              getLat.toInt() == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() == cafeLocation[i].long.toInt() &&
+              getLat.toInt() + 1 == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() + 1 == cafeLocation[i].long.toInt() &&
+              getLat.toInt() + 1 == cafeLocation[i].lat.toInt() ||
+          getLong.toInt() - 1 == cafeLocation[i].long.toInt() &&
+              getLat.toInt() - 1 == cafeLocation[i].lat.toInt()) {
+        yourCafes = cafeLocation[i].city;
+      }
+    }
+  }
+
   @override
   void initState() {
+    getCurrentPosition();
     //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
@@ -181,7 +227,7 @@ class _CafeListState extends State<CafeList> {
             child: Text(
               "قائمة المقاهي",
               style: TextStyle(
-                color: Colors.white,
+                  color: Colors.white,
                   fontFamily: 'arbaeen',
                   fontWeight: FontWeight.bold,
                   fontSize: 28),
@@ -193,7 +239,7 @@ class _CafeListState extends State<CafeList> {
               child: IconButton(
                 icon: Icon(
                   Icons.exit_to_app,
-                color: Colors.white,
+                  color: Colors.white,
                   size: 30,
                 ),
                 onPressed: () async {
@@ -211,7 +257,6 @@ class _CafeListState extends State<CafeList> {
           ],
         ),
         drawer: Drawer(
-          
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
@@ -220,14 +265,13 @@ class _CafeListState extends State<CafeList> {
                 accountEmail: Text(""),
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image:AssetImage('assests/images/logo.jpg'),
+                  image: AssetImage('assests/images/logo.jpg'),
                   fit: BoxFit.fill,
                 )),
               ),
               Container(
                 color: Colors.white,
                 child: ListTile(
-               
                   title: Center(
                       child: Text(
                     "أختر المدينه",
@@ -243,7 +287,7 @@ class _CafeListState extends State<CafeList> {
                           if (!snapshot.hasData) {
                             return Text("Loading...");
                           } else {
-                            citis.add("جميع المقاهي");
+                            citis.add("المقاهي القريبة");
                             for (var i = 0;
                                 i < snapshot.data.documents.length;
                                 i++) {
@@ -258,7 +302,7 @@ class _CafeListState extends State<CafeList> {
                                   onTap: () {
                                     setState(() {
                                       citySelected = cityFilter[index];
-                                      if (citySelected == 'جميع المقاهي') {
+                                      if (citySelected == 'المقاهي القريبة') {
                                         citySelected = '';
                                       }
                                     });
@@ -272,7 +316,8 @@ class _CafeListState extends State<CafeList> {
                                       child: Center(
                                           child: Text(
                                         cityFilter[index],
-                                        style: TextStyle(fontSize: 18, color: Colors.white),
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white),
                                       )),
                                     ),
                                   ),
@@ -299,6 +344,7 @@ class _CafeListState extends State<CafeList> {
                 : Firestore.instance
                     .collection('cafes')
                     .orderBy('reviewcount', descending: true)
+                    .where('city', isEqualTo: yourCafes)
                     .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -433,7 +479,10 @@ class _CafeListState extends State<CafeList> {
                                       child: Row(
                                         children: <Widget>[
                                           Text(
-                                              'التعليقات ${int.parse(reviewsCountF)}', style: TextStyle(color: Colors.white),),
+                                            'التعليقات ${int.parse(reviewsCountF)}',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
                                           SizedBox(
                                             width: width / 20,
                                           ),
@@ -441,7 +490,8 @@ class _CafeListState extends State<CafeList> {
                                             cafeName,
                                             style: TextStyle(
                                                 fontFamily: 'topaz',
-                                                fontSize: 23, color: Colors.white),
+                                                fontSize: 23,
+                                                color: Colors.white),
                                             textAlign: TextAlign.end,
                                           ),
                                         ],

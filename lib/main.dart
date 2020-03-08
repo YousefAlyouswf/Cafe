@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'login_screen/login.dart';
 import 'models/booking.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,8 +31,16 @@ class _MyAppState extends State<MyApp> {
   String getID;
   bool whereGo = false;
   Widget goThere = Loading();
+
+  void getCurrentPosition() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print("--------------------------------------------------$position");
+  }
+
   @override
   void initState() {
+    getCurrentPosition();
     getAllReviews();
     isLogined().then((onValue) {
       setState(() {
