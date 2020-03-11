@@ -27,7 +27,7 @@ class CancleButton extends StatelessWidget {
         child: Container(
           height: MediaQuery.of(context).size.height * 0.1,
           width: MediaQuery.of(context).size.width * 0.3,
-               decoration: BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.red[900].withOpacity(0.1), Colors.red[900]],
               begin: Alignment.topRight,
@@ -37,13 +37,16 @@ class CancleButton extends StatelessWidget {
           ),
           child: InkWell(
             child: Card(
-               color: Colors.transparent,
-               elevation: 0,
+              color: Colors.transparent,
+              elevation: 0,
               child: Center(
                 child: Text(
                   'خروج',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.w900),
+                  style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900),
                 ),
               ),
             ),
@@ -82,8 +85,9 @@ class CancleButton extends StatelessWidget {
               needService();
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String seatNumer = prefs.getString("seat");
+              String cafeNameForCancle = prefs.getString('cafeNameForOrder');
               SigninFiresotre()
-                  .calnceBooking(cafeName, id, name, phone, seatNumer);
+                  .calnceBooking(cafeNameForCancle, id, name, phone, seatNumer);
 
               hasBookinginSelected = false;
 

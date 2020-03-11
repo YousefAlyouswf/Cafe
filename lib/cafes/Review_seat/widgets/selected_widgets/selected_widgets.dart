@@ -65,16 +65,8 @@ class _SelectedWidgetsState extends State<SelectedWidgets> {
 
   //---------
   String seatID;
-  // countOrderINCart
-  int orderCount;
-  int cartPrice = 0;
-  void countOrderINCart() async {
-    orderCount = cartList.length;
-    cartPrice = 0;
-    for (var i = 0; i < orderCount; i++) {
-      cartPrice += int.parse(cartList[i].price);
-    }
-  }
+
+
 
   void cancleSeat() async {
     //Delete from SQLITE
