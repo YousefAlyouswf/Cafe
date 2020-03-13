@@ -361,6 +361,9 @@ class _CafeListState extends State<CafeList> {
                       String cafeName = snapshot
                           .data.documents[index].data['name']
                           .toString();
+                       String branch = snapshot
+                          .data.documents[index].data['branch']
+                          .toString();
 
                       String starsSumF = snapshot
                           .data.documents[index].data['stars']
@@ -379,12 +382,12 @@ class _CafeListState extends State<CafeList> {
                         borderRadius: BorderRadius.circular(10),
                         child: InkWell(
                           onTap: () {
-                            createInterstitialAd()
-                              ..load()
-                              ..show();
-                            createInterstitialAdIOS()
-                              ..load()
-                              ..show();
+                            // createInterstitialAd()
+                            //   ..load()
+                            //   ..show();
+                            // createInterstitialAdIOS()
+                            //   ..load()
+                            //   ..show();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) {
@@ -484,16 +487,30 @@ class _CafeListState extends State<CafeList> {
                                                 TextStyle(color: Colors.white),
                                           ),
                                           SizedBox(
-                                            width: width / 20,
+                                            width: width / 10,
                                           ),
-                                          Text(
-                                            cafeName,
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                cafeName,
+                                                style: TextStyle(
+                                                    fontFamily: 'topaz',
+                                                    fontSize: 23,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.end,
+                                              ),
+                                              Text(
+                                            branch,
                                             style: TextStyle(
-                                                fontFamily: 'topaz',
-                                                fontSize: 23,
+                                             
+                                                fontSize: 12,
                                                 color: Colors.white),
                                             textAlign: TextAlign.end,
                                           ),
+                                            ],
+                                          ),
+                                          
                                         ],
                                       ),
                                     ),

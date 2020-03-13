@@ -166,13 +166,16 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                         itemCount: snapshot.data['allseats'].length,
                         itemBuilder: (context, index) {
                           Color color;
+                          String status;
                           bool isbooked = false;
                           if (seatsModels[index].color.toString() == 'green') {
                             color = Colors.green;
                             isbooked = false;
+                            status = 'متاح';
                           } else {
                             color = Colors.grey;
                             isbooked = true;
+                            status = 'محجوز';
                           }
                           String idSeat = index.toString();
                           String seatNum = seatsModels[index].seat.toString();
@@ -261,16 +264,29 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                     });
                                   },
                             splashColor: Colors.purple,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(5),
                             child: Container(
-                              padding: const EdgeInsets.all(15),
-                              child: Center(
-                                child: Text(
-                                  seatNum,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                              padding: const EdgeInsets.all(5),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Center(
+                                    child: Text(
+                                      seatNum,
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      status,
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold, color: Colors.black38),
+                                    ),
+                                  ),
+                                ],
                               ),
                               decoration: BoxDecoration(
                                   gradient: LinearGradient(
