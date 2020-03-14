@@ -18,7 +18,4 @@ class UserInfo {
     this.reviewsCount,
     this.starsAvrage,
   });
-
-
-  
 }

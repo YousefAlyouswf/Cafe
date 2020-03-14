@@ -162,6 +162,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     prefs.setString('nmae', data['name']);
                                     prefs.setString('phone', data['phone']);
                                     prefs.setString('id', data.documentID);
+                                    
                                     info = UserInfo(
                                       name: data['name'],
                                       phone: data['phone'],

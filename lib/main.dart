@@ -10,6 +10,8 @@ import 'login_screen/login.dart';
 import 'models/booking.dart';
 import 'package:geolocator/geolocator.dart';
 
+import 'models/cafe_location.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -32,15 +34,8 @@ class _MyAppState extends State<MyApp> {
   bool whereGo = false;
   Widget goThere = Loading();
 
-  void getCurrentPosition() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print("--------------------------------------------------$position");
-  }
-
   @override
   void initState() {
-    getCurrentPosition();
     getAllReviews();
     isLogined().then((onValue) {
       setState(() {

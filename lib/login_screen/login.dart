@@ -57,24 +57,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     });
   }
 
-  int control = 1;
-  bool login = true;
-  bool signup = false;
-  void showToast() {
-    setState(() {
-      if (control == 0) {
-        login = true;
-        signup = false;
-        control = 1;
-        pr.hide();
-      } else {
-        login = false;
-        signup = true;
-        control = 0;
-      }
-    });
-  }
-
   TextEditingController phoneText = TextEditingController();
   TextEditingController passwordText = TextEditingController();
   TextEditingController phoneTextReg = TextEditingController();
@@ -123,13 +105,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         message: '...أنتظر قليلا',
         progressWidget: Container(
           height: 200,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  'https://t4.ftcdn.net/jpg/02/57/34/73/240_F_257347345_xMLYoln5APOlAJcmv8x0FPexLUeRMdzA.jpg'),
-              fit: BoxFit.fill,
-            ),
-          ),
+ 
         ));
 
 //----------

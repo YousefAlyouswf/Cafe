@@ -1,5 +1,4 @@
-import 'dart:ffi';
-
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:cafe/loading/loading.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
@@ -29,6 +28,8 @@ class CafeList extends StatefulWidget {
 }
 
 class _CafeListState extends State<CafeList> {
+  //Progress dialog
+  ProgressDialog pr;
   //Admob-----------------------
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
@@ -170,6 +171,7 @@ class _CafeListState extends State<CafeList> {
   void initState() {
     getCurrentPosition();
     //android admob appid
+
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
     //ios appid admob
@@ -207,15 +209,16 @@ class _CafeListState extends State<CafeList> {
 
   @override
   Widget build(BuildContext context) {
+    pr = ProgressDialog(context, type: ProgressDialogType.Normal);
+
+    pr.style(
+        message: '...أنتظر قليلا',
+        progressWidget: Container(
+          height: 200,
+        ));
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    try {
-      userID = widget.info.id;
-      userName = widget.info.name;
-      userPhone = widget.info.phone;
-      userPassword = widget.info.password;
-      booked = widget.info.booked;
-    } catch (Ex) {}
 
     return WillPopScope(
       onWillPop: () => null,
@@ -304,6 +307,8 @@ class _CafeListState extends State<CafeList> {
                                       citySelected = cityFilter[index];
                                       if (citySelected == 'المقاهي القريبة') {
                                         citySelected = '';
+
+                                        getCurrentPosition();
                                       }
                                     });
                                     Navigator.pop(context);
@@ -361,7 +366,7 @@ class _CafeListState extends State<CafeList> {
                       String cafeName = snapshot
                           .data.documents[index].data['name']
                           .toString();
-                       String branch = snapshot
+                      String branch = snapshot
                           .data.documents[index].data['branch']
                           .toString();
 
@@ -490,7 +495,8 @@ class _CafeListState extends State<CafeList> {
                                             width: width / 10,
                                           ),
                                           Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: <Widget>[
                                               Text(
                                                 cafeName,
@@ -501,16 +507,14 @@ class _CafeListState extends State<CafeList> {
                                                 textAlign: TextAlign.end,
                                               ),
                                               Text(
-                                            branch,
-                                            style: TextStyle(
-                                             
-                                                fontSize: 12,
-                                                color: Colors.white),
-                                            textAlign: TextAlign.end,
-                                          ),
+                                                branch,
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.end,
+                                              ),
                                             ],
                                           ),
-                                          
                                         ],
                                       ),
                                     ),
