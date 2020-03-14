@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'order_card.dart';
+
 class DrinkButtons extends StatelessWidget {
   String phone, seatnum, reserveCafe, seatID, cafeName;
   bool hasBookinginSelected;
@@ -126,23 +128,11 @@ class DrinkButtons extends StatelessWidget {
                                                                               return GridView.builder(
                                                                                 itemCount: snapshot.data.documents.length,
                                                                                 itemBuilder: (context, index) {
-                                                                                  return Card(
-                                                                                    child: Column(
-                                                                                      children: <Widget>[
-                                                                                        Flexible(
-                                                                                          child: Text(
-                                                                                            snapshot.data.documents[index].data['order'],
-                                                                                            textAlign: TextAlign.center,
-                                                                                          ),
-                                                                                        ),
-                                                                                        SizedBox(
-                                                                                          height: 15,
-                                                                                        ),
-                                                                                        Text(
-                                                                                          "السعر: " + snapshot.data.documents[index].data['price'] + " ريال",
-                                                                                          textAlign: TextAlign.center,
-                                                                                        ),
-                                                                                      ],
+                                                                                  return InkWell(
+                                                                                    onTap: () {},
+                                                                                    child: OrderCard(
+                                                                                      snapshot.data.documents[index].data['order'],
+                                                                                      snapshot.data.documents[index].data['price'],
                                                                                     ),
                                                                                   );
                                                                                 },

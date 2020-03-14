@@ -22,7 +22,8 @@ class ReviewWidgets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    try {
+      return Column(
       children: <Widget>[
         Flexible(
           child: StreamBuilder(
@@ -76,5 +77,9 @@ class ReviewWidgets extends StatelessWidget {
         ),
       ],
     );
+    } catch (e) {
+      Text("review_widget");
+    }
+    
   }
 }
