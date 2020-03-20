@@ -6,7 +6,6 @@ import 'order_card.dart';
 class FoodButton extends StatelessWidget {
   String phone, seatnum, reserveCafe, seatID, cafeName;
   bool hasBookinginSelected;
-  Function _delete;
   double height;
   Color cardColor;
   FoodButton(
@@ -15,7 +14,6 @@ class FoodButton extends StatelessWidget {
     this.reserveCafe,
     this.seatID,
     this.cafeName,
-    this._delete,
     this.height,
   );
   @override
@@ -71,7 +69,7 @@ class FoodButton extends StatelessWidget {
                                         hasBookinginSelected = true;
                                       } else {
                                         hasBookinginSelected = false;
-                                        _delete();
+                                       // _delete();
                                       }
                                       seatnum = myBooking['booked'];
                                       reserveCafe = myBooking['cafename'];

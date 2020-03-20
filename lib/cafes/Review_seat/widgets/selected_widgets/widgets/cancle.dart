@@ -9,7 +9,6 @@ class CancleButton extends StatelessWidget {
   bool hasBookinginSelected;
   TabController _controller;
   CancleButton(
-    this._delete,
     this.needService,
     this.id,
     this.cafeName,
@@ -18,6 +17,7 @@ class CancleButton extends StatelessWidget {
     this.hasBookinginSelected,
     this._controller,
   );
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -52,7 +52,8 @@ class CancleButton extends StatelessWidget {
             ),
             onTap: () async {
               //Delete from SQLITE
-              _delete();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setBool('seatSelected', false);
 
               //Delete faham from firebase
               final QuerySnapshot result =
@@ -83,7 +84,7 @@ class CancleButton extends StatelessWidget {
               });
               //----------
               needService();
-              SharedPreferences prefs = await SharedPreferences.getInstance();
+
               String seatNumer = prefs.getString("seat");
               String cafeNameForCancle = prefs.getString('cafeNameForOrder');
               SigninFiresotre()

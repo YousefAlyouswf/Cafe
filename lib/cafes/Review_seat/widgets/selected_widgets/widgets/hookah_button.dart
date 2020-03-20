@@ -6,7 +6,6 @@ import 'order_card.dart';
 class HooakahButton extends StatelessWidget {
   String phone, seatnum, reserveCafe, seatID, cafeName;
   bool hasBookinginSelected;
-  Function _delete;
   double height;
   Color cardColor;
   HooakahButton(
@@ -15,7 +14,6 @@ class HooakahButton extends StatelessWidget {
     this.reserveCafe,
     this.seatID,
     this.cafeName,
-    this._delete,
     this.height,
   );
   @override
@@ -73,7 +71,7 @@ class HooakahButton extends StatelessWidget {
                                         hasBookinginSelected = true;
                                       } else {
                                         hasBookinginSelected = false;
-                                        _delete();
+                                      //  _delete();
                                       }
                                       seatnum = myBooking['booked'];
                                       reserveCafe = myBooking['cafename'];

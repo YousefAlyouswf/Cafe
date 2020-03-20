@@ -8,8 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String testDevice = '5f5e444ae62ce0ed';
 
@@ -91,9 +91,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   }
 
   //----------------------------
-  DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
-  int count = 0;
   UserInfo info;
   BookingDB bookingDB;
   List<String> reviews = new List();
@@ -122,13 +120,14 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   String cafeID;
   String reservation;
   void getUserResrevation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final QuerySnapshot result = await Firestore.instance
         .collection('users')
         .where('phone', isEqualTo: info.phone)
         .getDocuments();
     final List<DocumentSnapshot> documents = result.documents;
     documents.forEach((data) {
-      reservation = data['booked'];
+      prefs.setString('reservation', data['booked']);
     });
   }
 
@@ -151,7 +150,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
       ..load()
       ..show();
     super.initState();
-    updateListView();
+
     //Database blocks
 
     if (noteList == null) {
@@ -232,19 +231,14 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                 ),
                 SeatsWidgets(
                   info,
-                  count,
-                  updateListView,
-                  _save,
                   cafeName,
                   getUserResrevation,
-                  reservation,
                   seatSelect,
                   _controller,
                 ),
                 SelectedWidgets(
                   info,
                   hasBookinginSelected,
-                  _delete,
                   seatnum,
                   cafeName,
                   reservation,
@@ -483,63 +477,4 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
       ),
     );
   }
-
-  void updateListView() async {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    await dbFuture.then((database) {
-      Future<List<BookingDB>> noteListFuture = databaseHelper.getNoteList();
-      noteListFuture.then((noteList) {
-        setState(() {
-          this.noteList = noteList;
-          this.count = noteList.length;
-        });
-      });
-    });
-  }
-
-  // Save data to database
-  void _save() async {
-    int result;
-
-    // Case 2: Insert Operation
-    result = await databaseHelper.insertNote(bookingDB);
-
-    if (result != 0) {
-      // Success
-
-      debugPrint('Note Saved Successfully');
-    } else {
-      // Failure
-      debugPrint('Problem Saving Note');
-    }
-  }
-
-  void _delete() async {
-    await databaseHelper.deleteNote();
-  }
-
-  List<int> cafeReviews = new List();
-
-  // void getAllReviews() async {
-  //   int count = 0;
-  //   cafeReviews = [];
-  //   final QuerySnapshot result =
-  //       await Firestore.instance.collection('cafes').getDocuments();
-  //   final List<DocumentSnapshot> documents = result.documents;
-  //   documents.forEach((data) {
-  //     cafeReviews.add(data['reviews'].length);
-  //     int sum = 0;
-  //     for (var i = 0; i < cafeReviews[count]; i++) {
-  //       //should sum all the values
-  //       sum += data['reviews'][i]['stars'];
-  //     }
-  //     Firestore.instance
-  //         .collection('cafes')
-  //         .document(data.documentID)
-  //         .updateData(
-  //             {'stars': sum.toString(), 'reviewcount': data['reviews'].length});
-
-  //     count++;
-  //   });
-  // }
 }

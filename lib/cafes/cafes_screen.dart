@@ -3,12 +3,10 @@ import 'package:cafe/loading/loading.dart';
 import 'package:cafe/login_screen/login.dart';
 import 'package:cafe/models/booking.dart';
 import 'package:cafe/models/cafe_location.dart';
-import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqlite_api.dart';
 import '../models/user_info.dart';
 import 'Review_seat/reviews.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -96,7 +94,6 @@ class _CafeListState extends State<CafeList> {
   //----------------------------
   List<String> citis = new List();
   String citySelected = '';
-  DatabaseHelper databaseHelper = DatabaseHelper();
   List<BookingDB> noteList = new List();
   List<BookingDB> loginList = new List();
   bool sort = false;
@@ -185,7 +182,6 @@ class _CafeListState extends State<CafeList> {
       ..load()
       ..show();
     super.initState();
-    updateListView();
   }
 
   @override
@@ -246,7 +242,6 @@ class _CafeListState extends State<CafeList> {
                   size: 30,
                 ),
                 onPressed: () async {
-                  _deleteLogin();
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.setBool('isLogin', false);
@@ -544,50 +539,7 @@ class _CafeListState extends State<CafeList> {
     );
   }
 
-  //Login Function
-  void updateListView() async {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    await dbFuture.then((database) {
-      Future<List<BookingDB>> noteListFuture = databaseHelper.getLoginList();
-      noteListFuture.then((loginList) {
-        setState(() {
-          this.loginList = loginList;
-          this.count = loginList.length;
-          if (this.loginList.length == 0) {
-            _saveLogin();
-          }
-        });
-      });
-    });
-  }
+ 
 
-  // Save data to database
-  void _saveLogin() async {
-    int result;
-
-    // Case 2: Insert Operation
-    result = await databaseHelper.insertLogin(bookingDB);
-
-    if (result != 0) {
-      // Success
-
-      debugPrint('Login Saved Successfully');
-    } else {
-      // Failure
-      debugPrint('Problem Saving Login');
-    }
-  }
-
-  void _deleteLogin() async {
-    int result;
-    result = await databaseHelper.deleteLogin();
-    if (result != 0) {
-      // Success
-
-      debugPrint('deleted Successfully');
-    } else {
-      // Failure
-      debugPrint('Problem delete Login');
-    }
-  }
+  
 }

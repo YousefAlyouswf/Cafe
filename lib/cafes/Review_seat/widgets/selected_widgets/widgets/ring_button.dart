@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class RingButton extends StatelessWidget {
   bool pressed, hasBookinginSelected;
-  Function needService, _delete;
+  Function needService;
   String id, name, phone;
 
   RingButton(
@@ -15,8 +15,14 @@ class RingButton extends StatelessWidget {
     this.id,
     this.hasBookinginSelected,
     this.phone,
-    this._delete,
   );
+
+  void deleteSeatSelected() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setBool('seatSelected', false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -43,7 +49,7 @@ class RingButton extends StatelessWidget {
                       hasBookinginSelected = true;
                     } else {
                       hasBookinginSelected = false;
-                      _delete();
+                       deleteSeatSelected();
                     }
                     return InkWell(
                       child: pressed
@@ -110,11 +116,10 @@ class RingButton extends StatelessWidget {
                               } else {
                                 SnackBar mySnackBar = SnackBar(
                                   content: Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        1,
+                                    height:
+                                        MediaQuery.of(context).size.height * 1,
                                     child: Center(
                                       child: Card(
-                              
                                         color: Colors.red[900],
                                         child: Padding(
                                           padding: const EdgeInsets.only(
@@ -123,9 +128,9 @@ class RingButton extends StatelessWidget {
                                             "$workerName سوف يخدمك",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white,
-                                                ),
+                                              fontSize: 32,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),

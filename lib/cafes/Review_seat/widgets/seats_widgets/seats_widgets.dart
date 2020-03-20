@@ -2,7 +2,6 @@ import 'package:cafe/firebase/firebase_service.dart';
 import 'package:cafe/loading/loading.dart';
 import 'package:cafe/models/seats_models.dart';
 import 'package:cafe/models/user_info.dart';
-import 'package:cafe/utils/database_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,120 +11,116 @@ class SeatsWidgets extends StatefulWidget {
   final String cafeName;
 
   final UserInfo info;
-  final int count;
-  final Function updateListView;
-  final Function _save;
+
   final Function getUserResrevation;
-  String reservation;
+
   String seatSelect;
   TabController _controller;
-  SeatsWidgets(
-      this.info,
-      this.count,
-      this.updateListView,
-      this._save,
-      this.cafeName,
-      this.getUserResrevation,
-      this.reservation,
-      this.seatSelect,
-      this._controller);
+  SeatsWidgets(this.info, this.cafeName, this.getUserResrevation,
+      this.seatSelect, this._controller);
 
   @override
-  _SeatsWidgetsState createState() =>
-      _SeatsWidgetsState(this._save, this.updateListView);
+  _SeatsWidgetsState createState() => _SeatsWidgetsState();
 }
 
 class _SeatsWidgetsState extends State<SeatsWidgets> {
   String code;
   TextEditingController controller = TextEditingController();
-  final Function updateListView;
-  final Function _save;
-  _SeatsWidgetsState(this.updateListView, this._save);
+
+  _SeatsWidgetsState();
+  String reservation;
+  bool result;
+  void checkIfSeatSelected() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      result = prefs.getBool('seatSelected');
+      reservation = prefs.getString('reservation');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    checkIfSeatSelected();
     widget.getUserResrevation();
-    return widget.count > 0 && widget.reservation != ''
+    return result == true && reservation != ''
         ? Container(
             height: height / 1.56999,
             child: StreamBuilder(
-                stream: Firestore.instance
-                    .collection('users')
-                    .where('phone', isEqualTo: widget.info.phone)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return Text("Loading..");
+              stream: Firestore.instance
+                  .collection('users')
+                  .where('phone', isEqualTo: widget.info.phone)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Text("Loading..");
 
-                  return ListView.builder(
-                      itemCount: snapshot.data.documents.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot myBooking =
-                            snapshot.data.documents[index];
-                        widget.seatSelect = myBooking['booked'];
-                        updateListView();
-                        return Container(
-                          height: height / 2,
-                          child: Center(
-                            child: myBooking['cafename'] != '' &&
-                                    widget.count > 0
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        "لديك حجز في مقهى ${myBooking['cafename']}",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 25, fontFamily: 'topaz'),
-                                      ),
-                                      Text(
-                                        "جلسة رقم ${widget.seatSelect}",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 25, fontFamily: 'topaz'),
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                      ),
-                                      Text(
-                                        "أسحب الشاشة لعرض قائمة الطلبات وطلب خدمة",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          fontFamily: 'topaz',
-                                          color:
-                                              Color.fromRGBO(102, 102, 255, 1),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Center(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          "تم إلغاء حجزك أو حدث خطأ في التحميل",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 25,
-                                            fontFamily: 'topaz',
-                                          ),
-                                        ),
-                                        IconButton(
-                                            icon: Icon(Icons.refresh),
-                                            onPressed: () async {
-                                              _delete();
-                                              updateListView();
-                                            })
-                                      ],
+                return ListView.builder(
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot myBooking = snapshot.data.documents[index];
+                    widget.seatSelect = myBooking['booked'];
+                    String checkCafeName = myBooking['cafename'];
+                    return Container(
+                      height: height / 2,
+                      child: Center(
+                        child: checkCafeName != '' && result == true
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "لديك حجز في مقهى ${myBooking['cafename']}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25, fontFamily: 'topaz'),
+                                  ),
+                                  Text(
+                                    "جلسة رقم ${widget.seatSelect}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 25, fontFamily: 'topaz'),
+                                  ),
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  Text(
+                                    "أسحب الشاشة لعرض قائمة الطلبات وطلب خدمة",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontFamily: 'topaz',
+                                      color: Color.fromRGBO(102, 102, 255, 1),
                                     ),
                                   ),
-                          ),
-                        );
-                      });
-                }),
+                                ],
+                              )
+                            : Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      "تم إلغاء حجزك أو حدث خطأ في التحميل",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        fontFamily: 'topaz',
+                                      ),
+                                    ),
+                                    IconButton(
+                                        icon: Icon(Icons.refresh),
+                                        onPressed: () async {
+                                          // _delete();
+                                          // updateListView();
+                                        })
+                                  ],
+                                ),
+                              ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           )
         : Container(
             height: height / 1.57,
@@ -213,9 +208,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                             prefs.setString('worker', worker);
                                             prefs.setString(
                                                 'workerName', workerName);
-                                            updateListView();
-                                            _save();
-                                            updateListView();
+                                            prefs.setBool('seatSelected', true);
                                             SigninFiresotre().updateBooking(
                                               widget.cafeName,
                                               widget.info.id,
@@ -242,7 +235,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                             child: Center(
                                               child: Card(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.all(16.0),
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
                                                   child: Text(
                                                     "خطأ في إدخال الكود",
                                                     textAlign: TextAlign.end,
@@ -272,6 +266,15 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                 children: <Widget>[
                                   Center(
                                     child: Text(
+                                      seatsModels[index].workerName,
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
                                       seatNum,
                                       style: TextStyle(
                                           fontSize: 18,
@@ -283,7 +286,8 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                                       status,
                                       style: TextStyle(
                                           fontSize: 10,
-                                          fontWeight: FontWeight.bold, color: Colors.black38),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black38),
                                     ),
                                   ),
                                 ],
@@ -300,7 +304,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
-                          childAspectRatio: 3 / 2,
+                          childAspectRatio: 1.2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
                         ),
@@ -323,7 +327,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
       for (var i = 0; i < data['allseats'].length; i++) {
         if (data['allseats'][i]['seat'] == seatNumer) {
           if (data['allseats'][i]['userid'] != widget.info.id) {
-            cancleSeat();
+            // cancleSeat();
             break;
           }
         }
@@ -331,42 +335,7 @@ class _SeatsWidgetsState extends State<SeatsWidgets> {
     });
   }
 
-  DatabaseHelper databaseHelper = DatabaseHelper();
-
   bool hasBookinginSelected;
-
-  void _delete() async {
-    await databaseHelper.deleteNote();
-  }
-
-  void cancleSeat() async {
-    //Delete from SQLITE
-    _delete();
-    widget.reservation = '';
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String seatNumer = prefs.getString("seat");
-
-    SigninFiresotre().calnceBooking(widget.cafeName, widget.info.id,
-        widget.info.name, widget.info.phone, seatNumer);
-    hasBookinginSelected = false;
-
-    SigninFiresotre().cancleupdateUser(widget.info.id);
-
-    Firestore.instance
-        .collection('seats')
-        .document(widget.cafeName)
-        .updateData({
-      'allseats': FieldValue.arrayRemove([
-        {
-          'seat': 'null',
-          'color': 'green',
-          'userid': '',
-          'username': '',
-          'userphone': '',
-        }
-      ]),
-    });
-  }
 
   Future<bool> checkIfResirved(String seatNumber) async {
     bool valid = true;
