@@ -8,9 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'login_screen/login.dart';
 import 'models/booking.dart';
-import 'package:geolocator/geolocator.dart';
 
-import 'models/cafe_location.dart';
 
 void main() => runApp(MyApp());
 

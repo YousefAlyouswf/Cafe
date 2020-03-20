@@ -51,13 +51,13 @@ class RingButton extends StatelessWidget {
                               angle: .5,
                               child: Icon(
                                 Icons.notifications_active,
-                                size: 85,
+                                size: 70,
                                 color: Colors.red,
                               ),
                             )
                           : Icon(
                               Icons.notifications_none,
-                              size: 85,
+                              size: 70,
                               color: Colors.black,
                             ),
                       onTap: !hasBookinginSelected
