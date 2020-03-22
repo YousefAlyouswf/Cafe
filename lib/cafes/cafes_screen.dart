@@ -184,14 +184,7 @@ class _CafeListState extends State<CafeList> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _bannerAd.dispose();
-    _interstitialAd.dispose();
-    _bannerAdIOS.dispose();
-    _interstitialAdIOS.dispose();
-    super.dispose();
-  }
+
 
   static Future<void> openMap(String latitude, String longitude) async {
     String googleUrl =
@@ -385,9 +378,9 @@ class _CafeListState extends State<CafeList> {
                             // createInterstitialAd()
                             //   ..load()
                             //   ..show();
-                            // createInterstitialAdIOS()
-                            //   ..load()
-                            //   ..show();
+                            createInterstitialAdIOS()
+                              ..load()
+                              ..show();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) {

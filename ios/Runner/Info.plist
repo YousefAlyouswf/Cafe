@@ -25,7 +25,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>تطبيق هوكا يحتاج الوصول لموقعك لتحديد اقرب المقاهي</string>
+	<string>تطبيق كوفي يحتاج الوصول لموقعك لتحديد اقرب المقاهي</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

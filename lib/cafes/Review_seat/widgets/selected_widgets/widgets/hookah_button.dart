@@ -187,7 +187,7 @@ class HooakahButton extends StatelessWidget {
               elevation: 0,
               child: Center(
                 child: Text(
-                  'معسلات',
+                  'المقهى',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 25, color: Colors.black, fontFamily: "topaz"),
