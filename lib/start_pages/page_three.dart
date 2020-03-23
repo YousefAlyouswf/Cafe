@@ -11,11 +11,11 @@ class PageThree extends StatelessWidget {
           children: <Widget>[
             Center(
               child: Text(
-                "خدمات تطبيق هوكا",
+                "تطبيق جلسات",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 32,
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -28,7 +28,7 @@ class PageThree extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -37,7 +37,7 @@ class PageThree extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: ExactAssetImage('assests/images/page_view.jpg'),
+              image: ExactAssetImage('assests/images/reviews.png'),
             ),
           ),
         ),

@@ -12,7 +12,7 @@
     "android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="هوكا"
+        android:label="جلسات"
         android:icon="@mipmap/launcher_icon">
      <meta-data
     android:name="com.google.android.gms.ads.APPLICATION_ID"

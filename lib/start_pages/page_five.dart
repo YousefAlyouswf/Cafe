@@ -13,11 +13,11 @@ class PageFive extends StatelessWidget {
           children: <Widget>[
             Center(
               child: Text(
-                "خدمات تطبيق هوكا",
+              "تطبيق جلسات",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 32,
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -26,14 +26,23 @@ class PageFive extends StatelessWidget {
             ),
             Center(
               child: Text(
-                "بعد أختيارك للجسلة المتاحة يمكنك الإطلاع على قائمة الطلبات والأسعار المتوفرة لدى المقهى وكذلك يوجد جرس لاستدعاء مقدم الخدمة لك",
+                "قائمة الطلبات والأسعار المتوفرة لدى المقهى و جرس لاستدعاء مقدم الخدمة",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
+             Container(
+          height:  MediaQuery.of(context).size.height * 0.20,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: ExactAssetImage('assests/images/service.png'),
+            ),
+          ),
+        ),
           ],
         ),
         Align(
@@ -44,7 +53,7 @@ class PageFive extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.05,
               width: double.infinity,
               child: RaisedButton(
-                color: Colors.red,
+                color: Colors.red[900],
                 onPressed: () async {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();

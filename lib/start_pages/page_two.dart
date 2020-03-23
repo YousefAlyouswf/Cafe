@@ -9,10 +9,10 @@ class PageTwo extends StatelessWidget {
       children: <Widget>[
         Center(
           child: Text(
-            "ماذا يقدم تطبيق هوكا؟",
+            "تطبيق جلسات",
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold),
+                fontSize: 32, color: Colors.black, fontWeight: FontWeight.bold),
           ),
         ),
         SizedBox(
@@ -24,27 +24,19 @@ class PageTwo extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 25,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
         ),
         Container(
-          height:  MediaQuery.of(context).size.height * 0.10,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: ExactAssetImage('assests/images/menu_bar.jpg'),
-            ),
-          ),
-        ),
-         Container(
           height:  MediaQuery.of(context).size.height * 0.20,
-          width: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: ExactAssetImage('assests/images/city_menu.jpg'),
+              image: ExactAssetImage('assests/images/cities.png'),
             ),
           ),
         ),
+        
       ],
     );
   }

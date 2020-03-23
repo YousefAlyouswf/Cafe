@@ -24,7 +24,7 @@ class _TutorialsState extends State<Tutorials> {
               return Stack(
                 children: <Widget>[
                   Container(
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 40.0),
@@ -36,7 +36,7 @@ class _TutorialsState extends State<Tutorials> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: ExactAssetImage('assests/images/logo.jpg'),
+                            image: ExactAssetImage('assests/images/cafe_logo.png'),
                           ),
                         ),
                       ),

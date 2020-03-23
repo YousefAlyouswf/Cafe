@@ -148,8 +148,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assests/images/logo.jpg'),
-                  fit: BoxFit.fitWidth,
+                  image: AssetImage('assests/images/cafe_logo.png'),
+                  fit: BoxFit.none,
                   alignment: Alignment.topCenter),
             ),
             child: TabBarView(

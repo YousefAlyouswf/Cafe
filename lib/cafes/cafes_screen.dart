@@ -256,8 +256,8 @@ class _CafeListState extends State<CafeList> {
                 accountEmail: Text(""),
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: AssetImage('assests/images/logo.jpg'),
-                  fit: BoxFit.fill,
+                  image: AssetImage('assests/images/cafe_logo.png'),
+                  fit: BoxFit.fitHeight,
                 )),
               ),
               Container(
