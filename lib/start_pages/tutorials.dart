@@ -36,7 +36,7 @@ class _TutorialsState extends State<Tutorials> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            image: ExactAssetImage('assests/images/cafe_logo.png'),
+                            image: ExactAssetImage('assests/images/cafe_logo.jpg'),
                           ),
                         ),
                       ),
