@@ -1,27 +1,22 @@
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:cafe/loading/loading.dart';
-import 'package:cafe/login_screen/login.dart';
-import 'package:cafe/models/booking.dart';
 import 'package:cafe/models/cafe_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/user_info.dart';
 import 'Review_seat/reviews.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_admob/firebase_admob.dart';
+import 'dart:io' show Platform;
 
 const String testDevice = '5f5e444ae62ce0ed';
 
 class CafeList extends StatefulWidget {
-  final UserInfo info;
-  final BookingDB bookingDB;
-  CafeList(this.info, this.bookingDB);
+  CafeList();
 
   @override
   _CafeListState createState() {
-    return _CafeListState(this.info, this.bookingDB);
+    return _CafeListState();
   }
 }
 
@@ -94,35 +89,19 @@ class _CafeListState extends State<CafeList> {
   //----------------------------
   List<String> citis = new List();
   String citySelected = '';
-  List<BookingDB> noteList = new List();
-  List<BookingDB> loginList = new List();
+
   bool sort = false;
-  BookingDB bookingDB;
+
   String city;
 
   String filterCity;
 
-  bool check = false;
-
-  String userID;
-
-  String userName;
-
-  String userPhone;
-
-  String userPassword;
-
-  String booked;
-
   int count;
 
   String seatNum;
-  UserInfo info;
   List<String> cityList = new List();
 
   List<dynamic> removeDoublicat = new List();
-
-  _CafeListState(this.info, this.bookingDB);
 
   double getLong;
   double getLat;
@@ -168,23 +147,25 @@ class _CafeListState extends State<CafeList> {
   void initState() {
     getCurrentPosition();
     //android admob appid
+    if (Platform.isAndroid) {
+      FirebaseAdMob.instance
+          .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
+      _bannerAd = createBannerAd()
+        ..load()
+        ..show();
+    } else {
+      //ios appid admob
+      FirebaseAdMob.instance
+          .initialize(appId: "ca-app-pub-6845451754172569~2955436171");
+      //Change appId With Admob Id
 
-    FirebaseAdMob.instance
-        .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
-    //ios appid admob
-    FirebaseAdMob.instance
-        .initialize(appId: "ca-app-pub-6845451754172569~2955436171");
-    //Change appId With Admob Id
-    _bannerAd = createBannerAd()
-      ..load()
-      ..show();
-    _bannerAdIOS = createBannerAdIOS()
-      ..load()
-      ..show();
+      _bannerAdIOS = createBannerAdIOS()
+        ..load()
+        ..show();
+    }
+
     super.initState();
   }
-
-
 
   static Future<void> openMap(String latitude, String longitude) async {
     String googleUrl =
@@ -225,27 +206,6 @@ class _CafeListState extends State<CafeList> {
                   fontSize: 28),
             ),
           ),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                icon: Icon(
-                  Icons.exit_to_app,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.setBool('isLogin', false);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                  );
-                },
-              ),
-            ),
-          ],
         ),
         drawer: Drawer(
           child: ListView(
@@ -378,17 +338,18 @@ class _CafeListState extends State<CafeList> {
                             // createInterstitialAd()
                             //   ..load()
                             //   ..show();
-                            createInterstitialAdIOS()
-                              ..load()
-                              ..show();
+                            if (Platform.isIOS) {
+                              createInterstitialAdIOS()
+                                ..load()
+                                ..show();
+                            }
+
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) {
                                   return Reviews(
-                                    widget.info,
                                     cafeName,
                                     cafeID,
-                                    widget.bookingDB,
                                   );
                                 },
                               ),
@@ -463,10 +424,8 @@ class _CafeListState extends State<CafeList> {
                                           MaterialPageRoute(
                                             builder: (_) {
                                               return Reviews(
-                                                widget.info,
                                                 cafeName,
                                                 cafeID,
-                                                widget.bookingDB,
                                               );
                                             },
                                           ),
@@ -531,8 +490,4 @@ class _CafeListState extends State<CafeList> {
       ),
     );
   }
-
- 
-
-  
 }

@@ -1,32 +1,32 @@
 import 'package:cafe/cafes/Review_seat/widgets/review_widgets/review_widgets.dart';
 import 'package:cafe/cafes/Review_seat/widgets/seats_widgets/seats_widgets.dart';
 import 'package:cafe/cafes/Review_seat/widgets/selected_widgets/selected_widgets.dart';
-import 'package:cafe/models/booking.dart';
-import 'package:cafe/models/user_info.dart';
-import 'package:cafe/utils/database_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const String testDevice = '5f5e444ae62ce0ed';
 
 class Reviews extends StatefulWidget {
-  final UserInfo info;
   final String cafeName;
   final String cafeID;
-  final BookingDB booking;
-  const Reviews(this.info, this.cafeName, this.cafeID, this.booking);
+  const Reviews(
+    this.cafeName,
+    this.cafeID,
+  );
 
   @override
   _ReviewsState createState() {
-    return _ReviewsState(this.info, this.cafeName, this.cafeID, this.booking);
+    return _ReviewsState(this.cafeName, this.cafeID);
   }
 }
 
 class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
+  TextEditingController controllerPhone = TextEditingController();
+  String phone;
   //Admob-----------------------
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     testDevices: testDevice != null ? <String>[testDevice] : null,
@@ -91,9 +91,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   }
 
   //----------------------------
-  List<BookingDB> noteList = new List();
-  UserInfo info;
-  BookingDB bookingDB;
+
   List<String> reviews = new List();
   List<int> stars = new List();
   List<String> names = new List();
@@ -119,23 +117,23 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   String cafeName;
   String cafeID;
   String reservation;
-  void getUserResrevation() async {
+
+  _ReviewsState(
+    this.cafeName,
+    this.cafeID,
+  );
+
+  TabController _controller;
+  void checkPhoneIsEmpty() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final QuerySnapshot result = await Firestore.instance
-        .collection('users')
-        .where('phone', isEqualTo: info.phone)
-        .getDocuments();
-    final List<DocumentSnapshot> documents = result.documents;
-    documents.forEach((data) {
-      prefs.setString('reservation', data['booked']);
+    setState(() {
+      phone = prefs.getString('thePhone');
     });
   }
 
-  _ReviewsState(this.info, this.cafeName, this.cafeID, this.bookingDB);
-
-  TabController _controller;
   @override
   void initState() {
+    checkPhoneIsEmpty();
     //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
@@ -153,9 +151,6 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
 
     //Database blocks
 
-    if (noteList == null) {
-      noteList = List<BookingDB>();
-    }
     //Database blocks
     _controller = TabController(length: 3, vsync: this);
   }
@@ -169,8 +164,25 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  void getUserPhone(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('gotPhone') != true) {
+      prefs.setBool('gotPhone', false);
+    }
+
+    bool gotPhone = prefs.getBool('gotPhone');
+    if (gotPhone != true) {
+      _showDialog(context).then((onValue) {
+        phone = onValue;
+        prefs.setString('thePhone', onValue);
+        prefs.setBool('gotPhone', true);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    getUserPhone(context);
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
@@ -230,19 +242,18 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                   height,
                 ),
                 SeatsWidgets(
-                  info,
                   cafeName,
-                  getUserResrevation,
                   seatSelect,
                   _controller,
+                  phone,
                 ),
                 SelectedWidgets(
-                  info,
                   hasBookinginSelected,
                   seatnum,
                   cafeName,
                   reservation,
                   _controller,
+                  phone,
                 ),
               ],
               controller: _controller,
@@ -446,7 +457,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
                   var date = new DateFormat("dd-MM-yyyy").format(now);
                   List<Map<String, dynamic>> maplist = [
                     {
-                      'name': info.name,
+                      'name': "زائر",
                       'stars': countStar,
                       'review': review,
                       'date': date,
@@ -476,5 +487,57 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
         padding: EdgeInsets.all(40.0),
       ),
     );
+  }
+
+  Future<String> _showDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (_) => new _SystemPadding(
+        child: new AlertDialog(
+          title: Text(
+            'أدخل رقم الجوال لمرة واحده',
+            textAlign: TextAlign.end,
+            style: TextStyle(color: Colors.blue),
+          ),
+          contentPadding: const EdgeInsets.all(16.0),
+          content: new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new TextField(
+                  keyboardType: TextInputType.phone,
+                  controller: controllerPhone,
+                  textAlign: TextAlign.end,
+                  autofocus: true,
+                  decoration: new InputDecoration(
+                    hintText: 'رقم الجوال',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            new FlatButton(
+                child: const Text('إدخال'),
+                onPressed: () {
+                  Navigator.of(context).pop(
+                    controllerPhone.text.toString(),
+                  );
+                })
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SystemPadding extends StatelessWidget {
+  final Widget child;
+
+  _SystemPadding({Key key, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new AnimatedContainer(
+        duration: const Duration(milliseconds: 300), child: child);
   }
 }

@@ -42,8 +42,7 @@ class SigninFiresotre {
   }
 
 //Update seat stauts
-  Future updateBooking(String id, String userid, String username,
-      String userphone, String seatNum) async {
+  Future updateBooking(String cafeid, String seatNum, String userPhone) async {
     String hour = DateTime.now().hour.toString();
     String minute = DateTime.now().minute.toString();
     String second = DateTime.now().second.toString();
@@ -174,13 +173,11 @@ class SigninFiresotre {
     prefs.setString('time', time);
     String worker = prefs.get('worker');
     String workerName = prefs.get('workerName');
-    Firestore.instance.collection('seats').document(id).updateData({
+    Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayRemove([
         {
           'seat': seatNum,
           'color': 'green',
-          'userid': '',
-          'username': '',
           'userphone': '',
           'time': '',
           'worker': worker,
@@ -188,14 +185,12 @@ class SigninFiresotre {
         }
       ]),
     });
-    Firestore.instance.collection('seats').document(id).updateData({
+    Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayUnion([
         {
           'seat': seatNum,
           'color': 'grey',
-          'userid': userid,
-          'username': username,
-          'userphone': userphone,
+          'userphone': userPhone,
           'time': time,
           'worker': worker,
           'workerName': workerName,
@@ -204,20 +199,17 @@ class SigninFiresotre {
     });
   }
 
-  Future calnceBooking(String id, String userid, String username,
-      String userphone, String seatNum) async {
+  Future calnceBooking(String cafeid, String userphone, String seatNum) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String time = prefs.getString('time');
 
     String worker = prefs.get('worker');
     String workerName = prefs.get('workerName');
-    await Firestore.instance.collection('seats').document(id).updateData({
+    await Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayRemove([
         {
           'seat': seatNum,
           'color': 'grey',
-          'userid': userid,
-          'username': username,
           'userphone': userphone,
           'time': time,
           'worker': worker,
@@ -225,13 +217,11 @@ class SigninFiresotre {
         }
       ]),
     });
-    await Firestore.instance.collection('seats').document(id).updateData({
+    await Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayUnion([
         {
           'seat': seatNum,
           'color': 'green',
-          'userid': '',
-          'username': '',
           'userphone': '',
           'time': '',
           'worker': worker,
@@ -242,18 +232,16 @@ class SigninFiresotre {
   }
 
   //Cancel Duplicate reservation
-  Future calncedupleBooking(String id, String userid, String username,
-      String userphone, String seatNum) async {
+  Future calncedupleBooking(
+      String cafeid, String userphone, String seatNum) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String worker = prefs.get('worker');
     String workerName = prefs.get('workerName');
-    Firestore.instance.collection('seats').document(id).updateData({
+    Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayRemove([
         {
           'seat': seatNum,
           'color': 'grey',
-          'userid': userid,
-          'username': username,
           'userphone': userphone,
           'time': '',
           'worker': worker,
@@ -261,13 +249,11 @@ class SigninFiresotre {
         }
       ]),
     });
-    Firestore.instance.collection('seats').document(id).updateData({
+    Firestore.instance.collection('seats').document(cafeid).updateData({
       'allseats': FieldValue.arrayUnion([
         {
           'seat': seatNum,
           'color': 'green',
-          'userid': '',
-          'username': '',
           'userphone': '',
           'time': '',
           'worker': worker,
@@ -277,27 +263,27 @@ class SigninFiresotre {
     });
   }
 
-  //Add seat to a user
-  Future updateUser(
-      String id, String sitNum, String cafename, String seatID) async {
-    await Firestore.instance.collection('users').document(id).updateData({
-      'booked': sitNum,
-      'cafename': cafename,
-      'seatid': seatID,
-    });
-  }
+  // //Add seat to a user
+  // Future updateUser(
+  //     String id, String sitNum, String cafename, String seatID) async {
+  //   await Firestore.instance.collection('users').document(id).updateData({
+  //     'booked': sitNum,
+  //     'cafename': cafename,
+  //     'seatid': seatID,
+  //   });
+  // }
 
-  Future cancleupdateUser(String id) async {
-    await Firestore.instance.collection('users').document(id).updateData({
-      'booked': '',
-      'cafename': '',
-      'seatid': '',
-    });
-  }
+  // Future cancleupdateUser(String id) async {
+  //   await Firestore.instance.collection('users').document(id).updateData({
+  //     'booked': '',
+  //     'cafename': '',
+  //     'seatid': '',
+  //   });
+  // }
 
   //Add Faham
-  Future faham(String cafename, String seatnum, String sort, String username,
-      String userid) async {
+  Future faham(
+      String cafename, String seatnum, String sort, String userPhone) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String worker = prefs.get('worker');
     String workerName = prefs.get('workerName');
@@ -305,40 +291,9 @@ class SigninFiresotre {
       'cafename': cafename,
       'seatnum': seatnum,
       'sort': sort,
-      'username': username,
-      'userid': userid,
+      'userphone': userPhone,
       'worker': worker,
       'workerName': workerName
-    });
-  }
-
-  //Add in Cart
-  Future addInCart(String cafename, String seatnum, String order,
-          String username, String price, String userid) async =>
-      await Firestore.instance.collection('cart').document().setData({
-        'cafename': cafename,
-        'seatnum': seatnum,
-        'order': order,
-        'username': username,
-        'price': price,
-        'userid': userid,
-        'submit': 'no',
-      });
-  //Update in Cart
-  Future insertInCart(List ordername, List orderPrice, String cafeName,
-      String seatnum, String name, String phone) async {
-    List<Map<String, dynamic>> maplist = [
-      {
-        'ordername': ordername,
-        'price': orderPrice,
-      },
-    ];
-    Firestore.instance.collection('cart').document().setData({
-      'name': name,
-      'phone': phone,
-      'cafename': cafeName,
-      'seatnum': seatnum,
-      'orders': FieldValue.arrayUnion(maplist),
     });
   }
 }

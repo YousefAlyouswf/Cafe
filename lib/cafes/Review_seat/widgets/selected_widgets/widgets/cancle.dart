@@ -5,14 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CancleButton extends StatelessWidget {
   Function _delete, needService;
-  String id, cafeName, name, phone;
+  String cafeName, phone;
   bool hasBookinginSelected;
   TabController _controller;
   CancleButton(
     this.needService,
-    this.id,
     this.cafeName,
-    this.name,
     this.phone,
     this.hasBookinginSelected,
     this._controller,
@@ -51,7 +49,6 @@ class CancleButton extends StatelessWidget {
               ),
             ),
             onTap: () async {
-              //Delete from SQLITE
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.setBool('seatSelected', false);
 
@@ -60,7 +57,7 @@ class CancleButton extends StatelessWidget {
                   await Firestore.instance.collection('faham').getDocuments();
               final List<DocumentSnapshot> documents = result.documents;
               documents.forEach((data) {
-                if (data['userid'] == id) {
+                if (data['userphone'] == phone) {
                   String docID = data.documentID;
                   Firestore.instance
                       .collection('faham')
@@ -69,30 +66,16 @@ class CancleButton extends StatelessWidget {
                 }
               });
               //------------
-              //Delete cart from firebase
-              final QuerySnapshot cartResult =
-                  await Firestore.instance.collection('cart').getDocuments();
-              final List<DocumentSnapshot> documentsCart = cartResult.documents;
-              documentsCart.forEach((data) {
-                if (data['userid'] == id) {
-                  String docID = data.documentID;
-                  Firestore.instance
-                      .collection('cart')
-                      .document(docID)
-                      .delete();
-                }
-              });
-              //----------
+             
               needService();
 
               String seatNumer = prefs.getString("seat");
               String cafeNameForCancle = prefs.getString('cafeNameForOrder');
               SigninFiresotre()
-                  .calnceBooking(cafeNameForCancle, id, name, phone, seatNumer);
+                  .calnceBooking(cafeNameForCancle, phone, seatNumer);
 
               hasBookinginSelected = false;
-
-              SigninFiresotre().cancleupdateUser(id);
+              prefs.setString("seat", null);
               _controller.index = 1;
             },
           ),
