@@ -134,6 +134,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     checkPhoneIsEmpty();
+    getUserPhone(context);
     //android admob appid
     FirebaseAdMob.instance
         .initialize(appId: "ca-app-pub-6845451754172569~9603621495");
@@ -182,7 +183,6 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    getUserPhone(context);
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
         appBar: AppBar(
