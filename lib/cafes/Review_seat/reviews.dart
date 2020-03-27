@@ -168,7 +168,7 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
   String errorMsg;
   void getUserPhone(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('gotPhone') == true) {
+    if (prefs.getBool('gotPhone') != true) {
       prefs.setBool('gotPhone', false);
       prefs.setString('thePhone', null);
     }
@@ -189,7 +189,11 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
             }
           }
         });
-        if (isDublicated) {
+        int len = onValue.length;
+        if (len != 10) {
+          errorMsg = 'يجب أن يكون 10 أرقام';
+          getUserPhone(context);
+        } else if (isDublicated) {
           // Navigator.pop(context);
           errorMsg = 'الرقم مسجل مسبقا';
           getUserPhone(context);
