@@ -165,18 +165,53 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  String errorMsg;
   void getUserPhone(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('gotPhone') != true) {
+    if (prefs.getBool('gotPhone') == true) {
       prefs.setBool('gotPhone', false);
+      prefs.setString('thePhone', null);
     }
 
     bool gotPhone = prefs.getBool('gotPhone');
     if (gotPhone != true) {
-      _showDialog(context).then((onValue) {
-        phone = onValue;
-        prefs.setString('thePhone', onValue);
-        prefs.setBool('gotPhone', true);
+      _showDialog(context).then((onValue) async {
+        final QuerySnapshot result =
+            await Firestore.instance.collection('users').getDocuments();
+        final List<DocumentSnapshot> documents = result.documents;
+        bool isDublicated = false;
+        documents.forEach((data) {
+          for (var i = 0; i < data['all'].length; i++) {
+            if (data['all'][i]['phone'] == onValue) {
+              setState(() {
+                isDublicated = true;
+              });
+            }
+          }
+        });
+        if (isDublicated) {
+          // Navigator.pop(context);
+          errorMsg = 'الرقم مسجل مسبقا';
+          getUserPhone(context);
+        } else if (onValue == null || onValue == '') {
+          //   Navigator.pop(context);
+          errorMsg = 'يجب إدخال رقم الجوال';
+          getUserPhone(context);
+        } else {
+          phone = onValue;
+          prefs.setString('thePhone', onValue);
+          prefs.setBool('gotPhone', true);
+          await Firestore.instance
+              .collection('users')
+              .document('YrTwuK1qrt8D06hwfkvr')
+              .updateData({
+            'all': FieldValue.arrayUnion([
+              {
+                'phone': phone,
+              },
+            ]),
+          });
+        }
       });
     }
   }
@@ -495,9 +530,10 @@ class _ReviewsState extends State<Reviews> with SingleTickerProviderStateMixin {
       builder: (_) => new _SystemPadding(
         child: new AlertDialog(
           title: Text(
-            'أدخل رقم الجوال لمرة واحده',
+            errorMsg == null ? 'أدخل رقم الجوال لمرة واحده' : errorMsg,
             textAlign: TextAlign.end,
-            style: TextStyle(color: Colors.blue),
+            style:
+                TextStyle(color: errorMsg == null ? Colors.blue : Colors.red),
           ),
           contentPadding: const EdgeInsets.all(16.0),
           content: new Row(
